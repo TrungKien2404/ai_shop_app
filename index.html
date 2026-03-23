@@ -1,0 +1,163 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<div class="bg-blue-800 text-white p-4 flex justify-between items-center">
+  
+  <!-- Logo -->
+  <div class="font-bold text-lg">MyShoes</div>
+
+  <!-- Menu -->
+  <div class="space-x-4">
+    <a href="nike.html">Nike</a>
+    <a href="adidas.html">Adidas</a>
+    <a href="puma.html">Puma</a>
+    <a href="sale.html" class="text-red-300">SALE</a>
+  </div>
+
+  <!-- Right side -->
+  <div class="flex items-center space-x-4">
+
+<div class="relative">
+  <a href="cart.html" class="cursor-pointer">
+    🛒
+    <span class="absolute -top-2 -right-2 bg-red-500 text-xs px-1 rounded-full">
+      2
+    </span>
+  </a>
+
+  <!-- Cart dropdown -->
+  </div>
+
+    <!-- User Icon -->
+    <div class="relative">
+      <i onclick="toggleUserMenu()" class="fa-solid fa-user text-xl cursor-pointer"></i>
+
+      <!-- Dropdown -->
+      <div id="userMenu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
+        <a href="login.html" class="block px-4 py-2 hover:bg-gray-100">Đăng nhập</a>
+        <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100">Đăng ký</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+  <!-- Title -->
+  <h2 class="text-center text-2xl font-bold my-6">SẢN PHẨM MỚI</h2>
+
+  <!-- Product Grid -->
+  <div class="grid grid-cols-5 gap-4 px-6">
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://static.nike.com/a/images/t_default/" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Nike Vomero 18</h3>
+      <p class="text-red-500 font-bold">4.190.000đ</p>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://static.nike.com/a/images/t_default/" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Nike Metcon 10</h3>
+      <p class="text-red-500 font-bold">4.590.000đ</p>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://static.nike.com/a/images/t_default/" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Nike Pegasus 41</h3>
+      <p class="text-red-500 font-bold">3.790.000đ</p>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://static.nike.com/a/images/t_default/" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Nike Winflo 11</h3>
+      <p class="text-red-500 font-bold">2.890.000đ</p>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://static.nike.com/a/images/t_default/" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Nike Court Vision</h3>
+      <p class="text-red-500 font-bold">1.990.000đ</p>
+    </div>
+  </div>
+
+  <!-- Chatbot Button -->
+  <div class="fixed bottom-5 right-5">
+    <button onclick="toggleChat()" class="bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg">
+      💬 Chat
+    </button>
+  </div>
+
+  <!-- Chatbox -->
+  <div id="chatbox" class="hidden fixed bottom-20 right-5 w-80 bg-white rounded-xl shadow-lg flex flex-col chatbox">
+    <div class="bg-blue-600 text-white p-3 rounded-t-xl flex justify-between">
+      <span>Chatbot</span>
+      <button onclick="toggleChat()">✖</button>
+    </div>
+
+    <div id="messages" class="p-3 h-60 overflow-y-auto text-sm scrollbar"></div>
+
+    <div class="flex border-t">
+      <input id="input" type="text" placeholder="Nhập tin nhắn..." class="flex-1 p-2 outline-none">
+      <button onclick="sendMessage()" class="bg-blue-600 text-white px-3">Gửi</button>
+    </div>
+  </div>
+
+<script>
+function toggleChat() {
+  document.getElementById('chatbox').classList.toggle('hidden');
+}
+
+function sendMessage() {
+  const input = document.getElementById('input');
+  const messages = document.getElementById('messages');
+
+  if (input.value.trim() === '') return;
+
+  messages.innerHTML += `<div class='text-right mb-2'>Bạn: ${input.value}</div>`;
+  messages.innerHTML += `<div class='text-left mb-2 text-gray-600'>Bot: Tôi có thể giúp gì cho bạn?</div>`;
+
+  input.value = '';
+  messages.scrollTop = messages.scrollHeight;
+}
+</script>
+
+</body>
+</html>
+
+<script>
+function toggleUserMenu() {
+  const menu = document.getElementById("userMenu");
+  menu.classList.toggle("hidden");
+}
+
+// click ra ngoài thì đóng
+document.addEventListener("click", function(event) {
+  const menu = document.getElementById("userMenu");
+  const icon = document.querySelector(".fa-user");
+
+  if (!icon.contains(event.target) && !menu.contains(event.target)) {
+    menu.classList.add("hidden");
+  }
+});
+</script>
+<script>
+function toggleCart() {
+  const cart = document.getElementById("cartMenu");
+  cart.classList.toggle("hidden");
+}
+
+// click ngoài đóng cart
+document.addEventListener("click", function(event) {
+  const cart = document.getElementById("cartMenu");
+  const icon = event.target.closest(".cursor-pointer");
+
+  if (!event.target.closest("#cartMenu") && !icon) {
+    cart.classList.add("hidden");
+  }
+});
+</script>

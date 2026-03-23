@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Puma - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div class="bg-blue-800 text-white p-4 flex justify-between items-center">
+    <a href="index.html" class="font-bold text-lg hover:text-gray-200">MyShoes</a>
+    <div class="space-x-4">
+      <a href="nike.html">Nike</a>
+      <a href="adidas.html">Adidas</a>
+      <a href="puma.html" class="underline">Puma</a>
+      <a href="sale.html" class="text-red-300">SALE</a>
+    </div>
+    <div class="flex items-center space-x-4">
+      <a href="cart.html" class="cursor-pointer">🛒</a>
+      <div class="relative">
+        <i onclick="toggleUserMenu()" class="fa-solid fa-user text-xl cursor-pointer"></i>
+        <div id="userMenu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
+          <a href="login.html" class="block px-4 py-2 hover:bg-gray-100">Đăng nhập</a>
+          <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100">Đăng ký</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products -->
+  <h2 class="text-center text-2xl font-bold my-6">👟 PUMA</h2>
+  
+  <div class="grid grid-cols-5 gap-4 px-6 mb-6">
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://images.puma.com/image/upload/f_auto,q_auto,h_500,w_500/global/376905/01-puma-rs-x" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Puma RS-X</h3>
+      <p class="text-red-500 font-bold">3.490.000đ</p>
+      <button class="w-full bg-blue-600 text-white py-1 text-sm mt-2 rounded hover:bg-blue-700">Thêm vào giỏ</button>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://images.puma.com/image/upload/f_auto,q_auto,h_500,w_500/global/194437/03-future-rider" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Puma Future Rider</h3>
+      <p class="text-red-500 font-bold">2.990.000đ</p>
+      <button class="w-full bg-blue-600 text-white py-1 text-sm mt-2 rounded hover:bg-blue-700">Thêm vào giỏ</button>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://images.puma.com/image/upload/f_auto,q_auto,h_500,w_500/global/374915/01-suede-classic" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Puma Suede Classic</h3>
+      <p class="text-red-500 font-bold">2.590.000đ</p>
+      <button class="w-full bg-blue-600 text-white py-1 text-sm mt-2 rounded hover:bg-blue-700">Thêm vào giỏ</button>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://images.puma.com/image/upload/f_auto,q_auto,h_500,w_500/global/192648/03-puma-x-ray" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Puma X-Ray</h3>
+      <p class="text-red-500 font-bold">2.390.000đ</p>
+      <button class="w-full bg-blue-600 text-white py-1 text-sm mt-2 rounded hover:bg-blue-700">Thêm vào giỏ</button>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card">
+      <img src="https://images.puma.com/image/upload/f_auto,q_auto,h_500,w_500/global/392359/08-ralph-sampson" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Puma Ralph Sampson</h3>
+      <p class="text-red-500 font-bold">2.790.000đ</p>
+      <button class="w-full bg-blue-600 text-white py-1 text-sm mt-2 rounded hover:bg-blue-700">Thêm vào giỏ</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById('userMenu');
+      menu.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

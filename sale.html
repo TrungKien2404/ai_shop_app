@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>SALE - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div class="bg-blue-800 text-white p-4 flex justify-between items-center">
+    <a href="index.html" class="font-bold text-lg hover:text-gray-200">MyShoes</a>
+    <div class="space-x-4">
+      <a href="nike.html">Nike</a>
+      <a href="adidas.html">Adidas</a>
+      <a href="puma.html">Puma</a>
+      <a href="sale.html" class="underline text-red-300">SALE</a>
+    </div>
+    <div class="flex items-center space-x-4">
+      <a href="cart.html" class="cursor-pointer">🛒</a>
+      <div class="relative">
+        <i onclick="toggleUserMenu()" class="fa-solid fa-user text-xl cursor-pointer"></i>
+        <div id="userMenu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
+          <a href="login.html" class="block px-4 py-2 hover:bg-gray-100">Đăng nhập</a>
+          <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100">Đăng ký</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sale Banner -->
+  <div class="bg-red-500 text-white text-center py-6 text-3xl font-bold">
+    🔥 KHUYẾN MÃI ĐẶC BIỆT - GIẢM GIÁ ĐẾN 50% 🔥
+  </div>
+
+  <!-- Products -->
+  <h2 class="text-center text-2xl font-bold my-6">💯 HÀNG SALE</h2>
+  
+  <div class="grid grid-cols-5 gap-4 px-6 mb-6">
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-40%</span>
+      <img src="https://static.nike.com/a/images/t_default/" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Nike Vomero 18</h3>
+      <p class="text-gray-500 line-through">4.190.000đ</p>
+      <p class="text-red-500 font-bold text-lg">2.514.000đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-35%</span>
+      <img src="https://assets.adidas.com/images/h_840,f_auto,fl_lossy,q_auto,w_840,c_limit/eb3cb47c78604cbdb0ffa5f90116d2b9_9366/Ultraboost_23_Shoes_Black_HP7457_01_standard.jpg" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Adidas Ultraboost 23</h3>
+      <p class="text-gray-500 line-through">3.890.000đ</p>
+      <p class="text-red-500 font-bold text-lg">2.528.500đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-50%</span>
+      <img src="https://images.puma.com/image/upload/f_auto,q_auto,h_500,w_500/global/376905/01-puma-rs-x" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Puma RS-X</h3>
+      <p class="text-gray-500 line-through">3.490.000đ</p>
+      <p class="text-red-500 font-bold text-lg">1.745.000đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-30%</span>
+      <img src="https://static.nike.com/a/images/t_default/" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Nike Pegasus 41</h3>
+      <p class="text-gray-500 line-through">3.790.000đ</p>
+      <p class="text-red-500 font-bold text-lg">2.653.000đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-45%</span>
+      <img src="https://images.puma.com/image/upload/f_auto,q_auto,h_500,w_500/global/194437/03-future-rider" class="w-full h-32 object-cover">
+      <h3 class="mt-2 font-semibold text-sm">Puma Future Rider</h3>
+      <p class="text-gray-500 line-through">2.990.000đ</p>
+      <p class="text-red-500 font-bold text-lg">1.644.500đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById('userMenu');
+      menu.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>
