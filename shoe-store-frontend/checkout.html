@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh Toán - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <main class="max-w-4xl mx-auto px-6 py-10">
+    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+      <h1 class="text-3xl font-bold mb-6">Thanh toán đơn hàng</h1>
+
+      <form id="checkoutForm" class="space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="buyerName" class="block text-sm font-medium mb-2">Họ và tên người mua</label>
+            <input id="buyerName" type="text" required placeholder="Nhập họ tên" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-600">
+          </div>
+          <div>
+            <label for="buyerAddress" class="block text-sm font-medium mb-2">Địa chỉ nhận hàng</label>
+            <input id="buyerAddress" type="text" required placeholder="Nhập địa chỉ" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-600">
+          </div>
+        </div>
+
+        <div>
+          <p class="text-sm font-medium mb-2">Phương thức giao hàng</p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center gap-2">
+              <input type="radio" name="shippingMethod" value="Giao thường" checked>
+              <span>Giao thường</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="radio" name="shippingMethod" value="Giao hỏa tốc">
+              <span>Giao hỏa tốc</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-sm font-medium mb-2">Phương thức thanh toán</p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center gap-2">
+              <input type="radio" name="paymentMethod" value="Tiền mặt" checked>
+              <span>Thanh toán tiền mặt</span>
+            </label>
+
+            <label class="inline-flex items-center gap-2">
+              <input type="radio" name="paymentMethod" value="Chuyển khoản ngân hàng">
+              <span>Chuyển khoản ngân hàng</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="bankTransferBox" class="hidden checkout-qr-box">
+          <p class="checkout-qr-title">Quét mã QR để chuyển khoản</p>
+          <h2 class="checkout-qr-amount">Tổng tiền: <span id="bankTransferAmount"></span> VND</h2>
+          <img id="qr" alt="QR chuyển khoản" class="checkout-qr-image">
+          <p class="checkout-qr-note">Nội dung chuyển khoản: <strong>THANHTOANDONHANG</strong></p>
+        </div>
+
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700">Tổng thanh toán:</p>
+          <p id="totalAmount" class="text-2xl font-bold text-red-500 mt-1">0đ</p>
+        </div>
+
+        <div class="flex gap-3">
+          <a href="cart.html" class="px-5 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">Quay lại giỏ hàng</a>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">Thanh toán</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function formatVnd(value) {
+      return Number(value || 0).toLocaleString("vi-VN") + "đ";
+    }
+
+    const cartItems = JSON.parse(sessionStorage.getItem("checkoutCartItems") || "[]");
+    const baseAmount = Number(sessionStorage.getItem("checkoutTotalAmount") || 0);
+    const EXPRESS_FEE = 15000;
+
+    function getShippingFee() {
+      const shippingMethod = document.querySelector("input[name='shippingMethod']:checked")?.value || "Giao thường";
+      return shippingMethod === "Giao hỏa tốc" ? EXPRESS_FEE : 0;
+    }
+
+    function getFinalAmount() {
+      return baseAmount + getShippingFee();
+    }
+
+    function updatePaymentInfo() {
+      const finalAmount = getFinalAmount();
+      document.getElementById("totalAmount").textContent = formatVnd(finalAmount);
+      document.getElementById("bankTransferAmount").textContent = finalAmount;
+
+      const qrUrl = `https://img.vietqr.io/image/970422-0901240242-compact2.png?amount=${finalAmount}&addInfo=ThanhToanDonHang`;
+      document.getElementById("qr").src = qrUrl;
+    }
+
+    const paymentMethodInputs = document.querySelectorAll("input[name='paymentMethod']");
+    const bankTransferBox = document.getElementById("bankTransferBox");
+
+    paymentMethodInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        bankTransferBox.classList.toggle("hidden", !(input.checked && input.value === "Chuyển khoản ngân hàng"));
+      });
+    });
+
+    document.querySelectorAll("input[name='shippingMethod']").forEach((input) => {
+      input.addEventListener("change", updatePaymentInfo);
+    });
+
+    updatePaymentInfo();
+
+    document.getElementById("checkoutForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const buyerName = document.getElementById("buyerName").value.trim();
+      const buyerAddress = document.getElementById("buyerAddress").value.trim();
+      const shippingMethod = document.querySelector("input[name='shippingMethod']:checked")?.value || "Giao thường";
+      const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value || "Tiền mặt";
+
+      const orderData = {
+        orderCode: "OD" + Date.now(),
+        createdAt: new Date().toLocaleString("vi-VN"),
+        buyerName,
+        buyerAddress,
+        shippingMethod,
+        paymentMethod,
+        items: cartItems,
+        totalAmount: getFinalAmount()
+      };
+
+      sessionStorage.setItem("lastOrder", JSON.stringify(orderData));
+      window.location.href = "order-success.html";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt Hàng - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="bg-blue-800 text-white p-4 flex justify-between items-center">
+    <a href="home.html" class="font-bold text-lg hover:text-gray-200">MyShoes</a>
+    <div class="space-x-4">
+      <a href="nike.html">Nike</a>
+      <a href="adidas.html">Adidas</a>
+      <a href="puma.html">Puma</a>
+      <a href="bitis.html">Bitis</a>
+      <a href="mizuno.html">Mizuno</a>
+      <a href="sale.html" class="text-red-300">SALE</a>
+    </div>
+    <div class="flex items-center space-x-4">
+      <a href="cart.html" class="cursor-pointer">🛒</a>
+      <div class="relative">
+        <i onclick="toggleUserMenu()" class="fa-solid fa-user text-xl cursor-pointer"></i>
+        <div id="userMenu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
+          <a href="login.html" class="block px-4 py-2 hover:bg-gray-100">Đăng nhập</a>
+          <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100">Đăng ký</a>
+          <a href="#" onclick="handleLogout(event)" class="block px-4 py-2 hover:bg-gray-100 text-red-600">Đăng xuất</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-5xl mx-auto p-6">
+    <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="rounded-xl overflow-hidden bg-gray-100">
+        <img
+          id="productImage"
+          src="images/Nike/vomero18.jpg"
+          alt="Nike Vomero 18"
+          class="product-image-container"
+        >
+      </div>
+
+      <div>
+        <h1 id="productName" class="text-2xl md:text-3xl font-bold text-gray-900">Nike Vomero 18</h1>
+        <p class="mt-3 text-2xl font-bold text-red-500" id="productPrice" data-price="4190000">4.190.000đ</p>
+        <p class="mt-3 text-sm text-gray-500">Giày chạy bộ cao cấp, êm ái và bám đường tốt.</p>
+
+        <section class="mt-6">
+          <h2 class="font-semibold mb-3">Chọn size</h2>
+          <div class="flex flex-wrap gap-2" id="sizeGroup">
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="38">38</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="39">39</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="40">40</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="41">41</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="42">42</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="43">43</button>
+          </div>
+        </section>
+
+        <section class="mt-6">
+          <h2 class="font-semibold mb-3">Số lượng</h2>
+          <div class="inline-flex items-center border rounded-lg overflow-hidden">
+            <button id="decreaseBtn" type="button" class="px-4 py-2 bg-gray-100 hover:bg-gray-200">-</button>
+            <input
+              id="quantityInput"
+              type="number"
+              min=""
+              value="1"
+              class="w-16 text-center outline-none py-2"
+            >
+            <button id="increaseBtn" type="button" class="px-4 py-2 bg-gray-100 hover:bg-gray-200">+</button>
+          </div>
+        </section>
+
+        <section class="mt-6 bg-gray-50 rounded-xl p-4">
+          <p class="text-gray-700">Tạm tính:</p>
+          <p id="subtotal" class="text-2xl font-bold text-blue-700 mt-1">4.190.000đ</p>
+        </section>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button
+            id="addToCartBtn"
+            type="button"
+            class="px-5 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700"
+          >
+            Thêm vào giỏ hàng
+          </button>
+          <button
+            id="buyNowBtn"
+            type="button"
+            class="px-5 py-3 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700"
+          >
+            Mua hàng ngay
+          </button>
+        </div>
+
+        <a href="home.html" class="inline-block mt-5 text-sm text-gray-500 hover:text-gray-700">← Quay lại trang chủ</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById("userMenu");
+      menu.classList.toggle("hidden");
+    }
+
+    function handleLogout(event) {
+      event.preventDefault();
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("token");
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("currentUser");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("authToken");
+      window.location.href = "login.html";
+    }
+
+    const priceEl = document.getElementById("productPrice");
+    const quantityInput = document.getElementById("quantityInput");
+    const subtotalEl = document.getElementById("subtotal");
+    const sizeButtons = document.querySelectorAll(".size-btn");
+    const productNameEl = document.getElementById("productName");
+    const productImageEl = document.getElementById("productImage");
+    const buyNowBtn = document.getElementById("buyNowBtn");
+    let selectedSize = null;
+
+    buyNowBtn.textContent = "Thanh toán ngay";
+
+    function formatVnd(value) {
+      return Number(value).toLocaleString("vi-VN") + "đ";
+    }
+
+    function updateSubtotal() {
+      const unitPrice = Number(priceEl.dataset.price || 0);
+      const quantityRaw = Number(quantityInput.value);
+      const quantity = Number.isFinite(quantityRaw) && quantityRaw > 0 ? quantityRaw : 0;
+      subtotalEl.textContent = formatVnd(unitPrice * quantity);
+    }
+
+    function normalizeQuantityToMinOne() {
+      const parsed = Math.floor(Number(quantityInput.value));
+      quantityInput.value = Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+      updateSubtotal();
+    }
+
+    function setActiveSize(button) {
+      sizeButtons.forEach((btn) => {
+        btn.classList.remove("bg-blue-600", "text-white", "border-blue-600");
+        btn.classList.add("border-gray-300");
+      });
+      button.classList.remove("border-gray-300");
+      button.classList.add("bg-blue-600", "text-white", "border-blue-600");
+      selectedSize = button.dataset.size;
+    }
+
+    function getSelectedOrderData() {
+      const quantity = Math.max(1, Math.floor(Number(quantityInput.value) || 1));
+      return {
+        name: productNameEl.textContent.trim(),
+        image: productImageEl.getAttribute("src"),
+        price: Number(priceEl.dataset.price || 0),
+        quantity,
+        size: selectedSize
+      };
+    }
+
+    function addCurrentItemToCart() {
+      const item = getSelectedOrderData();
+      if (!item.size) {
+        alert("Vui lòng chọn size trước khi thêm vào giỏ hàng.");
+        return false;
+      }
+
+      const cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      cart.push(item);
+      localStorage.setItem("cartItems", JSON.stringify(cart));
+      return true;
+    }
+
+    function goToCheckoutWithCurrentItem() {
+      const item = getSelectedOrderData();
+      if (!item.size) {
+        alert("Vui lòng chọn size trước khi thanh toán.");
+        return;
+      }
+
+      const totalAmount = item.price * item.quantity;
+      sessionStorage.setItem("checkoutCartItems", JSON.stringify([
+        {
+          ...item,
+          total: totalAmount
+        }
+      ]));
+      sessionStorage.setItem("checkoutTotalAmount", String(totalAmount));
+      window.location.href = "checkout.html";
+    }
+
+    document.getElementById("decreaseBtn").addEventListener("click", () => {
+      quantityInput.value = Math.max(1, Math.floor(Number(quantityInput.value) || 1) - 1);
+      updateSubtotal();
+    });
+
+    document.getElementById("increaseBtn").addEventListener("click", () => {
+      quantityInput.value = Math.max(1, Math.floor(Number(quantityInput.value) || 1) + 1);
+      updateSubtotal();
+    });
+
+    // Tính realtime theo từng ký tự nhập
+    quantityInput.addEventListener("input", updateSubtotal);
+    quantityInput.addEventListener("blur", normalizeQuantityToMinOne);
+    quantityInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        normalizeQuantityToMinOne();
+      }
+    });
+
+    sizeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => setActiveSize(btn));
+    });
+
+    document.getElementById("addToCartBtn").addEventListener("click", () => {
+      const ok = addCurrentItemToCart();
+      if (ok) {
+        alert("Đã thêm sản phẩm vào giỏ hàng.");
+      }
+    });
+
+    buyNowBtn.addEventListener("click", () => {
+      goToCheckoutWithCurrentItem();
+    });
+
+    // Hỗ trợ truyền thông tin nhanh qua URL: order.html?name=...&price=4190000&image=...
+    const query = new URLSearchParams(window.location.search);
+    const qName = query.get("name");
+    const qPrice = query.get("price");
+    const qImage = query.get("image");
+
+    if (qName) productNameEl.textContent = qName;
+    if (qPrice && !Number.isNaN(Number(qPrice))) {
+      priceEl.dataset.price = String(Number(qPrice));
+      priceEl.textContent = formatVnd(Number(qPrice));
+    }
+    if (qImage) {
+      productImageEl.src = qImage;
+      productImageEl.alt = qName || productImageEl.alt;
+    }
+
+    updateSubtotal();
+  </script>
+</body>
+</html>

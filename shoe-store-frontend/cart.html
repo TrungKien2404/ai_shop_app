@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Giỏ Hàng - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div class="bg-blue-800 text-white p-4 flex justify-between items-center">
+    <a href="home.html" class="font-bold text-lg hover:text-gray-200">MyShoes</a>
+    <div class="space-x-4">
+      <a href="nike.html">Nike</a>
+      <a href="adidas.html">Adidas</a>
+      <a href="puma.html">Puma</a>
+      <a href="bitis.html">Bitis</a>
+      <a href="mizuno.html">Mizuno</a>
+      <a href="sale.html" class="text-red-300">SALE</a>
+    </div>
+    <div class="flex items-center space-x-4">
+      <a href="cart.html" class="cursor-pointer">🛒</a>
+      <div class="relative">
+        <i onclick="toggleUserMenu()" class="fa-solid fa-user text-xl cursor-pointer"></i>
+        <div id="userMenu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
+          <a href="login.html" class="block px-4 py-2 hover:bg-gray-100">Đăng nhập</a>
+          <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100">Đăng ký</a>
+          <a href="#" onclick="handleLogout(event)" class="block px-4 py-2 hover:bg-gray-100 text-red-600">Đăng xuất</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Content -->
+  <div class="max-w-4xl mx-auto mt-8 px-6">
+    <h1 class="text-3xl font-bold mb-6">🛒 Giỏ Hàng</h1>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b">
+            <th class="text-left py-3">Sản Phẩm</th>
+            <th class="text-center py-3">Số Lượng</th>
+            <th class="text-right py-3">Giá</th>
+            <th class="text-right py-3">Tổng</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b hover:bg-gray-50">
+            <td class="py-4">Nike Vomero 18</td>
+            <td class="text-center">1</td>
+            <td class="text-right">4.190.000đ</td>
+            <td class="text-right font-bold">4.190.000đ</td>
+          </tr>
+          <tr class="border-b hover:bg-gray-50">
+            <td class="py-4">Adidas Ultraboost 23</td>
+            <td class="text-center">1</td>
+            <td class="text-right">3.890.000đ</td>
+            <td class="text-right font-bold">3.890.000đ</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="mt-6 text-right">
+        <p class="text-xl font-bold mb-4">Tổng cộng: <span class="text-red-500">8.080.000đ</span></p>
+        <button onclick="window.location.href='home.html'" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mr-2">Tiếp tục mua hàng</button>
+        <button onclick="goToCheckout()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Thanh toán</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById('userMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function handleLogout(event) {
+      event.preventDefault();
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("token");
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("currentUser");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("authToken");
+      window.location.href = "login.html";
+    }
+
+    function parseMoneyToNumber(text) {
+      const digits = String(text || "").replace(/[^\d]/g, "");
+      return Number(digits || 0);
+    }
+
+    function getCartItemsFromTable() {
+      const rows = document.querySelectorAll("tbody tr");
+      const items = [];
+      rows.forEach((row) => {
+        const cols = row.querySelectorAll("td");
+        if (cols.length < 4) return;
+        items.push({
+          name: cols[0].textContent.trim(),
+          quantity: Number(cols[1].textContent.trim()) || 1,
+          price: parseMoneyToNumber(cols[2].textContent),
+          total: parseMoneyToNumber(cols[3].textContent)
+        });
+      });
+      return items;
+    }
+
+    function goToCheckout() {
+      const cartItems = getCartItemsFromTable();
+      const totalAmount = cartItems.reduce((sum, item) => sum + item.total, 0);
+      sessionStorage.setItem("checkoutCartItems", JSON.stringify(cartItems));
+      sessionStorage.setItem("checkoutTotalAmount", String(totalAmount));
+      window.location.href = "checkout.html";
+    }
+  </script>
+</body>
+</html>

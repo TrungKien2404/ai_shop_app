@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>SALE - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div class="bg-blue-800 text-white p-4 flex justify-between items-center">
+    <a href="home.html" class="font-bold text-lg hover:text-gray-200">MyShoes</a>
+  
+    <div class="space-x-4">
+      <a href="nike.html">Nike</a>
+      <a href="adidas.html">Adidas</a>
+      <a href="puma.html">Puma</a>
+      <a href="bitis.html">Bitis</a>
+      <a href="mizuno.html">Mizuno</a>
+      <a href="sale.html" class="underline text-red-300">SALE</a>
+    </div>
+    <div class="flex items-center space-x-4">
+      <a href="cart.html" class="cursor-pointer">🛒</a>
+      <div class="relative">
+        <i onclick="toggleUserMenu()" class="fa-solid fa-user text-xl cursor-pointer"></i>
+        <div id="userMenu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
+          <a href="login.html" class="block px-4 py-2 hover:bg-gray-100">Đăng nhập</a>
+          <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100">Đăng ký</a>
+          <a href="#" onclick="handleLogout(event)" class="block px-4 py-2 hover:bg-gray-100 text-red-600">Đăng xuất</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sale Banner -->
+  <div class="bg-red-500 text-white text-center py-6 text-3xl font-bold">
+    🔥 KHUYẾN MÃI ĐẶC BIỆT - GIẢM GIÁ ĐẾN 50% 🔥
+  </div>
+
+  <!-- Products -->
+  <h2 class="text-center text-2xl font-bold my-6">💯 HÀNG SALE</h2>
+  
+  <div class="grid grid-cols-5 gap-4 px-6 mb-6">
+    <!-- Nike  -->
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-40%</span>
+      <img src="images/Nike/Giày Nike Air Zoom Infinify Tour 2 ‘Black White Vapor Green’ FD0218-002_8590000.jpg" class="product-image-container">
+      <h3 class="mt-2 font-semibold text-sm">Giày Nike Air Zoom Infinify Tour 2 ‘Black White Vapor Green’ FD0218-002</h3>
+      <p class="text-gray-500 line-through">8.590.000đ</p>
+      <p class="text-red-500 font-bold text-lg">5.154.000đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+
+    <!-- Adidas  -->
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-35%</span>
+      <img src="images/Adidas/GIÀY SAMBA 62 SUPER_2700000.jpg" class="product-image-container">
+      <h3 class="mt-2 font-semibold text-sm">GIÀY SAMBA 62 SUPER</h3>
+      <p class="text-gray-500 line-through">2.700.000đ</p>
+      <p class="text-red-500 font-bold text-lg">1.755.000đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+   
+    <!-- Bitis  -->
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-15%</span>
+      <img src="images/Bitis/Giày Thể Thao Biti's Nam Màu Xanh Nhớt BSM004700XNH_765000.jpg" class="product-image-container">
+      <h3 class="mt-2 font-semibold text-sm">Giày Thể Thao Biti's Nam Màu Xanh Nhớt BSM004700XNH</h3>
+      <p class="text-gray-500 line-through">765.000đ</p>
+      <p class="text-red-500 font-bold text-lg">650.250đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+
+    <!-- Mizuno  -->
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-30%</span>
+      <img src="images/Mizuno/HYPERWARP PURE_6000000.jpg" class="product-image-container">
+      <h3 class="mt-2 font-semibold text-sm">MIZUNO HYPERWARP PURE</h3>
+      <p class="text-gray-500 line-through">6.000.000đ</p>
+      <p class="text-red-500 font-bold text-lg">4.200.000đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+
+    <!-- Puma  -->
+    <div class="bg-white p-3 rounded-xl shadow product-card relative">
+      <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">-45%</span>
+      <img src="images/Puma/Giày Chạy Bộ Nữ Puma Deviate Nitro Elite 4 - Xanh Mint_5950000.jpg" class="product-image-container">
+      <h3 class="mt-2 font-semibold text-sm">Giày Chạy Bộ Nữ Puma Deviate Nitro Elite 4 - Xanh Mint</h3>
+      <p class="text-gray-500 line-through">5.950.000đ</p>
+      <p class="text-red-500 font-bold text-lg">3.272.500đ</p>
+      <button class="w-full bg-red-600 text-white py-1 text-sm mt-2 rounded hover:bg-red-700">Thêm vào giỏ</button>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById('userMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function handleLogout(event) {
+      event.preventDefault();
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("token");
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("currentUser");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("authToken");
+      window.location.href = "login.html";
+    }
+
+    function getNumericPrice(priceText) {
+      const onlyDigits = (priceText || "").replace(/[^\d]/g, "");
+      return Number(onlyDigits || 0);
+    }
+
+    function goToOrderFromCard(card) {
+      const nameEl = card.querySelector("h3");
+      const salePriceEl = card.querySelector("p.text-red-500");
+      const imageEl = card.querySelector("img");
+      if (!nameEl || !salePriceEl || !imageEl) return;
+
+      const name = nameEl.textContent.trim();
+      const price = getNumericPrice(salePriceEl.textContent);
+      const image = imageEl.getAttribute("src") || "";
+      const targetUrl =
+        "order.html?name=" + encodeURIComponent(name) +
+        "&price=" + encodeURIComponent(price) +
+        "&image=" + encodeURIComponent(image);
+      window.location.href = targetUrl;
+    }
+
+    document.querySelectorAll(".product-card").forEach((card) => {
+      const imageEl = card.querySelector("img");
+      const addBtn = card.querySelector("button");
+
+      if (imageEl) {
+        imageEl.classList.add("cursor-pointer");
+        imageEl.addEventListener("click", () => goToOrderFromCard(card));
+      }
+
+      if (addBtn) {
+        addBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          goToOrderFromCard(card);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

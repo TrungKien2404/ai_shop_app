@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh Toán Thành Công - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="max-w-4xl mx-auto px-6 py-10">
+    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+      <div class="text-center mb-6">
+        <div class="text-5xl mb-2">✅</div>
+        <h1 class="text-3xl font-bold text-green-700">Thanh toán thành công</h1>
+        <p class="text-gray-600 mt-2">Cảm ơn bạn đã mua sắm tại MyShoes.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base">
+        <p><span class="font-semibold">Mã đơn hàng:</span> <span id="orderCode">-</span></p>
+        <p><span class="font-semibold">Thời gian:</span> <span id="createdAt">-</span></p>
+        <p><span class="font-semibold">Người mua:</span> <span id="buyerName">-</span></p>
+        <p><span class="font-semibold">Địa chỉ:</span> <span id="buyerAddress">-</span></p>
+        <p><span class="font-semibold">Giao hàng:</span> <span id="shippingMethod">-</span></p>
+        <p><span class="font-semibold">Thanh toán:</span> <span id="paymentMethod">-</span></p>
+      </div>
+
+      <div class="mt-6">
+        <h2 class="text-xl font-bold mb-3">Chi tiết đơn hàng</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b">
+                <th class="text-left py-2">Sản phẩm</th>
+                <th class="text-center py-2">Số lượng</th>
+                <th class="text-right py-2">Đơn giá</th>
+                <th class="text-right py-2">Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody id="orderItemsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mt-5 text-right">
+        <p class="text-xl font-bold">Tổng thanh toán: <span id="totalAmount" class="text-red-500">0đ</span></p>
+      </div>
+
+      <div class="mt-6 flex gap-3">
+        <a href="home.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">Về trang chủ</a>
+        <a href="cart.html" class="bg-gray-600 text-white px-5 py-2 rounded-lg hover:bg-gray-700">Quay lại giỏ hàng</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function formatVnd(value) {
+      return Number(value || 0).toLocaleString("vi-VN") + "đ";
+    }
+
+    const orderData = JSON.parse(sessionStorage.getItem("lastOrder") || "null");
+    if (!orderData) {
+      window.location.href = "cart.html";
+    } else {
+      document.getElementById("orderCode").textContent = orderData.orderCode || "-";
+      document.getElementById("createdAt").textContent = orderData.createdAt || "-";
+      document.getElementById("buyerName").textContent = orderData.buyerName || "-";
+      document.getElementById("buyerAddress").textContent = orderData.buyerAddress || "-";
+      document.getElementById("shippingMethod").textContent = orderData.shippingMethod || "-";
+      document.getElementById("paymentMethod").textContent = orderData.paymentMethod || "-";
+
+      const body = document.getElementById("orderItemsBody");
+      (orderData.items || []).forEach((item) => {
+        const row = document.createElement("tr");
+        row.className = "border-b";
+        row.innerHTML = `
+          <td class="py-2">${item.name || ""}</td>
+          <td class="text-center">${item.quantity || 1}</td>
+          <td class="text-right">${formatVnd(item.price || 0)}</td>
+          <td class="text-right font-semibold">${formatVnd(item.total || 0)}</td>
+        `;
+        body.appendChild(row);
+      });
+
+      document.getElementById("totalAmount").textContent = formatVnd(orderData.totalAmount || 0);
+    }
+  </script>
+</body>
+</html>
