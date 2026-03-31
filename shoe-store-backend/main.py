@@ -7,6 +7,8 @@ from typing import Optional
 
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, field_validator
 import jwt
 from passlib.context import CryptContext
@@ -23,6 +25,8 @@ JWT_SECRET = os.getenv("JWT_SECRET", "your_super_secret_jwt_key")
 JWT_EXPIRE = int(os.getenv("JWT_EXPIRE", "604800"))  # 7 days in seconds
 PORT = int(os.getenv("PORT", 5000))
 NODE_ENV = os.getenv("NODE_ENV", "development")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", "shoe-store-frontend"))
 
 # ==================== Database Setup ====================
 os.makedirs("./db", exist_ok=True)
@@ -202,11 +206,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if os.path.isdir(FRONTEND_DIR):
+    app.mount("/shoe-store-frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
+
 # ==================== Routes ====================
 
 @app.get("/")
 def read_root():
-    """Welcome endpoint"""
+    """Serve the storefront landing page when available."""
+    index_path = os.path.join(FRONTEND_DIR, "home.html")
+    if os.path.isfile(index_path):
+        return FileResponse(index_path)
     return {
         "message": "Welcome to Shoe Store Backend API",
         "version": "1.0.0",
@@ -417,4 +427,4 @@ async def general_exception_handler(request, exc):
 if __name__ == "__main__":
     import uvicorn
     print(f"🚀 Server running on port {PORT}")
-    uvicorn.run("main:app", host="127.0.0.1", port=5000, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=PORT)

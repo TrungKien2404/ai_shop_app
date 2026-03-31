@@ -1,6 +1,6 @@
 // src/js/auth.js - Frontend Authentication Handler
 
-const API_BASE_URL = 'http://localhost:5000/api/auth';
+const API_BASE_URL = 'http://localhost:8000/api/auth';
 
 // ================== SIGNUP ==================
 async function handleSignup(event) {
@@ -33,7 +33,7 @@ async function handleSignup(event) {
       localStorage.setItem('user', JSON.stringify(data.user));
       
       alert('Đăng ký thành công!');
-      window.location.href = 'index.html';
+      window.location.href = 'home.html';
     } else {
       alert('Đăng ký thất bại: ' + (data.errors?.[0] || data.message));
     }
@@ -69,7 +69,7 @@ async function handleLogin(event) {
       localStorage.setItem('user', JSON.stringify(data.user));
       
       alert('Đăng nhập thành công!');
-      window.location.href = 'index.html';
+      window.location.href = 'home.html';
     } else {
       alert('Đăng nhập thất bại: ' + data.message);
     }
@@ -95,7 +95,7 @@ async function handleLogout() {
   
   if (!token) {
     localStorage.removeItem('user');
-    window.location.href = 'index.html';
+    window.location.href = 'home.html';
     return;
   }
 
@@ -113,7 +113,7 @@ async function handleLogout() {
   // Clear local storage
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  window.location.href = 'index.html';
+  window.location.href = 'home.html';
 }
 
 // ================== CHECK IF LOGGED IN ==================
@@ -129,7 +129,7 @@ function updateUserMenu() {
     const user = getUser();
     userMenu.innerHTML = `
       <a href="javascript:void(0)" class="block px-4 py-2 hover:bg-gray-100">👤 ${user.fullname}</a>
-      <a href="javascript:void(0)" class="block px-4 py-2 hover:bg-gray-100">⚙️ Cài đặt</a>
+     
       <hr>
       <a href="javascript:handleLogout()" class="block px-4 py-2 hover:bg-gray-100">🚪 Đăng xuất</a>
     `;
