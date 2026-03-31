@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <title>Mizuno - Shoe Store</title>
@@ -7,6 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
   <!-- Header -->
   <div class="bg-blue-800 text-white p-4 flex justify-between items-center">
@@ -34,14 +36,10 @@
 
   <!-- Products -->
   <h2 class="text-center text-2xl font-bold my-6 flex items-center justify-center gap-2">
-    <img
-      src="https://upload.wikimedia.org/wikipedia/commons/5/53/MIZUNO_logo.svg"
-      alt="Mizuno logo"
-      class="h-6 w-auto"
-    >
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/MIZUNO_logo.svg" alt="Mizuno logo" class="h-6 w-auto">
     <span>MIZUNO</span>
   </h2>
-  
+
   <div class="grid grid-cols-5 gap-4 px-6 mb-6">
     <div class="bg-white p-3 rounded-xl shadow product-card">
       <img src="images/Mizuno/HYPERWARP PURE_6000000.jpg" class="product-image-container">
@@ -115,6 +113,30 @@
 
   </div>
 
+  <!-- Chatbot Button -->
+  <div class="fixed bottom-5 right-5">
+    <button onclick="toggleChat()" class="bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg">
+      💬 Chat
+    </button>
+  </div>
+
+  <!-- Chatbox -->
+  <div id="chatbox" class="hidden fixed bottom-20 right-5 w-80 bg-white rounded-xl shadow-lg flex flex-col chatbox">
+    <div class="bg-blue-600 text-white p-3 rounded-t-xl flex justify-between">
+      <span>Chatbot</span>
+      <button onclick="toggleChat()">✖</button>
+    </div>
+
+    <div id="messages" class="p-3 h-60 overflow-y-auto text-sm scrollbar"></div>
+
+    <div class="flex border-t">
+      <input id="input" type="text" placeholder="Nhập tin nhắn..." class="flex-1 p-2 outline-none">
+      <button onclick="sendMessage()" class="bg-blue-600 text-white px-3">Gửi</button>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+
   <script>
     function toggleUserMenu() {
       const menu = document.getElementById('userMenu');
@@ -167,4 +189,5 @@
     });
   </script>
 </body>
+
 </html>

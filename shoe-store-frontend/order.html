@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen">
   <div class="bg-blue-800 text-white p-4 flex justify-between items-center">
     <a href="home.html" class="font-bold text-lg hover:text-gray-200">MyShoes</a>
@@ -35,12 +37,7 @@
   <main class="max-w-5xl mx-auto p-6">
     <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
       <div class="rounded-xl overflow-hidden bg-gray-100">
-        <img
-          id="productImage"
-          src="images/Nike/vomero18.jpg"
-          alt="Nike Vomero 18"
-          class="product-image-container"
-        >
+        <img id="productImage" src="images/Nike/vomero18.jpg" alt="Nike Vomero 18" class="product-image-container">
       </div>
 
       <div>
@@ -51,12 +48,18 @@
         <section class="mt-6">
           <h2 class="font-semibold mb-3">Chọn size</h2>
           <div class="flex flex-wrap gap-2" id="sizeGroup">
-            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="38">38</button>
-            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="39">39</button>
-            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="40">40</button>
-            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="41">41</button>
-            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="42">42</button>
-            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600" data-size="43">43</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600"
+              data-size="38">38</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600"
+              data-size="39">39</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600"
+              data-size="40">40</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600"
+              data-size="41">41</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600"
+              data-size="42">42</button>
+            <button type="button" class="size-btn px-4 py-2 rounded-lg border border-gray-300 hover:border-blue-600"
+              data-size="43">43</button>
           </div>
         </section>
 
@@ -64,13 +67,7 @@
           <h2 class="font-semibold mb-3">Số lượng</h2>
           <div class="inline-flex items-center border rounded-lg overflow-hidden">
             <button id="decreaseBtn" type="button" class="px-4 py-2 bg-gray-100 hover:bg-gray-200">-</button>
-            <input
-              id="quantityInput"
-              type="number"
-              min=""
-              value="1"
-              class="w-16 text-center outline-none py-2"
-            >
+            <input id="quantityInput" type="number" min="" value="1" class="w-16 text-center outline-none py-2">
             <button id="increaseBtn" type="button" class="px-4 py-2 bg-gray-100 hover:bg-gray-200">+</button>
           </div>
         </section>
@@ -81,18 +78,12 @@
         </section>
 
         <div class="mt-6 flex flex-wrap gap-3">
-          <button
-            id="addToCartBtn"
-            type="button"
-            class="px-5 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700"
-          >
+          <button id="addToCartBtn" type="button"
+            class="px-5 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700">
             Thêm vào giỏ hàng
           </button>
-          <button
-            id="buyNowBtn"
-            type="button"
-            class="px-5 py-3 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700"
-          >
+          <button id="buyNowBtn" type="button"
+            class="px-5 py-3 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700">
             Mua hàng ngay
           </button>
         </div>
@@ -101,6 +92,8 @@
       </div>
     </div>
   </main>
+
+  <script src="js/auth.js"></script>
 
   <script>
     function toggleUserMenu() {
@@ -252,4 +245,5 @@
     updateSubtotal();
   </script>
 </body>
+
 </html>

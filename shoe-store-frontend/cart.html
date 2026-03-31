@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <title>Giỏ Hàng - Shoe Store</title>
@@ -7,6 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
   <!-- Header -->
   <div class="bg-blue-800 text-white p-4 flex justify-between items-center">
@@ -35,7 +37,7 @@
   <!-- Cart Content -->
   <div class="max-w-4xl mx-auto mt-8 px-6">
     <h1 class="text-3xl font-bold mb-6">🛒 Giỏ Hàng</h1>
-    
+
     <div class="bg-white rounded-lg shadow-lg p-6">
       <table class="w-full">
         <thead>
@@ -61,14 +63,18 @@
           </tr>
         </tbody>
       </table>
-      
+
       <div class="mt-6 text-right">
         <p class="text-xl font-bold mb-4">Tổng cộng: <span class="text-red-500">8.080.000đ</span></p>
-        <button onclick="window.location.href='home.html'" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mr-2">Tiếp tục mua hàng</button>
-        <button onclick="goToCheckout()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Thanh toán</button>
+        <button onclick="window.location.href='home.html'"
+          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mr-2">Tiếp tục mua hàng</button>
+        <button onclick="goToCheckout()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Thanh
+          toán</button>
       </div>
     </div>
   </div>
+
+  <script src="js/auth.js"></script>
 
   <script>
     function toggleUserMenu() {
@@ -117,4 +123,5 @@
     }
   </script>
 </body>
+
 </html>
