@@ -28,9 +28,9 @@ async function handleSignup(event) {
     const data = await response.json();
 
     if (data.success) {
-      // Lưu token
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // Lưu token vào sessionStorage (tự xóa khi đóng trình duyệt)
+      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('user', JSON.stringify(data.user));
 
       alert('Đăng ký thành công!');
       window.location.href = 'home.html';
@@ -64,9 +64,9 @@ async function handleLogin(event) {
     const data = await response.json();
 
     if (data.success) {
-      // Lưu token
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // Lưu token vào sessionStorage (tự xóa khi đóng trình duyệt)
+      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('user', JSON.stringify(data.user));
 
       alert('Đăng nhập thành công!');
       window.location.href = 'home.html';
@@ -80,12 +80,12 @@ async function handleLogin(event) {
 
 // ================== GET TOKEN ==================
 function getToken() {
-  return localStorage.getItem('token');
+  return sessionStorage.getItem('token');
 }
 
 // ================== GET USER ==================
 function getUser() {
-  const user = localStorage.getItem('user');
+  const user = sessionStorage.getItem('user');
   return user ? JSON.parse(user) : null;
 }
 
@@ -94,7 +94,7 @@ async function handleLogout() {
   const token = getToken();
 
   if (!token) {
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     window.location.href = 'home.html';
     return;
   }
@@ -110,9 +110,9 @@ async function handleLogout() {
     console.error('Logout error:', error);
   }
 
-  // Clear local storage
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
+  // Clear session storage
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('user');
   window.location.href = 'home.html';
 }
 

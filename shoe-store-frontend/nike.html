@@ -28,7 +28,6 @@
         <div id="userMenu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
           <a href="login.html" class="block px-4 py-2 hover:bg-gray-100">Đăng nhập</a>
           <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100">Đăng ký</a>
-          <a href="#" onclick="handleLogout(event)" class="block px-4 py-2 hover:bg-gray-100 text-red-600">Đăng xuất</a>
         </div>
       </div>
     </div>
@@ -131,16 +130,7 @@
       menu.classList.toggle('hidden');
     }
 
-    function handleLogout(event) {
-      event.preventDefault();
-      localStorage.removeItem("currentUser");
-      localStorage.removeItem("token");
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("currentUser");
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("authToken");
-      window.location.href = "login.html";
-    }
+
 
     function getNumericPrice(priceText) {
       const onlyDigits = (priceText || "").replace(/[^\d]/g, "");

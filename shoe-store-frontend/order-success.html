@@ -23,6 +23,7 @@
         <p><span class="font-semibold">Thời gian:</span> <span id="createdAt">-</span></p>
         <p><span class="font-semibold">Người mua:</span> <span id="buyerName">-</span></p>
         <p><span class="font-semibold">Địa chỉ:</span> <span id="buyerAddress">-</span></p>
+        <p><span class="font-semibold">Số điện thoại:</span> <span id="buyerPhone">-</span></p>
         <p><span class="font-semibold">Giao hàng:</span> <span id="shippingMethod">-</span></p>
         <p><span class="font-semibold">Thanh toán:</span> <span id="paymentMethod">-</span></p>
       </div>
@@ -70,6 +71,7 @@
       document.getElementById("createdAt").textContent = orderData.createdAt || "-";
       document.getElementById("buyerName").textContent = orderData.buyerName || "-";
       document.getElementById("buyerAddress").textContent = orderData.buyerAddress || "-";
+      document.getElementById("buyerPhone").textContent = orderData.buyerPhone || "-";
       document.getElementById("shippingMethod").textContent = orderData.shippingMethod || "-";
       document.getElementById("paymentMethod").textContent = orderData.paymentMethod || "-";
 
