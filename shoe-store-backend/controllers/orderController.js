@@ -1,14 +1,32 @@
 const Order = require("../models/Order");
 
+const EXPRESS_FEE = 15000;
+
+function normalizeText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function normalizeOrderItems(orderItems = []) {
+  if (!Array.isArray(orderItems)) return [];
+
+  return orderItems
+    .filter((item) => item && item.name)
+    .map((item) => ({
+      name: String(item.name).trim(),
+      image: item.image || "",
+      price: Math.max(0, Number(item.price) || 0),
+      quantity: Math.max(1, Math.floor(Number(item.quantity) || 1)),
+      size: item.size || "",
+    }));
+}
+
 exports.createOrder = async (req, res) => {
   try {
-    const { user, orderCode, buyerName, buyerAddress, buyerPhone, shippingMethod, paymentMethod, orderItems, totalPrice } = req.body;
-    
-    if (!user || !orderItems || orderItems.length === 0) {
-      return res.status(400).json({ message: "Thiếu thông tin đơn hàng" });
-    }
-
-    const order = new Order({
+    const {
       user,
       orderCode,
       buyerName,
@@ -17,6 +35,32 @@ exports.createOrder = async (req, res) => {
       shippingMethod,
       paymentMethod,
       orderItems,
+    } = req.body;
+
+    const normalizedItems = normalizeOrderItems(orderItems);
+
+    if (!user || normalizedItems.length === 0) {
+      return res.status(400).json({ message: "Thiếu thông tin đơn hàng" });
+    }
+
+    const itemsSubtotal = normalizedItems.reduce(
+      (sum, item) => sum + (item.price * item.quantity),
+      0
+    );
+    const shippingFee = normalizeText(shippingMethod).includes("hoa toc") ? EXPRESS_FEE : 0;
+    const totalPrice = itemsSubtotal + shippingFee;
+
+    const order = new Order({
+      user,
+      orderCode: orderCode || `DH${String(Math.floor(Math.random() * 99999)).padStart(5, "0")}`,
+      buyerName,
+      buyerAddress,
+      buyerPhone,
+      shippingMethod,
+      paymentMethod,
+      orderItems: normalizedItems,
+      itemsSubtotal,
+      shippingFee,
       totalPrice,
       status: "Đang giao"
     });

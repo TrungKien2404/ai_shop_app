@@ -17,6 +17,8 @@ const orderSchema = new mongoose.Schema({
       size: String,
     },
   ],
+  itemsSubtotal: Number,
+  shippingFee: Number,
   totalPrice: Number,
   status: { type: String, default: "Đang giao" },
   createdAt: { type: Date, default: Date.now },

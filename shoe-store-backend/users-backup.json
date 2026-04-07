@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Admin",
+    "email": "admin@gmail.com",
+    "passwordHash": "$2a$10$oxP3zmxG9ozfTQLxXFIh2ufnR3j47ZYYp4ZejAsV81nxbbv1Zytum",
+    "isAdmin": true
+  },
+  {
+    "name": "kien10",
+    "email": "kien10@gmail.com",
+    "passwordHash": "$2a$10$YpzsLWwmjcv2pHZHBbv6zuiYwectYBk8J/o6y5e6JyVWS3QqzGiR.",
+    "isAdmin": false
+  },
+  {
+    "name": "nhanle21",
+    "email": "nhanle21@gmail.com",
+    "passwordHash": "$2a$10$leNTDrG8g.hBS2.Soj1DAOqDferY7oK1SdF/KauZiNJ3lxM/tm7Y2",
+    "isAdmin": false
+  },
+  {
+    "name": "phat4",
+    "email": "phat@gmail.com",
+    "passwordHash": "$2a$10$1XotfaxuzRZR0U99bIAmfeEB9x1Fw/wE0OpptBZDqXd9WVzL8KiPq",
+    "isAdmin": false
+  }
+]
