@@ -81,6 +81,34 @@
         </div>
 
         <div class="bg-gray-50 rounded-lg p-4">
+          <h2 class="text-lg font-bold mb-3">Sản phẩm thanh toán</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b">
+                  <th class="text-left py-2">Sản phẩm</th>
+                  <th class="text-center py-2">Số lượng</th>
+                  <th class="text-right py-2">Đơn giá</th>
+                  <th class="text-right py-2">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody id="checkoutItemsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="mt-4 space-y-2 text-sm">
+            <div class="flex items-center justify-between">
+              <span>Tạm tính sản phẩm</span>
+              <span id="itemsSubtotal">0đ</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>Phí giao hàng</span>
+              <span id="shippingFee">0đ</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 rounded-lg p-4">
           <p class="text-gray-700">Tổng thanh toán:</p>
           <p id="totalAmount" class="text-2xl font-bold text-red-500 mt-1">0đ</p>
         </div>
@@ -102,9 +130,48 @@
       return Number(value || 0).toLocaleString("vi-VN") + "đ";
     }
 
-    const cartItems = JSON.parse(sessionStorage.getItem("checkoutCartItems") || "[]");
-    const baseAmount = Number(sessionStorage.getItem("checkoutTotalAmount") || 0);
+    function normalizeCheckoutItems(items) {
+      if (!Array.isArray(items)) return [];
+      return items
+        .filter((item) => item && item.name)
+        .map((item) => ({
+          name: item.name,
+          image: item.image || "",
+          price: Number(item.price) || 0,
+          quantity: window.cartUtils?.normalizeCartQuantity?.(item.quantity) || 1,
+          size: item.size || ""
+        }));
+    }
+
+    function getCheckoutItems() {
+      let items = [];
+
+      try {
+        items = JSON.parse(sessionStorage.getItem("checkoutCartItems") || "[]");
+      } catch (error) {
+        console.error("Read checkout session error:", error);
+      }
+
+      if (!items.length) {
+        items = window.cartUtils?.getCartItems?.() || [];
+      }
+
+      return normalizeCheckoutItems(items);
+    }
+
+    const cartItems = getCheckoutItems();
     const EXPRESS_FEE = 15000;
+    const checkoutForm = document.getElementById("checkoutForm");
+    const submitButton = checkoutForm.querySelector("button[type='submit']");
+
+    if (!cartItems.length) {
+      alert("Không có sản phẩm để thanh toán.");
+      window.location.href = "cart.html";
+    }
+
+    function getItemsSubtotal() {
+      return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
 
     function getShippingFee() {
       const shippingMethod = document.querySelector("input[name='shippingMethod']:checked")?.value || "Giao thường";
@@ -112,11 +179,46 @@
     }
 
     function getFinalAmount() {
-      return baseAmount + getShippingFee();
+      return getItemsSubtotal() + getShippingFee();
+    }
+
+    function syncCheckoutSession() {
+      const normalizedItems = cartItems.map((item) => ({
+        ...item,
+        total: item.price * item.quantity
+      }));
+
+      sessionStorage.setItem("checkoutCartItems", JSON.stringify(normalizedItems));
+      sessionStorage.setItem("checkoutTotalAmount", String(getItemsSubtotal()));
+    }
+
+    function renderCheckoutItems() {
+      const body = document.getElementById("checkoutItemsBody");
+      body.innerHTML = "";
+
+      cartItems.forEach((item) => {
+        const row = document.createElement("tr");
+        row.className = "border-b";
+        row.innerHTML = `
+          <td class="py-3">
+            <div class="font-medium">${item.name || ""}</div>
+            <div class="text-sm text-gray-500">${item.size ? `Size: ${item.size}` : ""}</div>
+          </td>
+          <td class="text-center">${item.quantity}</td>
+          <td class="text-right">${formatVnd(item.price)}</td>
+          <td class="text-right font-semibold">${formatVnd(item.price * item.quantity)}</td>
+        `;
+        body.appendChild(row);
+      });
     }
 
     function updatePaymentInfo() {
+      const itemsSubtotal = getItemsSubtotal();
+      const shippingFee = getShippingFee();
       const finalAmount = getFinalAmount();
+
+      document.getElementById("itemsSubtotal").textContent = formatVnd(itemsSubtotal);
+      document.getElementById("shippingFee").textContent = formatVnd(shippingFee);
       document.getElementById("totalAmount").textContent = formatVnd(finalAmount);
       document.getElementById("bankTransferAmount").textContent = finalAmount;
 
@@ -137,10 +239,47 @@
       input.addEventListener("change", updatePaymentInfo);
     });
 
+    renderCheckoutItems();
+    syncCheckoutSession();
     updatePaymentInfo();
 
-    document.getElementById("checkoutForm").addEventListener("submit", async (event) => {
+    function removePurchasedItemsFromCart(purchasedItems) {
+      const currentCart = window.cartUtils?.getCartItems?.() || [];
+      if (!currentCart.length || !purchasedItems.length) return;
+
+      const remainingItems = currentCart.map((item) => ({ ...item }));
+
+      purchasedItems.forEach((purchasedItem) => {
+        const index = remainingItems.findIndex((item) =>
+          item.name === purchasedItem.name &&
+          Number(item.price) === Number(purchasedItem.price) &&
+          String(item.size || "") === String(purchasedItem.size || "") &&
+          String(item.image || "") === String(purchasedItem.image || "")
+        );
+
+        if (index === -1) return;
+
+        const nextQuantity = remainingItems[index].quantity - (Number(purchasedItem.quantity) || 1);
+        if (nextQuantity > 0) {
+          remainingItems[index].quantity = nextQuantity;
+          return;
+        }
+
+        remainingItems.splice(index, 1);
+      });
+
+      window.cartUtils?.saveCartItems?.(remainingItems);
+      window.cartUtils?.updateCartBadge?.();
+    }
+
+    checkoutForm.addEventListener("submit", async (event) => {
       event.preventDefault();
+
+      if (!cartItems.length) {
+        alert("Không có sản phẩm để thanh toán.");
+        window.location.href = "cart.html";
+        return;
+      }
 
       // Kiểm tra đăng nhập
       const token = sessionStorage.getItem('token');
@@ -169,6 +308,8 @@
       document.getElementById("phoneError").classList.add("hidden");
 
       const orderCode = "DH" + String(Math.floor(Math.random() * 99999)).padStart(5, '0');
+      const itemsSubtotal = getItemsSubtotal();
+      const shippingFee = getShippingFee();
 
       const orderData = {
         user: userId,
@@ -185,10 +326,15 @@
           quantity: item.quantity || 1,
           size: item.size || ''
         })),
-        totalPrice: getFinalAmount()
+        itemsSubtotal,
+        shippingFee,
+        totalPrice: itemsSubtotal + shippingFee
       };
 
       try {
+        submitButton.disabled = true;
+        submitButton.textContent = "Đang lưu đơn hàng...";
+
         const response = await fetch("http://localhost:8000/api/orders", {
           method: "POST",
           headers: {
@@ -205,16 +351,12 @@
 
         const createdOrder = await response.json();
 
-        // Lưu đơn vừa tạo để hiển thị ở trang thành công
-        sessionStorage.setItem("lastOrder", JSON.stringify({
-          ...orderData,
-          _id: createdOrder._id,
-          createdAt: createdOrder.createdAt
-        }));
+        // Chỉ chuyển trang sau khi backend xác nhận MongoDB đã lưu xong
+        sessionStorage.setItem("lastOrder", JSON.stringify(createdOrder));
 
-        // Xoá giỏ hàng
+        removePurchasedItemsFromCart(createdOrder.orderItems || orderData.orderItems);
+
         localStorage.removeItem("cart");
-        localStorage.removeItem("cartItems");
         sessionStorage.removeItem("checkoutCartItems");
         sessionStorage.removeItem("checkoutTotalAmount");
 
@@ -222,6 +364,8 @@
       } catch (error) {
         alert("Lỗi khi đặt hàng: " + error.message);
         console.error(error);
+        submitButton.disabled = false;
+        submitButton.textContent = "Thanh toán";
       }
     });
   </script>

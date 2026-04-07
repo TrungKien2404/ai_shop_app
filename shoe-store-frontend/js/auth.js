@@ -121,6 +121,175 @@ function isLoggedIn() {
   return !!getToken();
 }
 
+// ================== CART HELPERS ==================
+const LEGACY_CART_STORAGE_KEY = 'cartItems';
+const CART_STORAGE_PREFIX = 'cartItems';
+
+function getCurrentCartStorageKey() {
+  const user = getUser();
+  if (!user) return `${CART_STORAGE_PREFIX}_guest`;
+
+  const userKey = user._id || user.id || user.email || 'guest';
+  return `${CART_STORAGE_PREFIX}_${String(userKey).trim().toLowerCase()}`;
+}
+
+function migrateLegacyCartItems() {
+  if (!isLoggedIn()) return;
+
+  const currentKey = getCurrentCartStorageKey();
+  const currentCart = localStorage.getItem(currentKey);
+  const legacyCart = localStorage.getItem(LEGACY_CART_STORAGE_KEY);
+
+  if (currentCart || !legacyCart) return;
+
+  try {
+    const parsedLegacyCart = JSON.parse(legacyCart);
+    localStorage.setItem(currentKey, JSON.stringify(parsedLegacyCart));
+    localStorage.removeItem(LEGACY_CART_STORAGE_KEY);
+  } catch (error) {
+    console.error('Legacy cart migration error:', error);
+  }
+}
+
+function normalizeCartQuantity(quantity) {
+  const parsed = Math.floor(Number(quantity));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+}
+
+function normalizeCartItems(items) {
+  if (!Array.isArray(items)) return [];
+
+  const merged = new Map();
+
+  items.forEach((rawItem) => {
+    if (!rawItem || !rawItem.name) return;
+
+    const item = {
+      name: String(rawItem.name).trim(),
+      image: rawItem.image || '',
+      price: Number(rawItem.price) || 0,
+      quantity: normalizeCartQuantity(rawItem.quantity),
+      size: rawItem.size || ''
+    };
+
+    const key = [item.name, item.price, item.size, item.image].join('||');
+    const existing = merged.get(key);
+
+    if (existing) {
+      existing.quantity += item.quantity;
+      return;
+    }
+
+    merged.set(key, item);
+  });
+
+  return Array.from(merged.values());
+}
+
+function getCartItems() {
+  try {
+    migrateLegacyCartItems();
+    const raw = JSON.parse(localStorage.getItem(getCurrentCartStorageKey()) || '[]');
+    return normalizeCartItems(raw);
+  } catch (error) {
+    console.error('Read cart error:', error);
+    return [];
+  }
+}
+
+function saveCartItems(items) {
+  const normalizedItems = normalizeCartItems(items);
+  localStorage.setItem(getCurrentCartStorageKey(), JSON.stringify(normalizedItems));
+  return normalizedItems;
+}
+
+function getCartItemCount() {
+  return getCartItems().reduce((sum, item) => sum + normalizeCartQuantity(item.quantity), 0);
+}
+
+function updateCartBadge() {
+  const cartLinks = document.querySelectorAll('a[href="cart.html"]');
+
+  cartLinks.forEach((link) => {
+    let badge = link.querySelector('.js-cart-badge');
+    const legacyBadge = link.querySelector('span.absolute');
+
+    if (legacyBadge && legacyBadge !== badge) {
+      legacyBadge.remove();
+    }
+
+    if (!isLoggedIn()) {
+      if (badge) badge.remove();
+      return;
+    }
+
+    const count = getCartItemCount();
+    if (count <= 0) {
+      if (badge) badge.remove();
+      return;
+    }
+
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'js-cart-badge absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold shadow';
+      link.appendChild(badge);
+    }
+
+    badge.textContent = String(count);
+  });
+}
+
+window.cartUtils = {
+  getCartItems,
+  saveCartItems,
+  getCartItemCount,
+  updateCartBadge,
+  normalizeCartItems,
+  normalizeCartQuantity
+};
+
+function getNavbarSearchElements() {
+  const searchInput = document.querySelector('.custom-navbar input[type="text"]');
+  const searchButton = searchInput?.parentElement?.querySelector('button');
+  return { searchInput, searchButton };
+}
+
+function submitGlobalSearch() {
+  const { searchInput } = getNavbarSearchElements();
+  if (!searchInput) return;
+
+  const query = String(searchInput.value || '').trim();
+  if (!query) {
+    searchInput.focus();
+    return;
+  }
+
+  window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+}
+
+function setupGlobalSearch() {
+  const { searchInput, searchButton } = getNavbarSearchElements();
+  if (!searchInput || searchInput.dataset.searchBound === 'true') return;
+
+  const urlQuery = new URLSearchParams(window.location.search).get('q');
+  if (urlQuery && !searchInput.value) {
+    searchInput.value = urlQuery;
+  }
+
+  if (searchButton) {
+    searchButton.addEventListener('click', submitGlobalSearch);
+  }
+
+  searchInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      submitGlobalSearch();
+    }
+  });
+
+  searchInput.dataset.searchBound = 'true';
+}
+
 // ================== UPDATE HEADER BASED ON LOGIN STATE ==================
 function updateUserMenu() {
   const userMenu = document.getElementById('userMenu');
@@ -143,7 +312,17 @@ function updateUserMenu() {
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', updateUserMenu);
+document.addEventListener('DOMContentLoaded', () => {
+  updateUserMenu();
+  updateCartBadge();
+  setupGlobalSearch();
+});
+
+window.addEventListener('storage', (event) => {
+  if (event.key && event.key.startsWith(CART_STORAGE_PREFIX)) {
+    updateCartBadge();
+  }
+});
 
 // ================== ATTACH FORM HANDLERS ==================
 // For signup.html

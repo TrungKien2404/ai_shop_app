@@ -152,7 +152,7 @@
           <h2 class="font-semibold mb-3">Số lượng</h2>
           <div class="inline-flex items-center border rounded-lg overflow-hidden">
             <button id="decreaseBtn" type="button" class="px-4 py-2 bg-gray-100 hover:bg-gray-200">-</button>
-            <input id="quantityInput" type="number" min="" value="1" class="w-16 text-center outline-none py-2">
+            <input id="quantityInput" type="number" min="1" value="1" class="w-16 text-center outline-none py-2">
             <button id="increaseBtn" type="button" class="px-4 py-2 bg-gray-100 hover:bg-gray-200">+</button>
           </div>
         </section>
@@ -244,9 +244,9 @@
         return false;
       }
 
-      const cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
-      cart.push(item);
-      localStorage.setItem("cartItems", JSON.stringify(cart));
+      const currentCart = window.cartUtils?.getCartItems?.() || [];
+      window.cartUtils?.saveCartItems?.([...currentCart, item]);
+      window.cartUtils?.updateCartBadge?.();
       return true;
     }
 

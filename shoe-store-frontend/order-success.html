@@ -76,7 +76,9 @@
       window.location.href = "cart.html";
     } else {
       document.getElementById("orderCode").textContent = orderData.orderCode || "-";
-      document.getElementById("createdAt").textContent = orderData.createdAt || "-";
+      document.getElementById("createdAt").textContent = orderData.createdAt
+        ? new Date(orderData.createdAt).toLocaleString("vi-VN")
+        : "-";
       document.getElementById("buyerName").textContent = orderData.buyerName || "-";
       document.getElementById("buyerAddress").textContent = orderData.buyerAddress || "-";
       document.getElementById("buyerPhone").textContent = orderData.buyerPhone || "-";
@@ -84,19 +86,22 @@
       document.getElementById("paymentMethod").textContent = orderData.paymentMethod || "-";
 
       const body = document.getElementById("orderItemsBody");
-      (orderData.items || []).forEach((item) => {
+      (orderData.orderItems || []).forEach((item) => {
         const row = document.createElement("tr");
         row.className = "border-b";
         row.innerHTML = `
-          <td class="py-2">${item.name || ""}</td>
+          <td class="py-2">
+            <div>${item.name || ""}</div>
+            <div class="text-sm text-gray-500">${item.size ? `Size: ${item.size}` : ""}</div>
+          </td>
           <td class="text-center">${item.quantity || 1}</td>
           <td class="text-right">${formatVnd(item.price || 0)}</td>
-          <td class="text-right font-semibold">${formatVnd(item.total || 0)}</td>
+          <td class="text-right font-semibold">${formatVnd((item.price || 0) * (item.quantity || 1))}</td>
         `;
         body.appendChild(row);
       });
 
-      document.getElementById("totalAmount").textContent = formatVnd(orderData.totalAmount || 0);
+      document.getElementById("totalAmount").textContent = formatVnd(orderData.totalPrice || 0);
     }
   </script>
   <script src="js/theme.js"></script>

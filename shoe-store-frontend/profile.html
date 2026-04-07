@@ -188,14 +188,6 @@
                             onclick="alert('Chức năng đổi mật khẩu đang được phát triển')">Đổi</button>
                     </div>
                 </div>
-
-                <div class="pt-6">
-                    <button type="button"
-                        class="w-full sm:w-auto bg-blue-600 text-white px-8 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
-                        disabled>
-                        <span>Lưu thay đổi</span>
-                    </button>
-                </div>
             </form>
         </div>
 
@@ -286,6 +278,169 @@
             }
         }
 
+        function setChangePasswordMessage(message, type = 'error') {
+            const messageEl = document.getElementById('changePasswordMessage');
+            if (!messageEl) return;
+
+            messageEl.textContent = message;
+            messageEl.classList.remove('hidden', 'text-red-600', 'text-green-600');
+            messageEl.classList.add(type === 'success' ? 'text-green-600' : 'text-red-600');
+        }
+
+        function clearChangePasswordForm() {
+            const currentPassword = document.getElementById('currentPassword');
+            const newPassword = document.getElementById('newPassword');
+            const confirmNewPassword = document.getElementById('confirmNewPassword');
+            const messageEl = document.getElementById('changePasswordMessage');
+            const submitBtn = document.getElementById('submitChangePasswordBtn');
+
+            if (currentPassword) currentPassword.value = '';
+            if (newPassword) newPassword.value = '';
+            if (confirmNewPassword) confirmNewPassword.value = '';
+            if (messageEl) {
+                messageEl.textContent = '';
+                messageEl.classList.add('hidden');
+            }
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Cập nhật mật khẩu';
+            }
+        }
+
+        function toggleChangePasswordForm(forceState) {
+            const wrap = document.getElementById('changePasswordFormWrap');
+            if (!wrap) return;
+
+            const shouldShow = typeof forceState === 'boolean' ? forceState : wrap.classList.contains('hidden');
+            wrap.classList.toggle('hidden', !shouldShow);
+
+            if (!shouldShow) {
+                clearChangePasswordForm();
+            }
+        }
+
+        async function handleChangePassword() {
+            const token = getToken();
+            if (!token) {
+                alert('Vui lòng đăng nhập lại để đổi mật khẩu.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const currentPassword = document.getElementById('currentPassword')?.value.trim();
+            const newPassword = document.getElementById('newPassword')?.value.trim();
+            const confirmPassword = document.getElementById('confirmNewPassword')?.value.trim();
+            const submitBtn = document.getElementById('submitChangePasswordBtn');
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                setChangePasswordMessage('Vui lòng nhập đầy đủ thông tin.');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                setChangePasswordMessage('Mật khẩu mới phải có ít nhất 6 ký tự.');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                setChangePasswordMessage('Mật khẩu mới và xác nhận mật khẩu chưa khớp.');
+                return;
+            }
+
+            if (currentPassword === newPassword) {
+                setChangePasswordMessage('Mật khẩu mới phải khác mật khẩu hiện tại.');
+                return;
+            }
+
+            try {
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Đang cập nhật...';
+                }
+
+                const response = await fetch('http://localhost:8000/api/auth/change-password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword,
+                        confirmPassword
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || 'Không đổi được mật khẩu');
+                }
+
+                setChangePasswordMessage('Đổi mật khẩu thành công.', 'success');
+                setTimeout(() => {
+                    toggleChangePasswordForm(false);
+                }, 1200);
+            } catch (error) {
+                setChangePasswordMessage(error.message || 'Đổi mật khẩu thất bại.');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Cập nhật mật khẩu';
+                }
+            }
+        }
+
+        function initializeChangePasswordSection() {
+            const passwordInput = document.getElementById('inputPassword');
+            if (!passwordInput) return;
+
+            const passwordWrapper = passwordInput.closest('.space-y-1');
+            if (!passwordWrapper) return;
+
+            const passwordButton = passwordWrapper.querySelector('button[type="button"]');
+            if (passwordButton) {
+                passwordButton.onclick = () => toggleChangePasswordForm();
+            }
+
+            if (!document.getElementById('changePasswordFormWrap')) {
+                passwordWrapper.insertAdjacentHTML('afterend', `
+                    <div id="changePasswordFormWrap" class="hidden space-y-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                        <div>
+                            <label for="currentPassword" class="block text-sm font-semibold mb-2">Mật khẩu hiện tại</label>
+                            <input type="password" id="currentPassword"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-600"
+                                placeholder="Nhập mật khẩu hiện tại">
+                        </div>
+                        <div>
+                            <label for="newPassword" class="block text-sm font-semibold mb-2">Mật khẩu mới</label>
+                            <input type="password" id="newPassword"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-600"
+                                placeholder="Nhập mật khẩu mới">
+                        </div>
+                        <div>
+                            <label for="confirmNewPassword" class="block text-sm font-semibold mb-2">Xác nhận mật khẩu mới</label>
+                            <input type="password" id="confirmNewPassword"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-600"
+                                placeholder="Nhập lại mật khẩu mới">
+                        </div>
+                        <p id="changePasswordMessage" class="hidden text-sm"></p>
+                        <div class="flex flex-wrap gap-3">
+                            <button type="button" id="submitChangePasswordBtn"
+                                class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                Cập nhật mật khẩu
+                            </button>
+                            <button type="button"
+                                class="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                                onclick="toggleChangePasswordForm(false)">
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                `);
+            }
+
+            document.getElementById('submitChangePasswordBtn')?.addEventListener('click', handleChangePassword);
+        }
+
         // Load user data on page load
         document.addEventListener('DOMContentLoaded', () => {
             if (!isLoggedIn()) {
@@ -304,6 +459,7 @@
             }
 
             updateUserMenu();
+            initializeChangePasswordSection();
             loadOrderHistory();
         });
 

@@ -128,27 +128,14 @@
             <th class="text-right py-3">Tổng</th>
           </tr>
         </thead>
-        <tbody>
-          <tr class="border-b hover:bg-gray-50">
-            <td class="py-4">Nike Vomero 18</td>
-            <td class="text-center">1</td>
-            <td class="text-right">4.190.000đ</td>
-            <td class="text-right font-bold">4.190.000đ</td>
-          </tr>
-          <tr class="border-b hover:bg-gray-50">
-            <td class="py-4">Adidas Ultraboost 23</td>
-            <td class="text-center">1</td>
-            <td class="text-right">3.890.000đ</td>
-            <td class="text-right font-bold">3.890.000đ</td>
-          </tr>
-        </tbody>
+        <tbody id="cartTableBody"></tbody>
       </table>
 
       <div class="mt-6 text-right">
-        <p class="text-xl font-bold mb-4">Tổng cộng: <span class="text-red-500">8.080.000đ</span></p>
+        <p class="text-xl font-bold mb-4">Tổng cộng: <span id="cartGrandTotal" class="text-red-500">0đ</span></p>
         <button onclick="window.location.href='home.html'"
           class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mr-2">Tiếp tục mua hàng</button>
-        <button onclick="goToCheckout()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Thanh
+        <button id="checkoutBtn" onclick="goToCheckout()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Thanh
           toán</button>
       </div>
     </div>
@@ -164,34 +151,95 @@
 
 
 
-    function parseMoneyToNumber(text) {
-      const digits = String(text || "").replace(/[^\d]/g, "");
-      return Number(digits || 0);
+    function formatVnd(value) {
+      return Number(value || 0).toLocaleString("vi-VN") + "đ";
     }
 
-    function getCartItemsFromTable() {
-      const rows = document.querySelectorAll("tbody tr");
-      const items = [];
-      rows.forEach((row) => {
-        const cols = row.querySelectorAll("td");
-        if (cols.length < 4) return;
-        items.push({
-          name: cols[0].textContent.trim(),
-          quantity: Number(cols[1].textContent.trim()) || 1,
-          price: parseMoneyToNumber(cols[2].textContent),
-          total: parseMoneyToNumber(cols[3].textContent)
-        });
+    function getCartItems() {
+      return window.cartUtils?.getCartItems?.() || [];
+    }
+
+    function removeCartItem(index) {
+      const cartItems = getCartItems();
+      cartItems.splice(index, 1);
+      window.cartUtils?.saveCartItems?.(cartItems);
+      window.cartUtils?.updateCartBadge?.();
+      renderCart();
+    }
+
+    function renderCart() {
+      const tableBody = document.getElementById("cartTableBody");
+      const totalEl = document.getElementById("cartGrandTotal");
+      const checkoutBtn = document.getElementById("checkoutBtn");
+      const cartItems = getCartItems();
+
+      tableBody.innerHTML = "";
+
+      if (!cartItems.length) {
+        const emptyRow = document.createElement("tr");
+        emptyRow.innerHTML = `
+          <td colspan="4" class="py-8 text-center text-gray-500">
+            Giỏ hàng của bạn đang trống.
+          </td>
+        `;
+        tableBody.appendChild(emptyRow);
+        totalEl.textContent = formatVnd(0);
+        checkoutBtn.disabled = true;
+        checkoutBtn.classList.add("opacity-50", "cursor-not-allowed");
+        return;
+      }
+
+      checkoutBtn.disabled = false;
+      checkoutBtn.classList.remove("opacity-50", "cursor-not-allowed");
+
+      let totalAmount = 0;
+
+      cartItems.forEach((item, index) => {
+        const quantity = Number(item.quantity) || 1;
+        const price = Number(item.price) || 0;
+        const itemTotal = quantity * price;
+        totalAmount += itemTotal;
+
+        const row = document.createElement("tr");
+        row.className = "border-b hover:bg-gray-50";
+        row.innerHTML = `
+          <td class="py-4">
+            <div class="font-medium">${item.name || ""}</div>
+            <div class="text-sm text-gray-500">${item.size ? `Size: ${item.size}` : ""}</div>
+            <button type="button" class="mt-2 text-sm text-red-500 hover:text-red-700" onclick="removeCartItem(${index})">
+              Xóa
+            </button>
+          </td>
+          <td class="text-center">${quantity}</td>
+          <td class="text-right">${formatVnd(price)}</td>
+          <td class="text-right font-bold">${formatVnd(itemTotal)}</td>
+        `;
+        tableBody.appendChild(row);
       });
-      return items;
+
+      totalEl.textContent = formatVnd(totalAmount);
     }
 
     function goToCheckout() {
-      const cartItems = getCartItemsFromTable();
+      const cartItems = getCartItems().map((item) => ({
+        ...item,
+        quantity: Number(item.quantity) || 1,
+        price: Number(item.price) || 0,
+        total: (Number(item.quantity) || 1) * (Number(item.price) || 0)
+      }));
+
+      if (!cartItems.length) {
+        alert("Giỏ hàng của bạn đang trống.");
+        return;
+      }
+
       const totalAmount = cartItems.reduce((sum, item) => sum + item.total, 0);
       sessionStorage.setItem("checkoutCartItems", JSON.stringify(cartItems));
       sessionStorage.setItem("checkoutTotalAmount", String(totalAmount));
       window.location.href = "checkout.html";
     }
+
+    renderCart();
   </script>
   <script src="js/theme.js"></script>
 </body>
