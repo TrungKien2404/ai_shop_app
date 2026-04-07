@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Trending - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <div class="custom-navbar p-4 flex justify-between items-center relative z-50 shadow-sm">
+    <a href="home.html" class="flex items-center gap-2">
+      <img id="siteLogo" src="images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
+    </a>
+    <div class="flex items-center space-x-8">
+      <a href="home.html" class="hover:text-gray-300 font-semibold text-lg transition">Home</a>
+      <div class="relative group">
+        <button class="flex items-center gap-1 hover:text-gray-300 font-semibold text-lg py-2">Sản phẩm <i
+            class="fa-solid fa-chevron-down text-xs ml-1"></i></button>
+        <div
+          class="absolute left-0 mt-0 w-48 bg-white text-black rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100">
+          <div class="py-2">
+            <a href="nike.html" class="block px-4 py-2 hover:bg-gray-100">Nike</a>
+            <a href="adidas.html" class="block px-4 py-2 hover:bg-gray-100">Adidas</a>
+            <a href="puma.html" class="block px-4 py-2 hover:bg-gray-100">Puma</a>
+            <a href="bitis.html" class="block px-4 py-2 hover:bg-gray-100">Biti's</a>
+            <a href="mizuno.html" class="block px-4 py-2 hover:bg-gray-100">Mizuno</a>
+          </div>
+        </div>
+      </div>
+      <a href="sale.html" class="text-red-400 font-bold text-lg">SALE</a>
+    </div>
+    <div class="flex items-center space-x-6">
+      <div class="relative"><a href="cart.html" class="text-2xl">🛒</a></div>
+      <button onclick="toggleTheme()" class="text-2xl"><i class="theme-icon fa-solid fa-moon"></i></button>
+
+      <!-- User Icon -->
+      <div class="relative group/user">
+        <div onclick="toggleUserMenu()" class="cursor-pointer hover:text-gray-300 transition">
+          <i class="fa-solid fa-user text-2xl"></i>
+        </div>
+        <!-- Dropdown User -->
+        <div id="userMenu"
+          class="hidden absolute right-0 mt-3 w-36 bg-white text-black rounded-lg shadow-xl border border-gray-100 py-1">
+          <a href="login.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium">Đăng nhập</a>
+          <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium">Đăng ký</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="text-center text-3xl font-bold my-10">XU HƯỚNG HIỆN TẠI</h2>
+  <div class="grid grid-cols-4 gap-6 px-10">
+    <!-- Sample Trending Item -->
+    <div class="bg-white p-4 rounded-xl shadow-lg product-card cursor-pointer"
+      onclick="location.href='order.html?name=Nike%20Air%20Max&price=4000000&image=images/Nike/Giày Nike Air Max Alpha Trainer 5 ‘Cargo Khaki Safety Orange’ DM0829-300_3290000.jpg'">
+      <img src="images/Nike/Giày Nike Air Max Alpha Trainer 5 ‘Cargo Khaki Safety Orange’ DM0829-300_3290000.jpg"
+        class="product-image-container">
+      <h3 class="mt-4 font-bold text-lg">Nike Air Max Alpha</h3>
+      <p class="text-red-500 font-bold text-xl">4.000.000đ</p>
+      <button class="w-full bg-blue-600 text-white py-2 mt-4 rounded-lg hover:bg-blue-700 transition">Mua ngay</button>
+    </div>
+    <!-- More items can be added here -->
+
+  </div>
+
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById("userMenu");
+      menu.classList.toggle("hidden");
+    }
+
+    // click ra ngoài thì đóng
+    document.addEventListener("click", function (event) {
+      const menu = document.getElementById("userMenu");
+      const icon = document.querySelector(".fa-user");
+
+      if (menu && icon && !icon.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+  </script>
+  <div class="pagination" id="pagination"></div>
+
+  <script src="js/auth.js"></script>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById('userMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    const productsPerPage = 4;
+    let currentPage = 1;
+    const products = Array.from(document.querySelectorAll(".product-card"));
+    const paginationEl = document.getElementById("pagination");
+
+    function getNumericPrice(priceText) {
+      return Number((priceText || "").replace(/[^\d]/g, "") || 0);
+    }
+
+    function goToOrderFromCard(card) {
+      const nameEl = card.querySelector("h3");
+      const descEl = card.querySelector("p.product-desc");
+      const priceEl = card.querySelector("p.text-red-500");
+      const imageEl = card.querySelector("img");
+      if (!nameEl || !priceEl || !imageEl) return;
+      let descText = descEl ? descEl.textContent.trim() : "";
+      window.location.href = "order.html?name=" + encodeURIComponent(nameEl.textContent.trim()) +
+        "&price=" + encodeURIComponent(getNumericPrice(priceEl.textContent)) +
+        "&image=" + encodeURIComponent(imageEl.getAttribute("src") || "") +
+        "&desc=" + encodeURIComponent(descText);
+    }
+
+    products.forEach((card) => {
+      card.classList.add("cursor-pointer");
+      card.addEventListener("click", () => goToOrderFromCard(card));
+      const addBtn = card.querySelector("button");
+      if (addBtn) addBtn.addEventListener("click", (e) => { e.stopPropagation(); goToOrderFromCard(card); });
+    });
+
+    function showPage(page) {
+      const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
+      currentPage = Math.min(Math.max(1, page), totalPages);
+      const start = (currentPage - 1) * productsPerPage;
+      const end = start + productsPerPage;
+      products.forEach((p, i) => { p.style.display = (i >= start && i < end) ? "block" : "none"; });
+      updatePagination();
+    }
+
+    function changePage(step) {
+      const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
+      let next = currentPage + step;
+      if (next > totalPages) next = 1;
+      if (next < 1) next = totalPages;
+      showPage(next);
+    }
+
+    function updatePagination() {
+      const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
+      if (!paginationEl) return;
+      paginationEl.innerHTML = "";
+      const prevBtn = document.createElement("button");
+      prevBtn.textContent = "←"; prevBtn.onclick = () => changePage(-1);
+      paginationEl.appendChild(prevBtn);
+      for (let p = 1; p <= totalPages; p++) {
+        const btn = document.createElement("button");
+        btn.textContent = String(p); btn.onclick = () => showPage(p);
+        if (p === currentPage) btn.classList.add("active");
+        paginationEl.appendChild(btn);
+      }
+      const nextBtn = document.createElement("button");
+      nextBtn.textContent = "→"; nextBtn.onclick = () => changePage(1);
+      paginationEl.appendChild(nextBtn);
+    }
+
+    showPage(currentPage);
+  </script>
+  <script src="js/theme.js"></script>
+</body>
+
+</html>

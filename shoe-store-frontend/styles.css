@@ -1,4 +1,6 @@
-body { font-family: Arial, sans-serif; }
+body {
+  font-family: Arial, sans-serif;
+}
 
 .product-card:hover {
   transform: translateY(-5px);
@@ -34,8 +36,15 @@ body { font-family: Arial, sans-serif; }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .scrollbar::-webkit-scrollbar {
@@ -53,7 +62,8 @@ body { font-family: Arial, sans-serif; }
 
 /* ===== PRODUCT GRID ===== */
 #productList {
-  min-height: 500px; /* giữ layout không bị nhảy khi đổi trang */
+  min-height: 500px;
+  /* giữ layout không bị nhảy khi đổi trang */
 }
 
 /* ===== PRODUCT CARD ===== */
@@ -138,6 +148,7 @@ body { font-family: Arial, sans-serif; }
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -183,3 +194,288 @@ body { font-family: Arial, sans-serif; }
   color: #4b5563;
   margin-top: 10px;
 }
+
+/* ===== DARK MODE ===== */
+body.dark-mode {
+  background-color: #121212 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .bg-white {
+  background-color: #1f2937 !important;
+  /* Tailwind gray-800 */
+  color: #8f8888 !important;
+}
+
+/* Đảm bảo các thành phần nền trắng cố định (như QR code) giữ chữ màu đen */
+body.dark-mode .bg-white.text-black,
+body.dark-mode .bg-white .text-black {
+  color: #ffffff !important;
+}
+
+body.dark-mode .text-gray-900 {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .bg-gray-50,
+body.dark-mode .bg-gray-100 {
+  background-color: #111827 !important;
+  /* Tailwind gray-900 */
+}
+
+/* Header hover effects */
+body.dark-mode .hover\:bg-gray-100:hover {
+  background-color: #374151 !important;
+  /* Tailwind gray-700 */
+}
+
+/* Product cards */
+body.dark-mode .product-card {
+  box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.1), 0 2px 4px -1px rgba(255, 255, 255, 0.06);
+  border: 1px solid #374151;
+}
+
+body.dark-mode .product-image-container {
+  background-color: #374151 !important;
+}
+
+/* Dropdowns / Modals */
+body.dark-mode .absolute.bg-white {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Search Bar */
+body.dark-mode .border-gray-300 {
+  border-color: #4b5563 !important;
+}
+
+body.dark-mode .focus-within\:border-blue-500:focus-within {
+  border-color: #3b82f6 !important;
+}
+
+body.dark-mode input.bg-transparent {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .placeholder-gray-500::placeholder {
+  color: #9ca3af !important;
+  /* Tailwind gray-400 */
+}
+
+/* Title colors */
+body.dark-mode h2,
+body.dark-mode h3 {
+  color: #e5e7eb !important;
+}
+
+/* Pagination */
+body.dark-mode .pagination button {
+  background: #374151;
+  color: #e5e7eb;
+}
+
+body.dark-mode .pagination button:hover {
+  background: #4b5563;
+}
+
+body.dark-mode .pagination button.active {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+body.dark-mode .checkout-qr-box {
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  border-color: #374151;
+}
+
+body.dark-mode .checkout-qr-title,
+body.dark-mode .checkout-qr-amount {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .checkout-qr-note {
+  color: #9ca3af !important;
+}
+
+body.dark-mode .checkout-qr-image {
+  background-color: #fff;
+  /* Keep QR code background white to be scannable */
+}
+
+/* ===== CUSTOM NAVBAR ===== */
+.custom-navbar {
+  background-color: #ffffff;
+  color: #000000;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Đổi màu hover của chữ trên navbar sáng */
+.custom-navbar .hover\:text-gray-300:hover {
+  color: #4b5563 !important;
+  /* Tailwind gray-600 */
+}
+
+/* Navbar khi ở Dark Mode */
+body.dark-mode .custom-navbar {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #374151 !important;
+  /* Tailwind gray-700 */
+}
+
+/* Đổi màu hover của chữ trên navbar tối */
+body.dark-mode .custom-navbar .hover\:text-gray-300:hover {
+  color: #d1d5db !important;
+  /* Tailwind gray-300 */
+}
+
+/* ===== PREMIUM BANNER SLIDER ===== */
+.banner-container {
+  width: 100%;
+  height: 500px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 40px;
+  background: #000;
+}
+
+.banner-slider {
+  display: flex;
+  width: 400%; /* 4 slides */
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.banner-slide {
+  width: 25%;
+  height: 100%;
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.banner-slide video, 
+.banner-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px 60px;
+  transition: opacity 0.3s ease;
+}
+
+.banner-content {
+  color: white;
+  max-width: 600px;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.5s ease 0.3s;
+}
+
+.banner-slide.active .banner-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.banner-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.banner-subtitle {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.banner-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  background: white;
+  color: black;
+  font-weight: bold;
+  border-radius: 4px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.banner-btn:hover {
+  background: #2563eb;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* Controls */
+.banner-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 60px;
+  display: flex;
+  gap: 15px;
+  z-index: 10;
+}
+
+.banner-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.banner-dot.active {
+  background: #fff;
+  width: 30px;
+  border-radius: 10px;
+}
+
+.banner-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.banner-nav:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.banner-nav.prev { left: 20px; }
+.banner-nav.next { right: 20px; }
+
+@media (max-width: 768px) {
+  .banner-container { height: 350px; }
+  .banner-title { font-size: 2rem; }
+  .banner-overlay { padding: 20px 30px; }
+  .banner-controls { right: 30px; }
+}

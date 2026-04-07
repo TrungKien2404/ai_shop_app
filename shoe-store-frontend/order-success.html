@@ -6,12 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thanh Toán Thành Công - Shoe Store</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen">
   <div class="max-w-4xl mx-auto px-6 py-10">
-    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 relative">
+      <!-- Theme Toggle -->
+      <div class="absolute top-6 right-6">
+        <button onclick="toggleTheme()" class="cursor-pointer text-2xl hover:text-gray-300 transition focus:outline-none" title="Đổi giao diện">
+          <i class="theme-icon fa-solid fa-moon"></i>
+        </button>
+      </div>
+
       <div class="text-center mb-6">
         <div class="text-5xl mb-2">✅</div>
         <h1 class="text-3xl font-bold text-green-700">Thanh toán thành công</h1>
@@ -50,8 +58,8 @@
       </div>
 
       <div class="mt-6 flex gap-3">
-        <a href="home.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">Về trang chủ</a>
-        <a href="cart.html" class="bg-gray-600 text-white px-5 py-2 rounded-lg hover:bg-gray-700">Quay lại giỏ hàng</a>
+        <a href="home.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Về trang chủ</a>
+        <a href="cart.html" class="bg-gray-600 text-white px-5 py-2 rounded-lg hover:bg-gray-700 transition">Quay lại giỏ hàng</a>
       </div>
     </div>
   </div>
@@ -91,6 +99,7 @@
       document.getElementById("totalAmount").textContent = formatVnd(orderData.totalAmount || 0);
     }
   </script>
+  <script src="js/theme.js"></script>
 </body>
 
 </html>

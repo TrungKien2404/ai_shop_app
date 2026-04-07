@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hướng dẫn chọn Size - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50">
+  <!-- Header -->
+  <div class="custom-navbar p-4 flex justify-between items-center relative z-50 shadow-sm">
+    <a href="home.html" class="flex items-center gap-2">
+      <img id="siteLogo" src="images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
+    </a>
+    <div class="flex items-center space-x-8">
+      <a href="home.html" class="hover:text-gray-300 font-semibold text-lg transition">Home</a>
+
+      <!-- Dropdown Sản phẩm -->
+      <div class="relative group">
+        <button
+          class="flex items-center gap-1 hover:text-gray-300 font-semibold text-lg focus:outline-none py-2 transition">
+          Sản phẩm <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
+        </button>
+
+        <!-- Khung lựa chọn sản phẩm (Hover để hiện) -->
+        <div
+          class="absolute left-0 mt-0 w-48 bg-white text-black rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100">
+          <div class="py-2">
+            <a href="nike.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-nike.png" alt="Nike" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Nike</span>
+            </a>
+            <a href="adidas.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-adidas.png" alt="Adidas" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Adidas</span>
+            </a>
+            <a href="puma.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-puma.png" alt="Puma" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Puma</span>
+            </a>
+            <a href="bitis.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-bitis.png" alt="Biti's" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Biti's</span>
+            </a>
+            <a href="mizuno.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-mizuno.png" alt="Mizuno" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Mizuno</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <a href="sale.html" class="text-red-400 hover:text-red-300 font-bold text-lg transition">SALE</a>
+    </div>
+    <div class="flex items-center space-x-6">
+      <button onclick="toggleTheme()" class="cursor-pointer text-2xl hover:text-gray-300 transition focus:outline-none">
+        <i class="theme-icon fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </div>
+
+  <main class="max-w-4xl mx-auto p-6 md:p-10">
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+      <h1 class="text-3xl font-bold text-center mb-8">📏 Hướng Dẫn Chọn Size Giày</h1>
+
+      <div class="space-y-8">
+        <section>
+          <h2 class="text-xl font-bold mb-4 text-blue-600 border-b pb-2">1. Cách đo kích thước chân</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-center">
+            <div class="space-y-3">
+              <p><strong>Bước 1:</strong> Chuẩn bị một tờ giấy trắng lớn hơn bàn chân, một cây bút và một chiếc thước
+                kẻ.</p>
+              <p><strong>Bước 2:</strong> Đặt bàn chân lên tờ giấy, giữ chân cố định và dùng bút vẽ lại khung bàn chân.
+              </p>
+              <p><strong>Bước 3:</strong> Dùng thước đo khoảng cách dài nhất từ gót chân đến ngón chân dài nhất (chiều
+                dài L).</p>
+              <p><strong>Bước 4:</strong> Tính size giày theo công thức: <strong>Size = L + 1.5cm</strong></p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-xl text-center">
+              <i class="fa-solid fa-ruler-combined text-5xl text-gray-400 mb-2"></i>
+              <p class="text-sm text-gray-500 italic">Mẹo: Nên đo chân vào cuối ngày khi chân đang ở trạng thái lớn
+                nhất.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-bold mb-4 text-blue-600 border-b pb-2">2. Bảng quy đổi Size chuẩn</h2>
+
+          <!-- Tab Navigation -->
+          <div class="flex space-x-2 mb-6 border-b border-gray-200">
+            <button onclick="showSizeTable('men')" id="btn-men"
+              class="px-6 py-2 font-bold text-gray-800 border-b-2 border-gray-800 transition-all focus:outline-none bg-white">
+              Nam
+            </button>
+            <button onclick="showSizeTable('women')" id="btn-women"
+              class="px-6 py-2 font-bold text-gray-400 hover:text-gray-600 transition-all focus:outline-none border-b-2 border-transparent bg-white">
+              Nữ
+            </button>
+          </div>
+
+          <!-- Men Size Table -->
+          <div id="table-men" class="overflow-x-auto transition-all duration-300">
+            <table class="w-full text-center border-collapse">
+              <thead>
+                <tr class="bg-blue-600 text-white">
+                  <th class="p-3 border border-blue-700">Chiều dài chân (cm)</th>
+                  <th class="p-3 border border-blue-700">Size VN (EU)</th>
+                  <th class="p-3 border border-blue-700">Size US</th>
+                  <th class="p-3 border border-blue-700">Size UK</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-2 border">23.5</td>
+                  <td class="p-2 border font-bold">38</td>
+                  <td class="p-2 border">6</td>
+                  <td class="p-2 border">5.5</td>
+                </tr>
+                <tr class="bg-blue-50">
+                  <td class="p-2 border">24.1</td>
+                  <td class="p-2 border font-bold">39</td>
+                  <td class="p-2 border">7</td>
+                  <td class="p-2 border">6.5</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border">24.4</td>
+                  <td class="p-2 border font-bold">40</td>
+                  <td class="p-2 border">7.5</td>
+                  <td class="p-2 border">7</td>
+                </tr>
+                <tr class="bg-blue-50">
+                  <td class="p-2 border">25.4</td>
+                  <td class="p-2 border font-bold">41</td>
+                  <td class="p-2 border">8.5</td>
+                  <td class="p-2 border">8</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border">26.0</td>
+                  <td class="p-2 border font-bold">42</td>
+                  <td class="p-2 border">9.5</td>
+                  <td class="p-2 border">9</td>
+                </tr>
+                <tr class="bg-blue-50">
+                  <td class="p-2 border">27.0</td>
+                  <td class="p-2 border font-bold">43</td>
+                  <td class="p-2 border">10.5</td>
+                  <td class="p-2 border">10</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border">27.9</td>
+                  <td class="p-2 border font-bold">44</td>
+                  <td class="p-2 border">11.5</td>
+                  <td class="p-2 border">11</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Women Size Table (Hidden by default) -->
+          <div id="table-women" class="hidden overflow-x-auto transition-all duration-300">
+            <table class="w-full text-center border-collapse">
+              <thead>
+                <tr class="bg-pink-500 text-white">
+                  <th class="p-3 border border-pink-600">Chiều dài chân (cm)</th>
+                  <th class="p-3 border border-pink-600">Size VN (EU)</th>
+                  <th class="p-3 border border-pink-600">Size US</th>
+                  <th class="p-3 border border-pink-600">Size UK</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-2 border">22.0</td>
+                  <td class="p-2 border font-bold">35</td>
+                  <td class="p-2 border">5</td>
+                  <td class="p-2 border">3</td>
+                </tr>
+                <tr class="bg-pink-50">
+                  <td class="p-2 border">22.5</td>
+                  <td class="p-2 border font-bold">36</td>
+                  <td class="p-2 border">6</td>
+                  <td class="p-2 border">4</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border">23.0</td>
+                  <td class="p-2 border font-bold">37</td>
+                  <td class="p-2 border">6.5</td>
+                  <td class="p-2 border">4.5</td>
+                </tr>
+                <tr class="bg-pink-50">
+                  <td class="p-2 border">23.5</td>
+                  <td class="p-2 border font-bold">38</td>
+                  <td class="p-2 border">7.5</td>
+                  <td class="p-2 border">5.5</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border">24.0</td>
+                  <td class="p-2 border font-bold">39</td>
+                  <td class="p-2 border">8.5</td>
+                  <td class="p-2 border">6.5</td>
+                </tr>
+                <tr class="bg-pink-50">
+                  <td class="p-2 border">24.5</td>
+                  <td class="p-2 border font-bold">40</td>
+                  <td class="p-2 border">9</td>
+                  <td class="p-2 border">7</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <script>
+          function showSizeTable(type) {
+            const menTable = document.getElementById('table-men');
+            const womenTable = document.getElementById('table-women');
+            const menBtn = document.getElementById('btn-men');
+            const womenBtn = document.getElementById('btn-women');
+
+            if (type === 'men') {
+              menTable.classList.remove('hidden');
+              womenTable.classList.add('hidden');
+              menBtn.classList.add('text-gray-800', 'border-gray-800');
+              menBtn.classList.remove('text-gray-400', 'border-transparent');
+              womenBtn.classList.add('text-gray-400', 'border-transparent');
+              womenBtn.classList.remove('text-gray-800', 'border-gray-800');
+            } else {
+              menTable.classList.add('hidden');
+              womenTable.classList.remove('hidden');
+              womenBtn.classList.add('text-gray-800', 'border-gray-800');
+              womenBtn.classList.remove('text-gray-400', 'border-transparent');
+              menBtn.classList.add('text-gray-400', 'border-transparent');
+              menBtn.classList.remove('text-gray-800', 'border-gray-800');
+            }
+          }
+        </script>
+
+        <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
+          <p class="text-yellow-800 text-sm">
+            <i class="fa-solid fa-circle-info mr-2"></i>
+            <strong>Lưu ý:</strong> Mỗi thương hiệu (Nike, Adidas, Puma...) có thể có độ lệch nhẹ. Nếu bạn có bàn chân
+            bè hoặc mu bàn chân cao, hãy cân nhắc tăng thêm 0.5 size để thoải mái hơn.
+          </p>
+        </div>
+
+        <!-- <div class="text-center pt-6">
+          <a href="order.html"
+            class="inline-block bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 transition shadow-lg hover:shadow-xl">
+            Quay lại đặt hàng
+          </a>
+        </div> -->
+      </div>
+    </div>
+  </main>
+
+  <script src="js/theme.js"></script>
+</body>
+
+</html>

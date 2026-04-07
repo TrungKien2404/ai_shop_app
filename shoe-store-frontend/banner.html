@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Sản Phẩm Độc Quyền - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50">
+  <!-- Header -->
+  <div class="custom-navbar p-4 flex justify-between items-center relative z-50 shadow-sm">
+
+    <!-- Logo (Góc trái) -->
+    <a href="home.html" class="flex items-center gap-2">
+      <img id="siteLogo" src="images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
+    </a>
+
+    <!-- Menu (Ở giữa) -->
+    <div class="flex items-center space-x-8">
+      <a href="home.html" class="hover:text-gray-300 font-semibold text-lg transition">Home</a>
+
+      <!-- Dropdown Sản phẩm -->
+      <div class="relative group">
+        <button
+          class="flex items-center gap-1 hover:text-gray-300 font-semibold text-lg focus:outline-none py-2 transition">
+          Sản phẩm <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
+        </button>
+
+        <!-- Khung lựa chọn sản phẩm (Hover để hiện) -->
+        <div
+          class="absolute left-0 mt-0 w-48 bg-white text-black rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100">
+          <div class="py-2">
+            <a href="nike.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-nike.png" alt="Nike" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Nike</span>
+            </a>
+            <a href="adidas.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-adidas.png" alt="Adidas" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Adidas</span>
+            </a>
+            <a href="puma.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-puma.png" alt="Puma" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Puma</span>
+            </a>
+            <a href="bitis.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-bitis.png" alt="Biti's" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Biti's</span>
+            </a>
+            <a href="mizuno.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
+              <img src="images/logo-mizuno.png" alt="Mizuno" class="w-6 h-6 object-contain"
+                onerror="this.style.display='none'">
+              <span class="font-medium">Mizuno</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <a href="sale.html" class="text-red-400 hover:text-red-300 font-bold text-lg transition">SALE</a>
+    </div>
+
+    <!-- Right side (Góc phải) -->
+    <div class="flex items-center space-x-6">
+
+      <!-- Thanh tìm kiếm -->
+      <div
+        class="flex items-center bg-white rounded-full px-4 py-1.5 shadow-sm border border-gray-300 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
+        <input type="text" placeholder="Tìm kiếm..."
+          class="bg-transparent text-black outline-none w-32 md:w-56 text-sm placeholder-gray-500">
+        <button class="focus:outline-none"><i
+            class="fa-solid fa-search text-gray-500 hover:text-blue-600 transition"></i></button>
+      </div>
+
+      <!-- Cart -->
+      <div class="relative">
+        <a href="cart.html" class="cursor-pointer text-2xl hover:opacity-80 transition">
+          🛒
+          <span
+            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold shadow">
+            2
+          </span>
+        </a>
+      </div>
+
+
+      <!-- Theme Toggle -->
+      <div class="relative">
+        <button onclick="toggleTheme()"
+          class="cursor-pointer text-2xl hover:text-gray-300 transition focus:outline-none" title="Đổi giao diện">
+          <i class="theme-icon fa-solid fa-moon"></i>
+        </button>
+      </div>
+
+      <!-- User Icon -->
+      <div class="relative group/user">
+        <div onclick="toggleUserMenu()" class="cursor-pointer hover:text-gray-300 transition">
+          <i class="fa-solid fa-user text-2xl"></i>
+        </div>
+
+        <!-- Dropdown User -->
+        <div id="userMenu"
+          class="hidden absolute right-0 mt-3 w-36 bg-white text-black rounded-lg shadow-xl border border-gray-100 py-1">
+          <a href="login.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium">Đăng nhập</a>
+          <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium">Đăng ký</a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="container mx-auto px-6 py-12">
+    <div class="flex flex-col items-center mb-12">
+      <h2 class="text-center text-3xl font-bold my-10 uppercase tracking-widest">Sản Phẩm Độc Quyền</h2>
+      <p class="text-gray-600 text-lg">Những mẫu giày giới hạn chỉ có tại X-Store</p>
+      <div class="h-1.5 w-32 bg-blue-600 mt-4 rounded-full"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <!-- Supreme x Nike Dunk -->
+      <div class="bg-white p-3 rounded-xl shadow product-card relative">
+        <div class="relative h-64 bg-gray-50 flex items-center justify-center p-4">
+          <img src="images/Nike/Giày Nike Air Force 1 Low ‘Valentine’s Day’ IQ4937-161_4090000.jpg"
+            class="product-image-container" alt="Supreme Nike Dunk">
+          <span
+            class="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase">Hot
+            Item</span>
+        </div>
+
+        <div class="p-6">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Supreme x Nike SB Dunk Low</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2 product-desc">Phiên bản giới hạn kết hợp giữa Supreme và
+            Nike SB, chất
+            liệu cao cấp.</p>
+          <div class="flex items-center justify-between">
+            <span class="text-red-500 font-bold">12.500.000đ</span>
+          </div>
+          <button
+            class="w-full mt-6 bg-blue-600 text-white py-2 rounded-xl font-bold hover:bg-blue-700 transition-colors">Mua
+            ngay</button>
+        </div>
+      </div>
+
+      <!-- Exclusive Adidas -->
+      <div class="bg-white p-3 rounded-xl shadow product-card relative">
+        <div class="relative h-64 bg-gray-50 flex items-center justify-center p-4">
+          <img src="images/Adidas/Giày Samba OG_270000.jpg" class="product-image-container"
+            alt="Adidas Samba Exclusive">
+          <span
+            class="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase">Rare</span>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Adidas Samba OG 'Midnight'</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2 product-desc">Phối màu đặc biệt dành riêng cho mùa lễ hội,
+            chất lượng
+            hoàn thiện tuyệt đối.</p>
+          <div class="flex items-center justify-between">
+            <span class="text-red-500 font-bold">4.200.000đ</span>
+          </div>
+          <button
+            class="w-full mt-6 bg-blue-600 text-white py-2 rounded-xl font-bold hover:bg-blue-700 transition-colors">Mua
+            ngay</button>
+        </div>
+      </div>
+
+      <!-- Puma MB.01 -->
+      <div class="bg-white p-3 rounded-xl shadow product-card relative">
+        <div class="relative h-64 bg-gray-50 flex items-center justify-center p-4">
+          <img src="images/Puma/Giày Chạy Bộ Nam Puma Deviate Nitro 3 - Xanh Lá_3950000.jpg"
+            class="product-image-container" alt="Puma Deviate">
+          <span
+            class="absolute top-4 left-4 bg-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase">New
+            Arrival</span>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Puma Deviate Nitro 3 Special</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2 product-desc">Công nghệ Nitro cao cấp nhất giúp phản hồi
+            năng lượng cực
+            tốt trong mọi hành trình.</p>
+          <div class="flex items-center justify-between">
+            <span class="text-red-500 font-bold">5.500.000đ</span>
+          </div>
+          <button
+            class="w-full mt-6 bg-blue-600 text-white py-2 rounded-xl font-bold hover:bg-blue-700 transition-colors">Mua
+            ngay</button>
+        </div>
+      </div>
+
+      <!-- Mizuno Morelia -->
+      <div class="bg-white p-3 rounded-xl shadow product-card relative">
+        <div class="relative h-64 bg-gray-50 flex items-center justify-center p-4">
+          <img src="images/Mizuno/MIZUNO α III ELITE AS_3600000.jpg" class="product-image-container" alt="Mizuno Alpha">
+          <span
+            class="absolute top-4 left-4 bg-gray-900 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase">Limited</span>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Mizuno Alpha III 'Gold'</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2 product-desc">Phiên bản giới hạn với các chi tiết mạ vàng
+            sang trọng dành
+            cho các cầu thủ hàng đầu.</p>
+          <div class="flex items-center justify-between">
+            <span class="text-red-500 font-bold">6.800.000đ</span>
+          </div>
+          <button
+            class="w-full mt-6 bg-blue-600 text-white py-2 rounded-xl font-bold hover:bg-blue-700 transition-colors">Mua
+            ngay</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination" id="pagination"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById('userMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // click ra ngoài thì đóng
+    document.addEventListener("click", function (event) {
+      const menu = document.getElementById("userMenu");
+      const icon = document.querySelector(".fa-user");
+      if (menu && icon && !icon.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+
+    const productsPerPage = 4;
+    let currentPage = 1;
+    const products = Array.from(document.querySelectorAll(".product-card"));
+    const paginationEl = document.getElementById("pagination");
+
+    function getNumericPrice(priceText) {
+      return Number((priceText || "").replace(/[^\d]/g, "") || 0);
+    }
+
+    function goToOrderFromCard(card) {
+      const nameEl = card.querySelector("h3");
+      const descEl = card.querySelector(".product-desc");
+      const priceEl = card.querySelector(".text-red-500");
+      const imageEl = card.querySelector("img");
+      if (!nameEl || !priceEl || !imageEl) return;
+      let descText = descEl ? descEl.textContent.trim() : "";
+      window.location.href = "order.html?name=" + encodeURIComponent(nameEl.textContent.trim()) +
+        "&price=" + encodeURIComponent(getNumericPrice(priceEl.textContent)) +
+        "&image=" + encodeURIComponent(imageEl.getAttribute("src") || "") +
+        "&desc=" + encodeURIComponent(descText);
+    }
+
+    products.forEach((card) => {
+      card.classList.add("cursor-pointer");
+      card.addEventListener("click", () => goToOrderFromCard(card));
+      const addBtn = card.querySelector("button");
+      if (addBtn) addBtn.addEventListener("click", (e) => { e.stopPropagation(); goToOrderFromCard(card); });
+    });
+
+    function showPage(page) {
+      const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
+      currentPage = Math.min(Math.max(1, page), totalPages);
+      const start = (currentPage - 1) * productsPerPage;
+      const end = start + productsPerPage;
+      products.forEach((p, i) => { p.style.display = (i >= start && i < end) ? "block" : "none"; });
+      updatePagination();
+    }
+
+    function changePage(step) {
+      const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
+      let next = currentPage + step;
+      if (next > totalPages) next = 1;
+      if (next < 1) next = totalPages;
+      showPage(next);
+    }
+
+    function updatePagination() {
+      const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
+      if (!paginationEl) return;
+      paginationEl.innerHTML = "";
+      const prevBtn = document.createElement("button");
+      prevBtn.textContent = "←"; prevBtn.onclick = () => changePage(-1);
+      paginationEl.appendChild(prevBtn);
+      for (let p = 1; p <= totalPages; p++) {
+        const btn = document.createElement("button");
+        btn.textContent = String(p); btn.onclick = () => showPage(p);
+        if (p === currentPage) btn.classList.add("active");
+        paginationEl.appendChild(btn);
+      }
+      const nextBtn = document.createElement("button");
+      nextBtn.textContent = "→"; nextBtn.onclick = () => changePage(1);
+      paginationEl.appendChild(nextBtn);
+    }
+
+    showPage(currentPage);
+  </script>
+</body>
+
+</html>
+
+</body>
+
+</html>

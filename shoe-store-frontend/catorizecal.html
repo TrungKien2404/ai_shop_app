@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Categorize - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <div class="custom-navbar p-4 flex justify-between items-center relative z-50 shadow-sm">
+    <a href="home.html" class="flex items-center gap-2">
+      <img id="siteLogo" src="images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
+    </a>
+    <div class="flex items-center space-x-8">
+      <a href="home.html" class="hover:text-gray-300 font-semibold text-lg transition">Home</a>
+      <div class="relative group">
+        <button class="flex items-center gap-1 hover:text-gray-300 font-semibold text-lg py-2">Sản phẩm <i
+            class="fa-solid fa-chevron-down text-xs ml-1"></i></button>
+        <div
+          class="absolute left-0 mt-0 w-48 bg-white text-black rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-100">
+          <div class="py-2">
+            <a href="nike.html" class="block px-4 py-2 hover:bg-gray-100">Nike</a>
+            <a href="adidas.html" class="block px-4 py-2 hover:bg-gray-100">Adidas</a>
+            <a href="puma.html" class="block px-4 py-2 hover:bg-gray-100">Puma</a>
+            <a href="bitis.html" class="block px-4 py-2 hover:bg-gray-100">Biti's</a>
+            <a href="mizuno.html" class="block px-4 py-2 hover:bg-gray-100">Mizuno</a>
+          </div>
+        </div>
+      </div>
+      <a href="sale.html" class="text-red-400 font-bold text-lg">SALE</a>
+    </div>
+    <div class="flex items-center space-x-6">
+      <div class="relative"><a href="cart.html" class="text-2xl">🛒</a></div>
+      <button onclick="toggleTheme()" class="text-2xl"><i class="theme-icon fa-solid fa-moon"></i></button>
+
+      <!-- User Icon -->
+      <div class="relative group/user">
+        <div onclick="toggleUserMenu()" class="cursor-pointer hover:text-gray-300 transition">
+          <i class="fa-solid fa-user text-2xl"></i>
+        </div>
+        <!-- Dropdown User -->
+        <div id="userMenu"
+          class="hidden absolute right-0 mt-3 w-36 bg-white text-black rounded-lg shadow-xl border border-gray-100 py-1">
+          <a href="login.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium">Đăng nhập</a>
+          <a href="signup.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium">Đăng ký</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="text-center text-4xl font-extrabold my-12 tracking-tight text-gray-900 dark:text-white">PHÂN LOẠI SẢN PHẨM</h2>
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-10 md:px-20 mb-20">
+    <!-- Giày bóng đá -->
+    <a href="sport.html" class="group relative overflow-hidden rounded-3xl aspect-[4/5] shadow-2xl transition-all duration-500 hover:-translate-y-2">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+      <img src="images/banners/sport_category.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Giày bóng đá">
+      <div class="absolute inset-0 flex flex-col justify-end p-8 z-20">
+        <h3 class="text-3xl font-bold text-white mb-2">GIÀY BÓNG ĐÁ</h3>
+        <p class="text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Chinh phục mọi sân cỏ</p>
+      </div>
+    </a>
+
+    <!-- Giày chạy bộ -->
+    <a href="running.html" class="group relative overflow-hidden rounded-3xl aspect-[4/5] shadow-2xl transition-all duration-500 hover:-translate-y-2">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+      <img src="images/banners/running_category.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Giày chạy bộ">
+      <div class="absolute inset-0 flex flex-col justify-end p-8 z-20">
+        <h3 class="text-3xl font-bold text-white mb-2">GIÀY CHẠY BỘ</h3>
+        <p class="text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Bứt phá mọi giới hạn</p>
+      </div>
+    </a>
+
+    <!-- Giày đi hằng ngày -->
+    <a href="casual.html" class="group relative overflow-hidden rounded-3xl aspect-[4/5] shadow-2xl transition-all duration-500 hover:-translate-y-2">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+      <img src="images/banners/casual_category.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Giày đi hằng ngày">
+      <div class="absolute inset-0 flex flex-col justify-end p-8 z-20">
+        <h3 class="text-3xl font-bold text-white mb-2">GIÀY CASUAL</h3>
+        <p class="text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Phong cách mỗi ngày</p>
+      </div>
+    </a>
+  </div>
+
+  <script>
+    function toggleUserMenu() {
+      const menu = document.getElementById("userMenu");
+      menu.classList.toggle("hidden");
+    }
+
+    // click ra ngoài thì đóng
+    document.addEventListener("click", function (event) {
+      const menu = document.getElementById("userMenu");
+      const icon = document.querySelector(".fa-user");
+
+      if (menu && icon && !icon.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+  </script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+
+</html>
