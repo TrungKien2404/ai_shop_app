@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lịch Sử Mua Hàng - Shoe Store</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header Menu (Chỉ lấy phần core thiết yếu hiển thị Back và User dropdown) -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="home.html" class="flex items-center gap-2">
+        <i class="fa-solid fa-arrow-left"></i> <span class="font-bold text-lg hover:text-blue-600 transition">Quay lại Cửa Hàng</span>
+      </a>
+      <div class="relative group/user z-50 text-right">
+        <div onclick="toggleUserMenu()" class="cursor-pointer hover:text-blue-600 transition flex items-center gap-2 font-medium">
+          <i class="fa-solid fa-circle-user text-2xl text-blue-600"></i>
+          <span id="headerUserName">Khách</span>
+        </div>
+        <div id="userMenu" class="hidden absolute right-0 mt-3 w-40 bg-white text-black rounded-lg shadow-xl border border-gray-100 py-1 text-sm">
+          <a href="history.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium text-blue-600"><i class="fa-solid fa-clock-rotate-left w-5"></i> Lịch sử đơn</a>
+          <a href="javascript:handleLogout()" class="block px-4 py-2 text-red-600 hover:bg-gray-100 font-medium"><i class="fa-solid fa-sign-out-alt w-5"></i> Đăng xuất</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Lịch sử mua hàng -->
+  <main class="max-w-5xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-800"><i class="fa-solid fa-box-open mr-2 text-blue-600"></i> Đơn hàng của bạn</h1>
+    </div>
+
+    <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 text-sm border-b">
+              <th class="p-4 font-semibold whitespace-nowrap">Mã ĐH</th>
+              <th class="p-4 font-semibold">Tóm tắt Sản phẩm</th>
+              <th class="p-4 font-semibold text-right">Tổng Tiền</th>
+              <th class="p-4 font-semibold text-center">Ngày đặt</th>
+              <th class="p-4 font-semibold text-center">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody" class="divide-y divide-gray-100">
+            <tr>
+              <td colspan="5" class="p-10 text-center text-gray-500">
+                <i class="fas fa-spinner fa-spin mr-2"></i>Đang tải dữ liệu...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      checkLoginAndLoadHistory();
+    });
+
+    async function checkLoginAndLoadHistory() {
+      const userStr = sessionStorage.getItem('user');
+      const token = sessionStorage.getItem('token');
+      
+      if (!token || !userStr) {
+        alert("Vui lòng đăng nhập để xem lịch sử đơn hàng!");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const userObj = JSON.parse(userStr);
+      document.getElementById('headerUserName').textContent = userObj.name || userObj.fullname || "Người dùng";
+
+      const tbody = document.getElementById('historyTableBody');
+      
+      try {
+        const response = await fetch(`http://localhost:8000/api/orders/myorders/${userObj._id}`, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+
+        if (!response.ok) throw new Error("Fetch failed");
+
+        let orders = await response.json();
+        
+        // Render
+        tbody.innerHTML = '';
+        if (!orders || orders.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-500">Bạn chưa mua bất kỳ đơn hàng nào. <a href="home.html" class="text-blue-600 underline border-b">Mua ngay</a></td></tr>`;
+          return;
+        }
+
+        orders.forEach((o) => {
+          const code = o.orderCode || (o._id ? o._id.substring(o._id.length - 8).toUpperCase() : 'N/A');
+          const total = o.totalPrice ? o.totalPrice.toLocaleString('vi-VN') + ' đ' : '0 đ';
+          const date = o.createdAt ? new Date(o.createdAt).toLocaleString('vi-VN') : 'N/A';
+          const stt = o.status || 'Chờ xử lý';
+          let sttClass = 'bg-blue-100 text-blue-600'; // Mặc định Đang giao
+          if (stt === 'Đã giao' || stt === 'Completed') sttClass = 'bg-green-100 text-green-600';
+          else if (stt === 'Đã huỷ' || stt === 'Đã hủy' || stt === 'Cancelled') sttClass = 'bg-red-100 text-red-600';
+          else if (stt === 'Chờ xử lý' || stt === 'Pending') sttClass = 'bg-yellow-100 text-yellow-600';
+          
+          let itemsText = "Trống";
+          if (o.orderItems && o.orderItems.length > 0) {
+             const firstItem = o.orderItems[0];
+             if (firstItem && firstItem.name) {
+                itemsText = firstItem.name + (o.orderItems.length > 1 ? ` (+${o.orderItems.length - 1} món khác)` : "");
+             } else {
+                itemsText = `${o.orderItems.length} sản phẩm`;
+             }
+          }
+
+          tbody.innerHTML += `
+            <tr class="hover:bg-gray-50 transition">
+              <td class="p-4 font-mono text-gray-500 text-sm">#${code}</td>
+              <td class="p-4 font-medium text-gray-800">${itemsText}</td>
+              <td class="p-4 font-bold text-red-500 text-right">${total}</td>
+              <td class="p-4 text-gray-500 text-sm text-center">${date}</td>
+              <td class="p-4 text-center">
+                <span class="px-3 py-1 ${sttClass} rounded-full text-xs font-semibold whitespace-nowrap">${stt}</span>
+              </td>
+            </tr>
+          `;
+        });
+
+      } catch(err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Có lỗi khi tải dữ liệu! Vui lòng thử lại.</td></tr>`;
+      }
+    }
+  </script>
+</body>
+</html>

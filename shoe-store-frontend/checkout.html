@@ -139,8 +139,20 @@
 
     updatePaymentInfo();
 
-    document.getElementById("checkoutForm").addEventListener("submit", (event) => {
+    document.getElementById("checkoutForm").addEventListener("submit", async (event) => {
       event.preventDefault();
+
+      // Kiểm tra đăng nhập
+      const token = sessionStorage.getItem('token');
+      const userData = sessionStorage.getItem('user');
+      if (!token || !userData) {
+        alert("Bạn cần đăng nhập để thanh toán!");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const user = JSON.parse(userData);
+      const userId = user._id || user.id;
 
       const buyerName = document.getElementById("buyerName").value.trim();
       const buyerAddress = document.getElementById("buyerAddress").value.trim();
@@ -156,20 +168,61 @@
       }
       document.getElementById("phoneError").classList.add("hidden");
 
+      const orderCode = "DH" + String(Math.floor(Math.random() * 99999)).padStart(5, '0');
+
       const orderData = {
-        orderCode: "OD" + Date.now(),
-        createdAt: new Date().toLocaleString("vi-VN"),
+        user: userId,
+        orderCode: orderCode,
         buyerName,
         buyerAddress,
         buyerPhone,
         shippingMethod,
         paymentMethod,
-        items: cartItems,
-        totalAmount: getFinalAmount()
+        orderItems: cartItems.map(item => ({
+          name: item.name,
+          image: item.image || '',
+          price: item.price,
+          quantity: item.quantity || 1,
+          size: item.size || ''
+        })),
+        totalPrice: getFinalAmount()
       };
 
-      sessionStorage.setItem("lastOrder", JSON.stringify(orderData));
-      window.location.href = "order-success.html";
+      try {
+        const response = await fetch("http://localhost:8000/api/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(orderData)
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.message || "Lỗi tạo đơn hàng");
+        }
+
+        const createdOrder = await response.json();
+
+        // Lưu đơn vừa tạo để hiển thị ở trang thành công
+        sessionStorage.setItem("lastOrder", JSON.stringify({
+          ...orderData,
+          _id: createdOrder._id,
+          createdAt: createdOrder.createdAt
+        }));
+
+        // Xoá giỏ hàng
+        localStorage.removeItem("cart");
+        localStorage.removeItem("cartItems");
+        sessionStorage.removeItem("checkoutCartItems");
+        sessionStorage.removeItem("checkoutTotalAmount");
+
+        window.location.href = "order-success.html";
+      } catch (error) {
+        alert("Lỗi khi đặt hàng: " + error.message);
+        console.error(error);
+      }
     });
   </script>
   <script src="js/theme.js"></script>

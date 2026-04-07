@@ -1,0 +1,81 @@
+[
+  {
+    "_id": "69d376975148d5b5cf12bcf3",
+    "user": "69cf9b5231b5c2f88e06da3b",
+    "orderItems": [
+      {
+        "qty": 1,
+        "_id": "69d376975148d5b5cf12bcf4"
+      }
+    ],
+    "totalPrice": 3290000,
+    "status": "Pending",
+    "createdAt": "2026-04-06T09:02:15.211Z",
+    "__v": 0
+  },
+  {
+    "_id": "69d47abbb17f2773b7b1976b",
+    "user": "69cf9b5231b5c2f88e06da3b",
+    "orderCode": "DH93196",
+    "buyerName": "phụng",
+    "buyerAddress": "Lý thường Kiệt , quận 10 , TP HCM",
+    "buyerPhone": "0356589456",
+    "shippingMethod": "Giao thường",
+    "paymentMethod": "Tiền mặt",
+    "orderItems": [
+      {
+        "name": "Giày Adidas Response 2 Nam - Đen Trắng",
+        "image": "images/Adidas/Giày Adidas Response 2 Nam - Đen Trắng_1790000.jpg",
+        "price": 1790000,
+        "quantity": 1,
+        "size": "39",
+        "_id": "69d47abbb17f2773b7b1976c"
+      }
+    ],
+    "totalPrice": 1790000,
+    "status": "Đang giao",
+    "createdAt": "2026-04-07T03:32:11.767Z",
+    "__v": 0
+  },
+  {
+    "_id": "69d47da4b17f2773b7b19799",
+    "user": "69cf9b5231b5c2f88e06da3b",
+    "orderCode": "DH80707",
+    "buyerName": "phụng",
+    "buyerAddress": "22/539 quang trung , Gò Vấp",
+    "buyerPhone": "0345544012",
+    "shippingMethod": "Giao thường",
+    "paymentMethod": "Tiền mặt",
+    "orderItems": [
+      {
+        "name": "Giày R71",
+        "image": "images/Adidas/Giày R71_1900000.jpg",
+        "price": 1900000,
+        "quantity": 1,
+        "size": "40",
+        "_id": "69d47da4b17f2773b7b1979a"
+      }
+    ],
+    "totalPrice": 1900000,
+    "status": "Đang giao",
+    "createdAt": "2026-04-07T03:44:36.074Z",
+    "__v": 0
+  },
+  {
+    "_id": "69d47e80b17f2773b7b197d4",
+    "user": "123456789012345678901234",
+    "orderCode": "123",
+    "orderItems": [
+      {
+        "name": "Giay",
+        "price": 100,
+        "quantity": 1,
+        "_id": "69d47e80b17f2773b7b197d5"
+      }
+    ],
+    "totalPrice": 100,
+    "status": "Đang giao",
+    "createdAt": "2026-04-07T03:48:16.635Z",
+    "__v": 0
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "products": [
+    {
+      "_id": "123",
+      "name": "Nike Air",
+      "price": 1200000
+    }
+  ]
+}

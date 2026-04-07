@@ -12,13 +12,13 @@ async function handleSignup(event) {
   const confirmPassword = document.querySelectorAll('input[type="password"]')[1].value;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/signup`, {
+    const response = await fetch(`${API_BASE_URL}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        fullname,
+        name: fullname,
         email,
         password,
         confirmPassword
@@ -27,10 +27,10 @@ async function handleSignup(event) {
 
     const data = await response.json();
 
-    if (data.success) {
+    if (response.ok) {
       // Lưu token vào sessionStorage (tự xóa khi đóng trình duyệt)
       sessionStorage.setItem('token', data.token);
-      sessionStorage.setItem('user', JSON.stringify(data.user));
+      sessionStorage.setItem('user', JSON.stringify(data));
 
       alert('Đăng ký thành công!');
       window.location.href = 'home.html';
@@ -63,10 +63,10 @@ async function handleLogin(event) {
 
     const data = await response.json();
 
-    if (data.success) {
+    if (response.ok) {
       // Lưu token vào sessionStorage (tự xóa khi đóng trình duyệt)
       sessionStorage.setItem('token', data.token);
-      sessionStorage.setItem('user', JSON.stringify(data.user));
+      sessionStorage.setItem('user', JSON.stringify(data));
 
       alert('Đăng nhập thành công!');
       window.location.href = 'home.html';
@@ -127,9 +127,17 @@ function updateUserMenu() {
 
   if (userMenu && isLoggedIn()) {
     const user = getUser();
+    const displayName = user.name || user.fullname || 'Người dùng';
+    
+    // Nếu là admin, hiển thị thêm link tới trang quản trị
+    const adminLink = (user.role === 'admin' || user.isAdmin === true) 
+      ? `<a href="admin.html" class="block px-4 py-2 text-blue-600 font-bold hover:bg-gray-100">🚀 Trang Quản Trị</a>` 
+      : '';
+
     userMenu.innerHTML = `
-      <a href="profile.html" class="block px-4 py-2 hover:bg-gray-100">👤 ${user.fullname}</a>
-      <a href="javascript:handleLogout()" class="block px-4 py-2 hover:bg-gray-100">🚪 Đăng xuất</a>
+      <a href="profile.html" class="block px-4 py-2 hover:bg-gray-100">👤 ${displayName}</a>
+      ${adminLink}
+      <a href="javascript:handleLogout()" class="block px-4 py-2 text-red-600 hover:bg-gray-100">🚪 Đăng xuất</a>
     `;
   }
 }

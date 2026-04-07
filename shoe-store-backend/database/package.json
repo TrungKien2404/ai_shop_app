@@ -1,0 +1,12 @@
+{
+  "name": "database",
+  "version": "1.0.0",
+  "main": "seed/seed.js",
+  "scripts": {
+    "seed": "node seed/seed.js",
+    "import": "node scripts/importData.js"
+  },
+  "dependencies": {
+    "mongoose": "^8.0.0"
+  }
+}
