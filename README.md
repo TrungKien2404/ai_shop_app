@@ -1,158 +1,217 @@
 # AI Shop App
 
-Hướng dẫn chi tiết để chạy toàn bộ project `ai_shop_app` trên máy mới.
+Project web ban giay gom:
 
-Project gồm 2 phần:
+- `shoe-store-frontend`: giao dien HTML/CSS/JavaScript thuan
+- `shoe-store-backend`: API Node.js + Express + MongoDB
 
-- `shoe-store-backend`: Node.js + Express + MongoDB
-- `shoe-store-frontend`: HTML/CSS/JS thuần
+README nay duoc viet lai theo dung trang thai code hien tai cua project.
 
-## 1. Yêu cầu trước khi chạy
+## 1. Tong quan
 
-Bạn cần cài sẵn:
+Ung dung co cac chuc nang chinh:
 
-- Node.js 18+ hoặc mới hơn
+- Dang ky, dang nhap, doi mat khau
+- Hien thi danh sach san pham
+- Tim kiem san pham
+- Them vao gio hang
+- Thanh toan va tao don hang
+- Trang quan tri co ban cho admin
+
+Luong chay thuc te:
+
+1. Frontend chay bang Live Server hoac mot static server
+2. Frontend goi API toi backend o `http://localhost:8000`
+3. Backend ket noi MongoDB local mac dinh o `mongodb://127.0.0.1:27017/shoe_shop`
+
+## 2. Cong nghe su dung
+
+### Frontend
+
+- HTML
+- CSS
+- JavaScript thuan
+- Tailwind CDN
+- Font Awesome CDN
+
+### Backend
+
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- JWT
+- bcryptjs
+- cors
+- dotenv
+
+## 3. Cau truc thu muc
+
+```text
+ai_shop_app/
+|- README.md
+|- shoe-store-frontend/
+|  |- home.html
+|  |- login.html
+|  |- signup.html
+|  |- cart.html
+|  |- checkout.html
+|  |- order.html
+|  |- admin.html
+|  |- search.html
+|  |- styles.css
+|  |- images/
+|  '- js/
+|     |- auth.js
+|     |- products.js
+|     |- products-enhanced.js
+|     |- admin.js
+|     '- theme.js
+'- shoe-store-backend/
+   |- server.js
+   |- package.json
+   |- .env.example
+   |- config/
+   |  |- db.js
+   |  '- env.js
+   |- controllers/
+   |- middleware/
+   |- models/
+   |- routes/
+   |- seed_users.js
+   |- backup_users.js
+   |- restore_users_backup.js
+   |- seed-users.json
+   |- users-backup.json
+   '- database/
+```
+
+## 4. Giai thich nhanh cac phan code chinh
+
+### Frontend
+
+- `js/auth.js`
+  Xu ly dang ky, dang nhap, dang xuat, token, user hien tai, gio hang theo tung tai khoan, va chan hanh dong khi chua dang nhap.
+
+- `js/products.js`
+  Dung cho cac trang danh sach san pham thong thuong nhu brand/category/bestseller/trending.
+
+- `js/products-enhanced.js`
+  Dung cho trang tim kiem va popup chon size truoc khi them vao gio hang.
+
+- `cart.html`
+  Hien thi gio hang hien tai, cho phep xoa item, chuyen sang thanh toan.
+
+- `order.html`
+  Trang chi tiet dat mua nhanh mot san pham, co chon size va so luong.
+
+- `checkout.html`
+  Thu thap thong tin nguoi mua, phuong thuc giao hang, phuong thuc thanh toan, roi gui don hang len backend.
+
+- `admin.html` + `js/admin.js`
+  Giao dien quan tri san pham, don hang, nguoi dung.
+
+### Backend
+
+- `server.js`
+  Diem khoi dong backend, tao app Express, ket noi MongoDB, mount routes, mo cong server.
+
+- `config/env.js`
+  Doc `.env` neu co, va tu fallback sang cau hinh mac dinh neu khong co `.env`.
+
+- `config/db.js`
+  Tao ket noi MongoDB bang Mongoose.
+
+- `models/User.js`
+  Model user, co hash password bang `bcryptjs` truoc khi luu.
+
+- `models/Product.js`
+  Model san pham.
+
+- `models/Order.js`
+  Model don hang.
+
+- `controllers/authController.js`
+  Xu ly dang ky, dang nhap, lay danh sach user, doi mat khau.
+
+- `controllers/productController.js`
+  Xu ly lay, them, sua, xoa san pham.
+
+- `controllers/orderController.js`
+  Xu ly tao don hang, lay danh sach don hang, cap nhat trang thai don.
+
+- `middleware/authMiddleware.js`
+  Xac thuc JWT va kiem tra quyen admin.
+
+- `routes/*.js`
+  Khai bao endpoint cho auth, products, orders.
+
+## 5. Yeu cau truoc khi chay
+
+Ban can cai san:
+
+- Node.js 18 tro len
 - npm
 - MongoDB Community Server
-- VS Code + Live Server extension là tốt nhất để mở frontend
 
-Kiểm tra nhanh:
+Kiem tra nhanh:
 
 ```powershell
 node -v
 npm -v
 ```
 
-## 2. Cấu trúc project
+## 6. Cau hinh mac dinh hien tai
 
-```text
-ai_shop_app/
-├─ shoe-store-backend/
-│  ├─ server.js
-│  ├─ .env
-│  ├─ .env.example
-│  ├─ seed_users.js
-│  ├─ backup_users.js
-│  ├─ restore_users_backup.js
-│  ├─ seed-users.json
-│  └─ users-backup.json
-└─ shoe-store-frontend/
-   ├─ home.html
-   ├─ profile.html
-   ├─ cart.html
-   ├─ checkout.html
-   ├─ search.html
-   └─ js/
+Backend hien da duoc chinh de may khac clone ve khong bat buoc phai tu tao `.env`.
+
+Neu khong co `.env`, backend se tu dung:
+
+```env
+MONGO_URI=mongodb://127.0.0.1:27017/shoe_shop
+JWT_SECRET=shoe-shop-dev-secret
+PORT=8000
 ```
 
-## 3. Cài đặt backend
+File cau hinh hien tai nam o:
 
-Mở terminal tại thư mục gốc project:
+- `shoe-store-backend/config/env.js`
+
+### Khi nao nen dung `.env`
+
+Ban chi can tao `.env` neu muon doi:
+
+- cong chay backend
+- chuoi ket noi MongoDB
+- JWT secret
+
+Vi du `.env`:
+
+```env
+MONGO_URI=mongodb://127.0.0.1:27017/shoe_shop
+JWT_SECRET=my_custom_secret
+PORT=8000
+```
+
+## 7. Cach chay backend
+
+Mo terminal:
 
 ```powershell
 cd e:\Kien_HK2_Nam3\ai_shop_app\shoe-store-backend
 npm install
-```
-
-Nếu `node_modules` đã có sẵn thì vẫn nên chạy lại `npm install` trên máy mới.
-
-## 4. Cấu hình file .env
-
-Trong thư mục `shoe-store-backend`, tạo file `.env`.
-
-Bạn có thể copy từ file mẫu `.env.example`.
-
-Nội dung mẫu:
-
-```env
-MONGO_URI=mongodb://127.0.0.1:27017/shoe_shop
-JWT_SECRET=your_jwt_secret_here
-PORT=8000
-```
-
-Giải thích:
-
-- `MONGO_URI`: địa chỉ MongoDB
-- `JWT_SECRET`: khóa tạo token đăng nhập
-- `PORT`: cổng chạy backend
-
-## 5. Khởi động MongoDB
-
-Bạn phải chắc chắn MongoDB đang chạy trước khi start backend.
-
-Nếu bạn cài MongoDB như service trên Windows, thường chỉ cần mở Services và start MongoDB.
-
-Nếu chạy thủ công, có thể dùng:
-
-```powershell
-mongod
-```
-
-Nếu MongoDB đã chạy rồi thì bỏ qua bước này.
-
-## 6. Khôi phục user/admin cũ từ backup
-
-Quan trọng:
-
-- Dữ liệu MongoDB không tự đi theo khi `git push`
-- Để mang user cũ sang máy mới, project đã có file `users-backup.json`
-- Máy mới clone về cần chạy lệnh restore để nhập lại user vào MongoDB
-
-Trong thư mục `shoe-store-backend`, chạy:
-
-```powershell
-npm run restore:users
-```
-
-hoặc:
-
-```powershell
-node restore_users_backup.js
-```
-
-Lệnh này sẽ:
-
-- đọc file `users-backup.json`
-- kết nối MongoDB
-- tạo mới hoặc cập nhật lại user
-- giữ nguyên mật khẩu đã hash trong database cũ
-
-## 7. Tạo user mẫu nếu không muốn restore backup
-
-Nếu bạn không muốn dùng user cũ mà chỉ muốn có tài khoản mẫu để test:
-
-```powershell
-npm run seed:users
-```
-
-hoặc:
-
-```powershell
-node seed_users.js
-```
-
-Script này đọc file `seed-users.json`.
-
-Tài khoản mẫu mặc định:
-
-- Admin: `admin@gmail.com` / `123456`
-- User: `user@gmail.com` / `123456`
-
-## 8. Chạy backend
-
-Trong thư mục `shoe-store-backend`:
-
-```powershell
 npm start
 ```
 
-Hoặc chạy chế độ dev:
+Hoac chay che do dev:
 
 ```powershell
+cd e:\Kien_HK2_Nam3\ai_shop_app\shoe-store-backend
+npm install
 npm run dev
 ```
 
-Khi chạy thành công, backend sẽ mở ở:
+Khi chay thanh cong:
 
 ```text
 http://localhost:8000
@@ -164,50 +223,161 @@ Test nhanh:
 http://localhost:8000/
 ```
 
-Nếu thấy JSON trả về như `Shoe shop API` là backend đã chạy đúng.
+Neu thay JSON tra ve thi backend da chay dung.
 
-## 9. Chạy frontend
+## 8. Cach chay frontend
 
-Frontend là HTML/CSS/JS thuần, không cần `npm install`.
+Frontend la HTML/CSS/JS thuan, khong can `npm install`.
 
-### Cách khuyến nghị: dùng VS Code Live Server
+Khuyen nghi dung VS Code + Live Server:
 
-1. Mở thư mục `shoe-store-frontend` bằng VS Code
-2. Click phải vào `home.html`
-3. Chọn `Open with Live Server`
+1. Mo thu muc `shoe-store-frontend`
+2. Click phai vao `home.html`
+3. Chon `Open with Live Server`
 
-Frontend sẽ chạy ở dạng:
-
-```text
-http://127.0.0.1:5500/home.html
-```
-
-hoặc cổng tương tự.
-
-### Cách đơn giản khác
-
-Bạn cũng có thể mở trực tiếp file:
+Thong thuong frontend se chay o dang:
 
 ```text
-shoe-store-frontend/home.html
+http://127.0.0.1:5500/shoe-store-frontend/home.html
 ```
 
-Nhưng cách dùng Live Server vẫn ổn định hơn khi test navigation và fetch.
+Luu y:
 
-## 10. Thứ tự chạy đầy đủ trên máy mới
+- Backend phai chay truoc
+- Frontend hien dang goi API co dinh toi `http://localhost:8000`
 
-Đây là quy trình khuyến nghị từ đầu đến cuối:
+## 9. Cach chay day du tu dau tren may moi
 
-1. Clone repo về máy
-2. Mở terminal tại `shoe-store-backend`
-3. Chạy `npm install`
-4. Tạo `.env` từ `.env.example`
-5. Bật MongoDB
-6. Chạy `npm run restore:users`
-7. Chạy `npm start`
-8. Mở `shoe-store-frontend/home.html` bằng Live Server
+### Buoc 1: clone project
 
-## 11. Các lệnh quan trọng
+```powershell
+git clone <repo-url>
+cd ai_shop_app
+```
+
+### Buoc 2: cai backend
+
+```powershell
+cd shoe-store-backend
+npm install
+```
+
+### Buoc 3: bat MongoDB
+
+Neu MongoDB dang chay dang Windows Service thi chi can dam bao service da start.
+
+Ban khong can mo MongoDB Compass va bam `Connect` de backend chay.
+
+Compass chi la phan mem xem du lieu, khong phai dieu kien bat buoc de app hoat dong.
+
+### Buoc 4: chay backend
+
+```powershell
+npm start
+```
+
+### Buoc 5: mo frontend
+
+Mo `shoe-store-frontend/home.html` bang Live Server.
+
+## 10. Du lieu MongoDB co di theo GitHub khong
+
+Khong.
+
+`git push` chi day:
+
+- source code
+- file JSON / anh / HTML / JS / CSS
+- moi file da duoc commit
+
+`git push` khong day:
+
+- MongoDB dang chay tren may ban
+- collection trong local database
+- du lieu trong Compass
+
+Noi ngan gon:
+
+- Code di theo GitHub
+- Database local khong di theo GitHub
+
+## 11. Project hien co san du lieu gi khi pull ve
+
+### Co the di theo repo
+
+- `seed-users.json`
+- `users-backup.json`
+- source code frontend/backend
+
+### Khong tu di theo repo
+
+- collection MongoDB hien tai tren may ban
+- du lieu san pham trong Mongo neu ban chi nhap thu cong
+- du lieu don hang da tao trong Mongo
+
+## 12. Cach mang du lieu user sang may khac
+
+Project hien co 2 cach:
+
+### Cach 1: restore user tu backup
+
+File:
+
+- `shoe-store-backend/users-backup.json`
+
+Chay:
+
+```powershell
+cd e:\Kien_HK2_Nam3\ai_shop_app\shoe-store-backend
+npm run restore:users
+```
+
+Script nay se:
+
+- doc `users-backup.json`
+- ket noi MongoDB
+- tao moi hoac cap nhat user
+
+### Cach 2: tao user mau
+
+File:
+
+- `shoe-store-backend/seed-users.json`
+
+Chay:
+
+```powershell
+cd e:\Kien_HK2_Nam3\ai_shop_app\shoe-store-backend
+npm run seed:users
+```
+
+Tai khoan mau mac dinh:
+
+- Admin: `admin@gmail.com` / `123456`
+- User: `user@gmail.com` / `123456`
+
+## 13. Backup user truoc khi push GitHub
+
+Neu ban vua:
+
+- dang ky them user
+- doi mat khau
+- doi quyen admin
+
+thi nen backup user truoc khi push:
+
+```powershell
+cd e:\Kien_HK2_Nam3\ai_shop_app\shoe-store-backend
+npm run backup:users
+```
+
+Sau do commit luon file:
+
+```text
+shoe-store-backend/users-backup.json
+```
+
+## 14. Cac lenh quan trong
 
 ### Backend
 
@@ -218,7 +388,7 @@ npm start
 npm run dev
 ```
 
-### User / admin
+### User scripts
 
 ```powershell
 npm run seed:users
@@ -226,7 +396,7 @@ npm run backup:users
 npm run restore:users
 ```
 
-### Chạy trực tiếp bằng node
+### Chay truc tiep bang Node
 
 ```powershell
 node seed_users.js
@@ -234,139 +404,163 @@ node backup_users.js
 node restore_users_backup.js
 ```
 
-## 12. Ý nghĩa các script user
+## 15. API chinh
 
-### `seed_users.js`
+### Goc API
 
-Dùng để tạo tài khoản mẫu từ file `seed-users.json`.
+- `GET /`
 
-### `backup_users.js`
+### Auth
 
-Dùng để xuất user hiện có trong MongoDB ra file `users-backup.json`.
+- `GET /api/auth`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `PUT /api/auth/change-password`
+- `GET /api/auth/users`
 
-Khi bạn vừa tạo thêm tài khoản mới và muốn push lên GitHub để máy khác restore được, hãy chạy:
+### Products
+
+- `GET /api/products`
+- `GET /api/products/:id`
+- `POST /api/products`
+- `PUT /api/products/:id`
+- `DELETE /api/products/:id`
+
+Luu y:
+
+- `POST`, `PUT`, `DELETE` san pham yeu cau token admin
+
+### Orders
+
+- `GET /api/orders`
+- `GET /api/orders/myorders/:userId`
+- `POST /api/orders`
+- `PUT /api/orders/:id`
+
+Luu y:
+
+- Theo code hien tai, route order chua gan middleware `protect`, nhung frontend van gui token khi thanh toan
+
+## 16. Luong du lieu chinh trong app
+
+### Dang ky / dang nhap
+
+1. Frontend gui request toi `api/auth/register` hoac `api/auth/login`
+2. Backend tao hoac kiem tra user trong MongoDB
+3. Backend tra ve token JWT
+4. Frontend luu `token` va `user` vao `sessionStorage`
+
+### Gio hang
+
+1. Frontend luu gio hang trong `localStorage`
+2. Gio hang duoc tach theo tung user dang nhap
+3. Khi chua dang nhap, cac nut them gio hang va thanh toan da duoc chan o frontend
+
+### Thanh toan
+
+1. Frontend gom item tu gio hang
+2. Nguoi dung nhap thong tin mua hang o `checkout.html`
+3. Frontend gui `POST /api/orders`
+4. Backend luu don hang vao MongoDB
+
+## 17. File frontend quan trong de sua tinh nang
+
+Neu ban muon chinh giao dien hoac hanh vi, day la cac file nen xem truoc:
+
+- `shoe-store-frontend/js/auth.js`
+- `shoe-store-frontend/js/products.js`
+- `shoe-store-frontend/js/products-enhanced.js`
+- `shoe-store-frontend/js/admin.js`
+- `shoe-store-frontend/cart.html`
+- `shoe-store-frontend/order.html`
+- `shoe-store-frontend/checkout.html`
+- `shoe-store-frontend/search.html`
+
+## 18. File backend quan trong de sua tinh nang
+
+- `shoe-store-backend/server.js`
+- `shoe-store-backend/config/env.js`
+- `shoe-store-backend/config/db.js`
+- `shoe-store-backend/controllers/authController.js`
+- `shoe-store-backend/controllers/productController.js`
+- `shoe-store-backend/controllers/orderController.js`
+- `shoe-store-backend/middleware/authMiddleware.js`
+- `shoe-store-backend/models/User.js`
+- `shoe-store-backend/models/Product.js`
+- `shoe-store-backend/models/Order.js`
+
+## 19. Loi thuong gap
+
+### Loi `EADDRINUSE: address already in use :::8000`
+
+Nguyen nhan:
+
+- cong `8000` dang bi mot tien trinh khac chiem
+
+Cach xu ly nhanh tren Windows:
 
 ```powershell
-npm run backup:users
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
 ```
 
-Sau đó commit luôn file:
-
-```text
-shoe-store-backend/users-backup.json
-```
-
-### `restore_users_backup.js`
-
-Dùng để nhập lại user từ `users-backup.json` vào MongoDB trên máy mới.
-
-## 13. Khi nào cần chạy backup user
-
-Bạn nên chạy backup trong các trường hợp sau:
-
-- vừa đăng ký thêm tài khoản mới
-- vừa đổi mật khẩu cho user/admin
-- vừa chỉnh quyền `isAdmin`
-- sắp push project lên GitHub và muốn máy khác lấy về có thể restore lại đúng user hiện tại
-
-Lệnh:
+Sau do chay lai:
 
 ```powershell
-cd shoe-store-backend
-npm run backup:users
+npm start
 ```
 
-## 14. Test nhanh sau khi chạy
+### Frontend mo duoc nhung khong co du lieu
 
-Sau khi backend và frontend đã chạy:
+Kiem tra:
 
-1. Mở `home.html`
-2. Đăng nhập bằng tài khoản admin hoặc user
-3. Thử tìm kiếm sản phẩm
-4. Thêm sản phẩm vào giỏ
-5. Vào giỏ hàng
-6. Thanh toán
-7. Vào trang cá nhân
-8. Thử đổi mật khẩu
+- backend da chay chua
+- MongoDB da chay chua
+- collection san pham co du lieu chua
 
-## 15. Một số URL quan trọng
+### Dang nhap khong duoc
 
-### Frontend
+Kiem tra:
 
-- `home.html`
-- `login.html`
-- `signup.html`
-- `cart.html`
-- `checkout.html`
-- `profile.html`
-- `search.html`
+- backend co dang chay khong
+- MongoDB co dang chay khong
+- da `restore` hoac `seed` user chua
+- email/password dung chua
 
-### Backend API
+### Ban pull code ve nhung khong thay user cu
 
-- `GET http://localhost:8000/`
-- `POST http://localhost:8000/api/auth/register`
-- `POST http://localhost:8000/api/auth/login`
-- `PUT http://localhost:8000/api/auth/change-password`
-- `GET http://localhost:8000/api/products`
-- `POST http://localhost:8000/api/orders`
+Nguyen nhan:
 
-## 16. Lỗi thường gặp
+- du lieu MongoDB local khong di theo Git
 
-### Không đăng nhập được
+Cach xu ly:
 
-Kiểm tra:
+1. O may cu chay `npm run backup:users`
+2. Commit file `users-backup.json`
+3. O may moi pull code
+4. Chay `npm run restore:users`
 
-- backend đã chạy chưa
-- MongoDB đã chạy chưa
-- đã restore user chưa
-- email/password nhập đúng chưa
+## 20. Goi y quy trinh lam viec an toan
 
-### Không thấy user cũ trên máy mới
+### Khi ban phat trien tren may chinh
 
-Bạn phải:
-
-1. chạy `npm run backup:users` trên máy cũ
-2. commit file `users-backup.json`
-3. pull/clone trên máy mới
-4. chạy `npm run restore:users`
-
-Nếu chỉ `git push` mà không backup user ra file JSON thì MongoDB của máy khác sẽ không có các tài khoản cũ.
-
-### Frontend mở được nhưng không tải dữ liệu
-
-Kiểm tra:
-
-- backend đang chạy ở `http://localhost:8000`
-- file `.env` đúng
-- MongoDB có dữ liệu
-
-## 17. Gợi ý quy trình làm việc an toàn
-
-Khi bạn thay đổi dữ liệu user thật trong quá trình dev:
-
-1. Chạy app
-2. Tạo user mới hoặc đổi mật khẩu
-3. Chạy `npm run backup:users`
+1. Chay app
+2. Tao hoac sua user/admin
+3. Chay `npm run backup:users`
 4. Commit code + `users-backup.json`
 5. Push GitHub
 
-Máy khác lấy về:
+### Khi may khac pull ve
 
-1. `npm install`
-2. bật MongoDB
+1. `npm install` trong `shoe-store-backend`
+2. Bat MongoDB
 3. `npm run restore:users`
 4. `npm start`
+5. Mo frontend bang Live Server
 
-## 18. Ghi chú quan trọng
+## 21. Chay nhanh nhat
 
-- `register` đã tự lưu user mới vào MongoDB
-- `login` chỉ kiểm tra user trong MongoDB
-- `change-password` đã lưu mật khẩu mới xuống MongoDB
-- `users-backup.json` là cầu nối để mang dữ liệu user từ máy này sang máy khác qua Git
-
-## 19. Lệnh chạy nhanh nhất
-
-Nếu mọi thứ đã cài sẵn, đây là bộ lệnh ngắn nhất:
+Neu may da cai san Node.js va MongoDB:
 
 ```powershell
 cd e:\Kien_HK2_Nam3\ai_shop_app\shoe-store-backend
@@ -375,10 +569,17 @@ npm run restore:users
 npm start
 ```
 
-Sau đó mở:
+Sau do mo:
 
 ```text
 shoe-store-frontend/home.html
 ```
 
-bằng Live Server.
+bang Live Server.
+
+## 22. Ghi chu cuoi
+
+- Backend hien co the chay ngay ca khi khong co `.env`
+- MongoDB phai dang chay, nhung khong can mo Compass de bam `Connect`
+- User co the backup/restore qua file JSON
+- Database local khong tu di theo GitHub

@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const config = require("../config/env");
 
 const normalizeEmail = (email) => (email || "").trim().toLowerCase();
 
@@ -10,7 +11,7 @@ const findUserByEmailCaseInsensitive = (email) =>
 
 // generate JWT
 const generateToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  jwt.sign({ id }, config.jwtSecret, { expiresIn: "7d" });
 
 exports.register = async (req, res) => {
   try {

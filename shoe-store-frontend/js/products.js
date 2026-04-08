@@ -96,7 +96,7 @@ function renderProductCards(container, productsSet, page = 1) {
                 <div class="relative overflow-hidden h-64 bg-gray-100 flex items-center justify-center">
                     <img src="${img}" alt="${p.name}" class="object-cover w-full h-full group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                        <button onclick="event.stopPropagation(); addToCart('${p._id}', '${p.name}', ${p.price})" class="bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transform translate-y-4 group-hover:translate-y-0 transition">
+                        <button onclick="event.stopPropagation(); addToCart('${p._id}', '${p.name}', ${p.price}, '${img}')" class="bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transform translate-y-4 group-hover:translate-y-0 transition">
                             Thêm vào giỏ
                         </button>
                     </div>
@@ -160,24 +160,22 @@ window.changePage = function(page) {
     }
 };
 
-function addToCart(id, name, price) {
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    
-    // Check exist
-    const existing = cart.find(item => item.id === id);
-    if (existing) {
-        existing.quantity += 1;
-        existing.total = existing.quantity * existing.price;
-    } else {
-        cart.push({
-            id,
-            name,
-            price: price,
-            quantity: 1,
-            total: price
-        });
+function addToCart(id, name, price, image = '') {
+    if (!window.authUtils?.requireLogin?.('Xin vui lòng đăng nhập trước khi thêm sản phẩm vào giỏ hàng.')) {
+        return;
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
+    const currentCart = window.cartUtils?.getCartItems?.() || [];
+    
+    const updatedCart = [...currentCart, {
+        id,
+        name,
+        price: Number(price) || 0,
+        quantity: 1,
+        image
+    }];
+
+    window.cartUtils?.saveCartItems?.(updatedCart);
+    window.cartUtils?.updateCartBadge?.();
     alert('Đã thêm "' + name + '" vào giỏ hàng!');
 }

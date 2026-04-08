@@ -1,13 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 const User = require("./models/User");
+const config = require("./config/env");
 
-dotenv.config({ path: path.join(__dirname, ".env") });
-
-const DEFAULT_MONGO_URI = "mongodb://127.0.0.1:27017/shoe_shop";
-const mongoUri = process.env.MONGO_URI || DEFAULT_MONGO_URI;
 const seedFilePath = path.join(__dirname, "seed-users.json");
 
 function normalizeUser(rawUser = {}) {
@@ -59,8 +55,8 @@ async function upsertUser(userData) {
 async function seedUsers() {
   const seedUsersList = readSeedUsers();
 
-  console.log(`Dang ket noi MongoDB: ${mongoUri}`);
-  await mongoose.connect(mongoUri);
+  console.log(`Dang ket noi MongoDB: ${config.mongoUri}`);
+  await mongoose.connect(config.mongoUri);
   console.log("MongoDB connected");
 
   let createdCount = 0;

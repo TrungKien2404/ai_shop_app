@@ -221,6 +221,10 @@
     }
 
     function goToCheckout() {
+      if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi thanh toán.")) {
+        return;
+      }
+
       const cartItems = getCartItems().map((item) => ({
         ...item,
         quantity: Number(item.quantity) || 1,

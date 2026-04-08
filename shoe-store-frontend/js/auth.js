@@ -69,7 +69,14 @@ async function handleLogin(event) {
       sessionStorage.setItem('user', JSON.stringify(data));
 
       alert('Đăng nhập thành công!');
-      window.location.href = 'home.html';
+      const redirectAfterLogin = sessionStorage.getItem('redirectAfterLogin');
+      if (redirectAfterLogin && !redirectAfterLogin.includes('login.html') && !redirectAfterLogin.includes('signup.html')) {
+        sessionStorage.removeItem('redirectAfterLogin');
+        window.location.href = redirectAfterLogin;
+      } else {
+        sessionStorage.removeItem('redirectAfterLogin');
+        window.location.href = 'home.html';
+      }
     } else {
       alert('Đăng nhập thất bại: ' + data.message);
     }
@@ -119,6 +126,15 @@ async function handleLogout() {
 // ================== CHECK IF LOGGED IN ==================
 function isLoggedIn() {
   return !!getToken();
+}
+
+function requireLogin(message = 'Xin vui long dang nhap de tiep tuc.') {
+  if (isLoggedIn()) return true;
+
+  sessionStorage.setItem('redirectAfterLogin', window.location.href);
+  alert(message);
+  window.location.href = 'login.html';
+  return false;
 }
 
 // ================== CART HELPERS ==================
@@ -246,6 +262,13 @@ window.cartUtils = {
   updateCartBadge,
   normalizeCartItems,
   normalizeCartQuantity
+};
+
+window.authUtils = {
+  getToken,
+  getUser,
+  isLoggedIn,
+  requireLogin
 };
 
 function getNavbarSearchElements() {

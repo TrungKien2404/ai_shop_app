@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const User = require('./models/User');
-const dotenv = require('dotenv');
-
-dotenv.config();
+const config = require('./config/env');
 
 const fixAdmin = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(config.mongoUri);
     console.log("Connected to DB...");
     
     // Tìm user admin

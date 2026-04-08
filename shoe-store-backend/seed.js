@@ -1,13 +1,11 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const Product = require('./models/Product');
-
-dotenv.config();
+const config = require('./config/env');
 
 async function seedProducts() {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(config.mongoUri);
     console.log("Connected to DB...");
 
     const data = fs.readFileSync('./data.csv', 'utf8');

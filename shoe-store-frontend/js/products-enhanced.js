@@ -381,6 +381,10 @@ function ensureSizePickerModal() {
 }
 
 function openSizePicker(product) {
+  if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi thêm sản phẩm vào giỏ hàng.")) {
+    return;
+  }
+
   pendingCartProduct = {
     ...product,
     selectedSize: ""
@@ -406,6 +410,11 @@ function closeSizePicker() {
 }
 
 function confirmSizeSelection() {
+  if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi thêm sản phẩm vào giỏ hàng.")) {
+    closeSizePicker();
+    return;
+  }
+
   if (!pendingCartProduct?.selectedSize) {
     document.getElementById("sizePickerError")?.classList.remove("hidden");
     return;

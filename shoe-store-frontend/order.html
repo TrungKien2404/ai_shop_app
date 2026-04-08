@@ -238,6 +238,10 @@
     }
 
     function addCurrentItemToCart() {
+      if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi thêm sản phẩm vào giỏ hàng.")) {
+        return false;
+      }
+
       const item = getSelectedOrderData();
       if (!item.size) {
         alert("Vui lòng chọn size trước khi thêm vào giỏ hàng.");
@@ -251,6 +255,10 @@
     }
 
     function goToCheckoutWithCurrentItem() {
+      if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi thanh toán.")) {
+        return;
+      }
+
       const item = getSelectedOrderData();
       if (!item.size) {
         alert("Vui lòng chọn size trước khi thanh toán.");

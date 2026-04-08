@@ -1,10 +1,7 @@
 const express = require("express");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db");
 const cors = require("cors");
-
-dotenv.config();
-connectDB();
+const connectDB = require("./config/db");
+const config = require("./config/env");
 
 const app = express();
 app.use(cors());
@@ -28,5 +25,27 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message });
 });
 
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+async function startServer() {
+  await connectDB();
+
+  const server = app.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`);
+
+    if (!config.envFileExists) {
+      console.log("Khong tim thay .env, backend dang dung cau hinh mac dinh cho development.");
+    }
+  });
+
+  server.on("error", (error) => {
+    if (error.code === "EADDRINUSE") {
+      console.error(`Port ${config.port} dang duoc mot tien trinh khac su dung.`);
+      console.error(`Hay tat tien trinh cu hoac doi PORT trong .env roi chay lai.`);
+      return process.exit(1);
+    }
+
+    console.error("Server start error:", error);
+    process.exit(1);
+  });
+}
+
+startServer();
