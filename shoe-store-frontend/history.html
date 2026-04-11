@@ -103,8 +103,9 @@
           const date = o.createdAt ? new Date(o.createdAt).toLocaleString('vi-VN') : 'N/A';
           const stt = o.status || 'Chờ xử lý';
           let sttClass = 'bg-blue-100 text-blue-600'; // Mặc định Đang giao
-          if (stt === 'Đã giao' || stt === 'Completed') sttClass = 'bg-green-100 text-green-600';
-          else if (stt === 'Đã huỷ' || stt === 'Đã hủy' || stt === 'Cancelled') sttClass = 'bg-red-100 text-red-600';
+
+          if (stt === 'Đã hoàn thành' || stt === 'Đã giao' || stt === 'Completed') sttClass = 'bg-green-100 text-green-600';
+          else if (stt === 'Đã hủy' || stt === 'Đã huỷ' || stt === 'Cancelled') sttClass = 'bg-red-100 text-red-600';
           else if (stt === 'Chờ xử lý' || stt === 'Pending') sttClass = 'bg-yellow-100 text-yellow-600';
           
           let itemsText = "Trống";

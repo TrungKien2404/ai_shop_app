@@ -11,12 +11,14 @@
     "restore:users": "node restore_users_backup.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.4.0",
-    "dotenv": "^16.1.4",
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
     "jsonwebtoken": "^9.0.3",
-    "cors": "^2.8.5"
+    "sequelize": "^6.37.8",
+    "sqlite3": "^6.0.1",
+    "tedious": "^19.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

@@ -1,14 +1,40 @@
-const mongoose = require("mongoose");
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../config/db");
 
-const productSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  brand: String,
-  category: String,
-  size: [Number],
-  stock: { type: Number, default: 0 },
-  description: String,
-  image: String,
+const Product = sequelize.define("Product", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  price: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+  brand: {
+    type: DataTypes.STRING,
+  },
+  category: {
+    type: DataTypes.STRING,
+  },
+  size: {
+    type: DataTypes.STRING, // Store as JSON string, e.g., "[38, 39, 40]"
+    defaultValue: "[]",
+  },
+  stock: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  description: {
+    type: DataTypes.TEXT,
+  },
+  image: {
+    type: DataTypes.STRING,
+  },
 });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = Product;

@@ -14,7 +14,7 @@ const protect = async (req, res, next) => {
 
       const decoded = jwt.verify(token, config.jwtSecret);
 
-      req.user = await User.findById(decoded.id).select("-password");
+      req.user = await User.findByPk(decoded.id, { attributes: { exclude: ["password"] } });
       next();
     } catch (error) {
       console.error(error);
