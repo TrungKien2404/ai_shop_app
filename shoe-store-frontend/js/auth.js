@@ -1,6 +1,7 @@
 // src/js/auth.js - Frontend Authentication Handler
 
 const API_BASE_URL = 'http://localhost:8000/api/auth';
+const CHAT_API_URL = 'http://localhost:8000/api/chat';
 
 // ================== SIGNUP ==================
 async function handleSignup(event) {
@@ -362,6 +363,7 @@ if (loginForm && window.location.pathname.includes('login.html')) {
 
 // ================== CHAT WIDGET INJECTION ==================
 function injectChatWidget() {
+  return; // Legacy widget disabled: live chat widget is initialized below.
   const currentPath = window.location.pathname;
   if (currentPath.includes('login.html') || currentPath.includes('signup.html')) {
     return;
@@ -438,4 +440,295 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', injectChatWidget);
 } else {
   injectChatWidget();
+}
+
+// ================== LIVE CHAT WIDGET ==================
+const liveChatState = {
+  history: [],
+  isSending: false,
+  typingElement: null
+};
+
+function scrollLiveChatToBottom() {
+  const messages = document.getElementById('myshoesChatMessages');
+  if (messages) {
+    messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
+  }
+}
+
+function setLiveChatSendingState(isSending) {
+  liveChatState.isSending = isSending;
+
+  const input = document.getElementById('myshoesChatInput');
+  const sendButton = document.getElementById('myshoesChatSendButton');
+
+  if (input) input.disabled = isSending;
+  if (sendButton) sendButton.disabled = isSending;
+}
+
+function buildLiveChatOrderUrl(product) {
+  return `order.html?name=${encodeURIComponent(product.name || '')}&price=${encodeURIComponent(product.price || 0)}&image=${encodeURIComponent(product.image || '')}`;
+}
+
+function appendLiveChatMessage(role, content, options = {}) {
+  const messages = document.getElementById('myshoesChatMessages');
+  if (!messages) return null;
+
+  const messageEl = document.createElement('div');
+  messageEl.className = `myshoes-chat-message ${role === 'user' ? 'is-user' : 'is-assistant'}`;
+
+  if (role === 'assistant') {
+    const avatar = document.createElement('div');
+    avatar.className = 'myshoes-chat-avatar';
+    avatar.textContent = 'AI';
+    messageEl.appendChild(avatar);
+  }
+
+  const bodyEl = document.createElement('div');
+  bodyEl.className = 'myshoes-chat-body';
+
+  const bubbleEl = document.createElement('div');
+  bubbleEl.className = 'myshoes-chat-bubble';
+  bubbleEl.textContent = content;
+  bodyEl.appendChild(bubbleEl);
+
+  if (Array.isArray(options.products) && options.products.length) {
+    const productsEl = document.createElement('div');
+    productsEl.className = 'myshoes-chat-products';
+
+    options.products.forEach((product) => {
+      const productLink = document.createElement('a');
+      productLink.className = 'myshoes-chat-product';
+      productLink.href = buildLiveChatOrderUrl(product);
+
+      const brandEl = document.createElement('span');
+      brandEl.className = 'myshoes-chat-product-brand';
+      brandEl.textContent = product.brand || product.category || 'MyShoes';
+
+      const nameEl = document.createElement('strong');
+      nameEl.className = 'myshoes-chat-product-name';
+      nameEl.textContent = product.name || 'San pham';
+
+      const priceEl = document.createElement('span');
+      priceEl.className = 'myshoes-chat-product-price';
+      const amount = Number(product.price) || 0;
+      priceEl.textContent = `${amount.toLocaleString('vi-VN')} đ`;
+
+      productLink.appendChild(brandEl);
+      productLink.appendChild(nameEl);
+      productLink.appendChild(priceEl);
+      productsEl.appendChild(productLink);
+    });
+
+    bodyEl.appendChild(productsEl);
+  }
+
+  messageEl.appendChild(bodyEl);
+  messages.appendChild(messageEl);
+  scrollLiveChatToBottom();
+  return messageEl;
+}
+
+function showLiveChatTypingIndicator() {
+  const messages = document.getElementById('myshoesChatMessages');
+  if (!messages || liveChatState.typingElement) return;
+
+  const typingEl = document.createElement('div');
+  typingEl.className = 'myshoes-chat-message is-assistant myshoes-chat-typing';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'myshoes-chat-avatar';
+  avatar.textContent = 'AI';
+
+  const body = document.createElement('div');
+  body.className = 'myshoes-chat-body';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'myshoes-chat-bubble';
+
+  const dots = document.createElement('div');
+  dots.className = 'myshoes-chat-dots';
+  dots.innerHTML = '<span></span><span></span><span></span>';
+
+  const text = document.createElement('div');
+  text.className = 'myshoes-chat-status';
+  text.textContent = 'MyShoes dang tim mau phu hop...';
+
+  bubble.appendChild(dots);
+  bubble.appendChild(text);
+  body.appendChild(bubble);
+  typingEl.appendChild(avatar);
+  typingEl.appendChild(body);
+  messages.appendChild(typingEl);
+
+  liveChatState.typingElement = typingEl;
+  scrollLiveChatToBottom();
+}
+
+function removeLiveChatTypingIndicator() {
+  if (liveChatState.typingElement) {
+    liveChatState.typingElement.remove();
+    liveChatState.typingElement = null;
+  }
+}
+
+function renderLiveChatQuickActions() {
+  const messages = document.getElementById('myshoesChatMessages');
+  if (!messages || document.getElementById('myshoesChatQuickActions')) return;
+
+  const quickActions = document.createElement('div');
+  quickActions.id = 'myshoesChatQuickActions';
+  quickActions.className = 'myshoes-chat-quick-actions';
+
+  [
+    'Nike duoi 2 trieu',
+    'Goi y giay chay bo em',
+    'Puma di hoc de phoi do'
+  ].forEach((label) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'myshoes-chat-chip';
+    button.textContent = label;
+    button.addEventListener('click', () => window.sendLiveChatQuickMessage(label));
+    quickActions.appendChild(button);
+  });
+
+  messages.appendChild(quickActions);
+}
+
+function ensureLiveChatWelcomeMessage() {
+  const messages = document.getElementById('myshoesChatMessages');
+  if (!messages || messages.dataset.seeded === 'true') return;
+
+  appendLiveChatMessage('assistant', 'Xin chao! Minh la tro ly MyShoes. Ban cu noi hang, tam gia hoac nhu cau nhu chay bo, di hoc, da bong, minh se loc mau phu hop tu kho hien co.');
+  renderLiveChatQuickActions();
+  messages.dataset.seeded = 'true';
+}
+
+function injectLiveChatWidget() {
+  const currentPath = window.location.pathname;
+  if (currentPath.includes('login.html') || currentPath.includes('signup.html')) {
+    return;
+  }
+
+  if (document.getElementById('myshoesLiveChatPanel')) return;
+
+  const chatContainer = document.createElement('div');
+  chatContainer.id = 'myshoesLiveChatRoot';
+  chatContainer.innerHTML = `
+    <div class="myshoes-chat-launcher-wrap">
+      <button type="button" onclick="toggleLiveChat()" class="myshoes-chat-launcher">
+        <i class="fa-solid fa-comment-dots"></i>
+        <span>Tu van AI</span>
+      </button>
+    </div>
+
+    <div id="myshoesLiveChatPanel" class="myshoes-chat-panel hidden">
+      <div class="myshoes-chat-header">
+        <div>
+          <strong>Tro ly MyShoes</strong>
+          <p>Tu van bang du lieu san pham that</p>
+        </div>
+        <button type="button" class="myshoes-chat-close" onclick="toggleLiveChat(false)">&times;</button>
+      </div>
+
+      <div id="myshoesChatMessages" class="myshoes-chat-messages scrollbar"></div>
+
+      <div class="myshoes-chat-inputbar">
+        <input id="myshoesChatInput" type="text" placeholder="Vi du: Nike duoi 2 trieu de di hoc" onkeypress="handleLiveChatKeyPress(event)">
+        <button id="myshoesChatSendButton" type="button" onclick="sendLiveChatMessage()">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(chatContainer);
+  ensureLiveChatWelcomeMessage();
+}
+
+window.toggleLiveChat = function (forceState) {
+  const chatbox = document.getElementById('myshoesLiveChatPanel');
+  if (!chatbox) return;
+
+  const shouldOpen = typeof forceState === 'boolean'
+    ? forceState
+    : chatbox.classList.contains('hidden');
+
+  chatbox.classList.toggle('hidden', !shouldOpen);
+
+  if (shouldOpen) {
+    ensureLiveChatWelcomeMessage();
+    document.getElementById('myshoesChatInput')?.focus();
+    scrollLiveChatToBottom();
+  }
+};
+
+window.sendLiveChatQuickMessage = function (message) {
+  window.toggleLiveChat(true);
+  const input = document.getElementById('myshoesChatInput');
+  if (!input) return;
+
+  input.value = message;
+  window.sendLiveChatMessage();
+};
+
+window.sendLiveChatMessage = async function () {
+  const input = document.getElementById('myshoesChatInput');
+  const quickActions = document.getElementById('myshoesChatQuickActions');
+  const text = String(input?.value || '').trim();
+
+  if (!input || !text || liveChatState.isSending) return;
+
+  if (quickActions) quickActions.remove();
+
+  appendLiveChatMessage('user', text);
+  liveChatState.history.push({ role: 'user', content: text });
+  liveChatState.history = liveChatState.history.slice(-10);
+
+  input.value = '';
+  setLiveChatSendingState(true);
+  showLiveChatTypingIndicator();
+
+  try {
+    const response = await fetch(CHAT_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        messages: liveChatState.history
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Khong the ket noi tro ly luc nay.');
+    }
+
+    const assistantText = data?.message?.content || 'Minh chua co phan hoi phu hop, ban thu mo ta cu the hon nhe.';
+    appendLiveChatMessage('assistant', assistantText, { products: data.products || [] });
+    liveChatState.history.push({ role: 'assistant', content: assistantText });
+    liveChatState.history = liveChatState.history.slice(-10);
+  } catch (error) {
+    appendLiveChatMessage('assistant', 'Minh chua ket noi duoc voi tro ly luc nay. Ban hay kiem tra backend MyShoes dang chay o cong 8000, hoac thu lai sau mot chut.');
+    console.error('Live chat error:', error);
+  } finally {
+    removeLiveChatTypingIndicator();
+    setLiveChatSendingState(false);
+    input.focus();
+  }
+};
+
+window.handleLiveChatKeyPress = function (event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    window.sendLiveChatMessage();
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', injectLiveChatWidget);
+} else {
+  injectLiveChatWidget();
 }
