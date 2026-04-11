@@ -30,6 +30,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (userForm) {
         userForm.addEventListener('submit', handleUserSubmit);
     }
+    // Gắn sự kiện Tìm kiếm sản phẩm
+    const searchInput = document.getElementById('searchProduct');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const filtered = products.filter(p => 
+                (p.name || "").toLowerCase().includes(query) || 
+                (p.brand || "").toLowerCase().includes(query)
+            );
+            renderProducts(filtered);
+        });
+    }
 
     // Load dữ liệu tab mặc định (Dashboard)
     switchTab('dashboard');
@@ -379,30 +391,42 @@ async function fetchProducts() {
     }
 }
 
-function renderProducts() {
+function renderProducts(filteredList = null) {
     const tbody = document.getElementById('productsTableBody');
-    tbody.innerHTML = '';
+    if (!tbody) return;
 
-    if (products.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Chưa có sản phẩm nào trong kho.</td></tr>`;
+    const list = filteredList || products;
+
+    if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Không tìm thấy sản phẩm nào phù hợp.</td></tr>`;
         return;
     }
 
-    products.forEach((p, index) => {
+    let html = '';
+    list.forEach((p, index) => {
         const priceFmt = p.price ? p.price.toLocaleString('vi-VN') + ' đ' : 'Liên hệ';
-        const img = p.image || 'https://via.placeholder.com/50';
+        const imgRaw = p.image || 'https://via.placeholder.com/50';
+        const img = encodeURI(imgRaw);
         
-        tbody.innerHTML += `
+        html += `
             <tr class="hover:bg-gray-50/50 transition">
                 <td class="p-4 text-gray-500">#${index+1}</td>
                 <td class="p-4">
                     <div class="flex items-center gap-3">
                         <img src="${img}" alt="${p.name}" class="w-12 h-12 object-cover rounded-lg border">
-                        <span class="font-medium text-gray-800">${p.name}</span>
+                        <div>
+                            <span class="font-medium text-gray-800 block">${p.name}</span>
+                            <span class="text-[10px] text-gray-400 uppercase tracking-tighter">${p.brand || 'Khác'}</span>
+                        </div>
                     </div>
                 </td>
                 <td class="p-4 font-semibold text-blue-600">${priceFmt}</td>
-                <td class="p-4"><span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">${p.category || 'Khác'}</span></td>
+                <td class="p-4">
+                    <div class="flex flex-col gap-1">
+                        <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] w-fit font-bold">${p.category || 'Khác'}</span>
+                        ${p.tag ? `<span class="px-2 py-0.5 bg-orange-50 text-orange-600 rounded text-[10px] w-fit font-bold">${p.tag}</span>` : ''}
+                    </div>
+                </td>
                 <td class="p-4 text-center">
                     <div class="flex items-center justify-center gap-2">
                         <button onclick="editProduct('${p._id}')" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center" title="Sửa">
@@ -416,6 +440,7 @@ function renderProducts() {
             </tr>
         `;
     });
+    tbody.innerHTML = html;
 }
 
 // Mở Modal Thêm/Sửa
@@ -425,11 +450,23 @@ function openProductModal() {
     document.getElementById('modalTitle').textContent = 'Thêm Sản Phẩm Mới';
     document.getElementById('productModal').classList.remove('hidden');
     document.getElementById('productModal').classList.add('flex');
+    // Reset ô chọn phụ
+    document.getElementById('categorySubSelect').classList.add('hidden');
 }
 
 function closeProductModal() {
     document.getElementById('productModal').classList.add('hidden');
     document.getElementById('productModal').classList.remove('flex');
+}
+
+// Logic ẩn hiện ô chọn Category phụ
+function toggleCategorySelect(val) {
+    const sub = document.getElementById('categorySubSelect');
+    if (val === 'Category') {
+        sub.classList.remove('hidden');
+    } else {
+        sub.classList.add('hidden');
+    }
 }
 
 // Đẩy dữ liệu vào Modal để Sửa
@@ -440,9 +477,24 @@ function editProduct(id) {
     document.getElementById('productId').value = p._id;
     document.getElementById('pName').value = p.name || '';
     document.getElementById('pPrice').value = p.price || '';
-    document.getElementById('pCategory').value = p.category || 'Nike';
+    document.getElementById('pBrand').value = p.brand || 'Nike';
+    document.getElementById('pCategory').value = p.category || 'Bóng đá';
+    document.getElementById('pSection').value = p.tag || '';
     document.getElementById('pImage').value = p.image || '';
     document.getElementById('pDescription').value = p.description || '';
+
+
+    // Xử lý Section và Category cho giao diện cũ
+    const sectionSelect = document.getElementById('pSection');
+    if (p.tag === 'Độc quyền' || p.tag === 'Trending' || p.tag === 'Bestseller') {
+        sectionSelect.value = p.tag;
+    } else if (p.category) {
+        sectionSelect.value = 'Category';
+        document.getElementById('pCategory').value = p.category;
+    } else {
+        sectionSelect.value = '';
+    }
+    toggleCategorySelect(sectionSelect.value);
 
     document.getElementById('modalTitle').textContent = 'Cập nhật Sản Phẩm';
     document.getElementById('productModal').classList.remove('hidden');
@@ -459,11 +511,23 @@ async function handleProductSubmit(e) {
 
     const id = document.getElementById('productId').value;
     
-    // Gán dữ liệu payload
+    // Logic thu thập dữ liệu có điều kiện
+    const sectionValue = document.getElementById('pSection').value;
+    let finalTag = "";
+    let finalCategory = "";
+
+    if (sectionValue === 'Category') {
+        finalCategory = document.getElementById('pCategory').value;
+    } else {
+        finalTag = sectionValue;
+    }
+
     const payload = {
         name: document.getElementById('pName').value,
         price: Number(document.getElementById('pPrice').value),
-        category: document.getElementById('pCategory').value,
+        brand: document.getElementById('pBrand').value,
+        category: finalCategory,
+        tag: finalTag,
         image: document.getElementById('pImage').value,
         description: document.getElementById('pDescription').value
     };

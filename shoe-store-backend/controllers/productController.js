@@ -3,10 +3,24 @@ const { Op } = require("sequelize");
 
 const transformProduct = (p) => {
   const json = p.toJSON ? p.toJSON() : p;
+  let parsedSize = [];
+  if (json.size) {
+    if (typeof json.size === "string") {
+      try {
+        parsedSize = JSON.parse(json.size);
+      } catch (e) {
+        // Fallback cho dữ liệu cũ (ví dụ: "38, 39, 40")
+        parsedSize = json.size.split(',').map(s => s.trim()).filter(Boolean);
+      }
+    } else {
+      parsedSize = json.size;
+    }
+  }
+
   return {
     ...json,
     _id: json.id,
-    size: typeof json.size === "string" ? JSON.parse(json.size) : json.size,
+    size: Array.isArray(parsedSize) ? parsedSize : [],
   };
 };
 
