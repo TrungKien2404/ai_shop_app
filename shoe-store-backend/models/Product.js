@@ -19,10 +19,7 @@ const Product = sequelize.define("Product", {
     type: DataTypes.STRING,
   },
   category: {
-    type: DataTypes.STRING, // Dùng cho 'Bóng đá', 'Chạy bộ', 'Casual'
-  },
-  tag: {
-    type: DataTypes.STRING, // Dùng cho 'Trending', 'Bestseller', 'Độc quyền'
+    type: DataTypes.STRING,
   },
   size: {
     type: DataTypes.STRING, // Store as JSON string, e.g., "[38, 39, 40]"
