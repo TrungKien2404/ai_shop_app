@@ -478,4 +478,351 @@ body.dark-mode .custom-navbar .hover\:text-gray-300:hover {
   .banner-title { font-size: 2rem; }
   .banner-overlay { padding: 20px 30px; }
   .banner-controls { right: 30px; }
-}
+}
+
+/* ===== LIVE CHAT WIDGET ===== */
+.myshoes-chat-launcher-wrap {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 120;
+}
+
+.myshoes-chat-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #0f172a 0%, #2563eb 55%, #38bdf8 100%);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 16px 40px rgba(37, 99, 235, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.myshoes-chat-launcher:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 42px rgba(37, 99, 235, 0.42);
+}
+
+.myshoes-chat-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 84px;
+  width: min(380px, calc(100vw - 24px));
+  height: min(620px, calc(100vh - 120px));
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+  z-index: 120;
+  backdrop-filter: blur(10px);
+}
+
+.myshoes-chat-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 18px 14px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 45%, #f8fafc 100%);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.myshoes-chat-header strong {
+  display: block;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.myshoes-chat-header p {
+  margin: 4px 0 0;
+  color: #475569;
+  font-size: 13px;
+}
+
+.myshoes-chat-close {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.myshoes-chat-messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 30%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+
+.myshoes-chat-message {
+  display: flex;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.myshoes-chat-message.is-user {
+  justify-content: flex-end;
+}
+
+.myshoes-chat-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.myshoes-chat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 82%;
+}
+
+.myshoes-chat-message.is-user .myshoes-chat-body {
+  align-items: flex-end;
+}
+
+.myshoes-chat-bubble {
+  border-radius: 20px;
+  padding: 12px 14px;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  font-size: 14px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.myshoes-chat-message.is-assistant .myshoes-chat-bubble {
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  color: #0f172a;
+  border-top-left-radius: 8px;
+}
+
+.myshoes-chat-message.is-user .myshoes-chat-bubble {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #38bdf8 100%);
+  color: #fff;
+  border-top-right-radius: 8px;
+}
+
+.myshoes-chat-inputbar {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  background: #fff;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.myshoes-chat-inputbar input {
+  flex: 1;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-size: 14px;
+  outline: none;
+  background: #f8fafc;
+}
+
+.myshoes-chat-inputbar input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+}
+
+.myshoes-chat-inputbar button {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0f172a 0%, #2563eb 55%, #38bdf8 100%);
+  color: #fff;
+  cursor: pointer;
+}
+
+.myshoes-chat-inputbar button:disabled,
+.myshoes-chat-inputbar input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.myshoes-chat-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.myshoes-chat-chip {
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  color: #1d4ed8;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.myshoes-chat-products {
+  display: grid;
+  gap: 8px;
+}
+
+.myshoes-chat-product {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: inherit;
+}
+
+.myshoes-chat-product:hover {
+  border-color: rgba(37, 99, 235, 0.28);
+  transform: translateY(-1px);
+}
+
+.myshoes-chat-product-brand {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.myshoes-chat-product-name {
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.myshoes-chat-product-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #dc2626;
+}
+
+.myshoes-chat-dots {
+  display: inline-flex;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.myshoes-chat-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+  animation: myshoes-chat-typing 1.2s infinite ease-in-out;
+}
+
+.myshoes-chat-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.myshoes-chat-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.myshoes-chat-status {
+  font-size: 12px;
+  color: #64748b;
+}
+
+@keyframes myshoes-chat-typing {
+  0%, 80%, 100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+
+  40% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+body.dark-mode .myshoes-chat-panel {
+  background: rgba(17, 24, 39, 0.98);
+  border-color: rgba(71, 85, 105, 0.55);
+}
+
+body.dark-mode .myshoes-chat-header {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.96) 0%, rgba(30, 64, 175, 0.45) 100%);
+}
+
+body.dark-mode .myshoes-chat-header strong,
+body.dark-mode .myshoes-chat-close,
+body.dark-mode .myshoes-chat-message.is-assistant .myshoes-chat-bubble,
+body.dark-mode .myshoes-chat-product-name {
+  color: #e5e7eb;
+}
+
+body.dark-mode .myshoes-chat-header p,
+body.dark-mode .myshoes-chat-product-brand,
+body.dark-mode .myshoes-chat-status {
+  color: #cbd5e1;
+}
+
+body.dark-mode .myshoes-chat-messages {
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 30%),
+    linear-gradient(180deg, #0f172a 0%, #111827 100%);
+}
+
+body.dark-mode .myshoes-chat-message.is-assistant .myshoes-chat-bubble,
+body.dark-mode .myshoes-chat-product,
+body.dark-mode .myshoes-chat-chip,
+body.dark-mode .myshoes-chat-inputbar {
+  background: #111827;
+  border-color: rgba(71, 85, 105, 0.55);
+}
+
+body.dark-mode .myshoes-chat-inputbar input {
+  background: #0f172a;
+  border-color: rgba(71, 85, 105, 0.7);
+  color: #e5e7eb;
+}
+
+body.dark-mode .myshoes-chat-chip {
+  color: #bfdbfe;
+}
+
+@media (max-width: 768px) {
+  .myshoes-chat-launcher-wrap {
+    right: 14px;
+    bottom: 14px;
+  }
+
+  .myshoes-chat-panel {
+    right: 12px;
+    left: 12px;
+    bottom: 74px;
+    width: auto;
+    height: min(70vh, 560px);
+  }
+
+  .myshoes-chat-body {
+    max-width: calc(100% - 44px);
+  }
+}

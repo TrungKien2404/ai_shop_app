@@ -11,7 +11,7 @@ app.get("/", (req, res) => {
   res.json({
     ok: true,
     message: "Shoe shop API",
-    routes: ["/api/auth", "/api/products", "/api/orders"],
+    routes: ["/api/auth", "/api/products", "/api/orders", "/api/chat"],
   });
 });
 
@@ -19,6 +19,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
+app.use("/api/chat", require("./routes/chatRoutes"));
 
 // Error handler (optional)
 app.use((err, req, res, next) => {
