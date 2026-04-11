@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 
 const transformProduct = (p) => {
   const json = p.toJSON ? p.toJSON() : p;
+  
   let parsedSize = [];
   if (json.size) {
     if (typeof json.size === "string") {

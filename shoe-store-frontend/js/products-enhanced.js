@@ -23,19 +23,34 @@ async function fetchProductsForCurrentPage() {
 
     const bestsellerGrid = document.getElementById("bestsellerGrid");
     if (bestsellerGrid) {
-      setupProductListing(bestsellerGrid, products.slice(0, 12));
+      const bestsellItems = products.filter(p => {
+        const t = (p.tag || "").toLowerCase();
+        return t.includes('bestseller') || t.includes('best seller');
+      }).reverse();
+      setupProductListing(bestsellerGrid, bestsellItems);
       return;
     }
 
     const trendingGrid = document.getElementById("trendingGrid");
     if (trendingGrid) {
-      setupProductListing(trendingGrid, products.slice(12, 24));
+      const trendingItems = products.filter(p => (p.tag || "").toLowerCase().includes('trending')).reverse();
+      setupProductListing(trendingGrid, trendingItems);
+      return;
+    }
+
+    const exclusiveGrid = document.getElementById("exclusiveGrid");
+    if (exclusiveGrid) {
+      const exclusiveItems = products.filter(p => {
+        const t = (p.tag || "").toLowerCase();
+        return t.includes('độc quyền') || t.includes('exclusive');
+      }).reverse();
+      setupProductListing(exclusiveGrid, exclusiveItems);
       return;
     }
 
     const searchGrid = document.getElementById("searchGrid");
     if (searchGrid) {
-      setupProductListing(searchGrid, products);
+      setupProductListing(searchGrid, products.slice().reverse());
       return;
     }
 
@@ -48,7 +63,10 @@ async function fetchProductsForCurrentPage() {
 
       if (brand) {
         listing = products.filter((product) => {
-          return String(product.category || "").toLowerCase() === brand.toLowerCase();
+          const b = (product.brand || "").toLowerCase();
+          const c = (product.category || "").toLowerCase();
+          const target = brand.toLowerCase();
+          return b === target || c === target;
         });
       } else if (type) {
         listing = products.filter((product) => {
@@ -207,7 +225,7 @@ function renderProductCards(container, productsSet, page = 1) {
       product.price
     )}&image=${encodeURIComponent(image)}`;
     const safeName = escapeHtml(product.name || "");
-    const safeCategory = escapeHtml(product.category || "Khac");
+    const safeBrand = escapeHtml(product.brand || "Brand");
     const safeImage = escapeHtml(image);
     const safeOrderUrl = escapeHtml(orderUrl);
 
@@ -229,7 +247,7 @@ function renderProductCards(container, productsSet, page = 1) {
           </div>
         </div>
         <div class="p-4">
-          <p class="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">${safeCategory}</p>
+          <p class="text-xs text-blue-500 font-semibold mb-1 uppercase tracking-wider">${safeBrand}</p>
           <h3 class="font-bold text-gray-800 text-lg mb-2 truncate" title="${safeName}">${safeName}</h3>
           <p class="text-red-600 font-bold text-lg">${priceFmt}</p>
         </div>

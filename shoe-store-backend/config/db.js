@@ -10,7 +10,9 @@ const sequelize = new Sequelize({
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log("SQLite connected successfully via Sequelize");
+    console.log("Database connected successfully.");
+    await sequelize.sync(); 
+    console.log("Database synchronized.");
   } catch (error) {
     console.error("Unable to connect to the SQLite database:", error);
     process.exit(1);
