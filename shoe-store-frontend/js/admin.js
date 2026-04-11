@@ -444,6 +444,15 @@ function closeProductModal() {
     document.getElementById('productModal').classList.remove('flex');
 }
 
+function toggleCategorySelect(val) {
+    const sub = document.getElementById('categorySubSelect');
+    if (val === 'Category') {
+        sub.classList.remove('hidden');
+    } else {
+        sub.classList.add('hidden');
+    }
+}
+
 // Đẩy dữ liệu vào Modal để Sửa
 function editProduct(id) {
     const p = products.find(prod => String(prod._id) === String(id));
@@ -452,9 +461,23 @@ function editProduct(id) {
     document.getElementById('productId').value = p._id;
     document.getElementById('pName').value = p.name || '';
     document.getElementById('pPrice').value = p.price || '';
-    document.getElementById('pCategory').value = p.category || 'Nike';
     document.getElementById('pImage').value = p.image || '';
     document.getElementById('pDescription').value = p.description || '';
+
+    // Xử lý Hãng giày
+    document.getElementById('pBrand').value = p.brand || 'Nike';
+    
+    // Xử lý Section và Category cho giao diện cũ
+    const sectionSelect = document.getElementById('pSection');
+    if (p.tag === 'Độc quyền' || p.tag === 'Trending' || p.tag === 'Bestseller') {
+        sectionSelect.value = p.tag;
+    } else if (p.category) {
+        sectionSelect.value = 'Category';
+        document.getElementById('pCategory').value = p.category;
+    } else {
+        sectionSelect.value = '';
+    }
+    toggleCategorySelect(sectionSelect.value);
 
     document.getElementById('modalTitle').textContent = 'Cập nhật Sản Phẩm';
     document.getElementById('productModal').classList.remove('hidden');
@@ -471,11 +494,24 @@ async function handleProductSubmit(e) {
 
     const id = document.getElementById('productId').value;
     
+    // Logic thu thập dữ liệu có điều kiện
+    const sectionValue = document.getElementById('pSection').value;
+    let finalTag = "";
+    let finalCategory = "";
+
+    if (sectionValue === 'Category') {
+        finalCategory = document.getElementById('pCategory').value;
+    } else {
+        finalTag = sectionValue;
+    }
+
     // Gán dữ liệu payload
     const payload = {
         name: document.getElementById('pName').value,
         price: Number(document.getElementById('pPrice').value),
-        category: document.getElementById('pCategory').value,
+        brand: document.getElementById('pBrand').value,
+        category: finalCategory,
+        tag: finalTag,
         image: document.getElementById('pImage').value,
         description: document.getElementById('pDescription').value
     };
