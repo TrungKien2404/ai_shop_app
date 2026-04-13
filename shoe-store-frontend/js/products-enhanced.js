@@ -54,6 +54,13 @@ async function fetchProductsForCurrentPage() {
       return;
     }
 
+    const saleGrid = document.getElementById("saleGrid");
+    if (saleGrid) {
+      const saleItems = products.filter(p => (p.tag || "").toLowerCase().includes('sale')).reverse();
+      setupProductListing(saleGrid, saleItems);
+      return;
+    }
+
     const categoryGrid = document.getElementById("categoryGrid");
     if (categoryGrid) {
       const brand = categoryGrid.getAttribute("data-brand");
@@ -70,13 +77,17 @@ async function fetchProductsForCurrentPage() {
         });
       } else if (type) {
         listing = products.filter((product) => {
-          const normalizedName = normalizeSearchText(product.name || "");
-          const isSport = /bong da|cau long|pickleball|tennis|tf|club|academy|predator|f50|phantom|mercurial|alpha|morelia|gate sky|wave claw|wave fang|wave drive|wave medal|wave dimension|sky blaster|dribble|vapor lite|hyperwarp/.test(
-            normalizedName
-          );
-          const isRunning = /chay bo|run|nitro|pureboost|galaxy|duramo|ultrarun|response|speed|deviate|velocity|darter|reflect lite|fast|vomero|quest|downshifter|revolution|metcon|invincible|wave mujin/.test(
-            normalizedName
-          );
+          const cat = (product.category || "").toLowerCase();
+          const name = normalizeSearchText(product.name || "");
+
+          // 1. Ưu tiên kiểm tra theo danh mục đã chọn trong Admin
+          if (type === "sport" && cat === "bóng đá") return true;
+          if (type === "running" && cat === "chạy bộ") return true;
+          if (type === "casual" && cat === "casual") return true;
+
+          // 2. Dự phòng bằng từ khóa trong tên (giữ lại logic cũ)
+          const isSport = /bong da|cau long|pickleball|tennis|tf|club|academy|predator|f50|phantom|mercurial|alpha|morelia|gate sky|wave claw|wave fang|wave drive|wave medal|wave dimension|sky blaster|dribble|vapor lite|hyperwarp/.test(name);
+          const isRunning = /chay bo|run|nitro|pureboost|galaxy|duramo|ultrarun|response|speed|deviate|velocity|darter|reflect lite|fast|vomero|quest|downshifter|revolution|metcon|invincible|wave mujin/.test(name);
 
           if (type === "sport") return isSport && !isRunning;
           if (type === "running") return isRunning;
@@ -249,7 +260,14 @@ function renderProductCards(container, productsSet, page = 1) {
         <div class="p-4">
           <p class="text-xs text-blue-500 font-semibold mb-1 uppercase tracking-wider">${safeBrand}</p>
           <h3 class="font-bold text-gray-800 text-lg mb-2 truncate" title="${safeName}">${safeName}</h3>
-          <p class="text-red-600 font-bold text-lg">${priceFmt}</p>
+          
+          <div class="flex flex-col">
+            ${(currentContainerId === "saleGrid" && product.originalPrice > 0) 
+              ? `<p class="text-gray-400 line-through text-xs">${Number(product.originalPrice).toLocaleString("vi-VN")} đ</p>` 
+              : ""
+            }
+            <p class="text-red-600 font-bold text-lg">${priceFmt}</p>
+          </div>
         </div>
       </div>
     `;

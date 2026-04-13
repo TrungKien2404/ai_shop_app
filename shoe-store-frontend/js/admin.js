@@ -463,10 +463,20 @@ function closeProductModal() {
 // Logic ẩn hiện ô chọn Category phụ
 function toggleCategorySelect(val) {
     const sub = document.getElementById('categorySubSelect');
+    const oriGroup = document.getElementById('originalPriceGroup');
+    
+    // Hiện category phụ nếu chọn 'Category'
     if (val === 'Category') {
         sub.classList.remove('hidden');
     } else {
         sub.classList.add('hidden');
+    }
+
+    // Hiện giá gốc nếu chọn 'Sale'
+    if (val === 'Sale') {
+        oriGroup.classList.remove('hidden');
+    } else {
+        oriGroup.classList.add('hidden');
     }
 }
 
@@ -494,7 +504,7 @@ function editProduct(id) {
     }
     document.getElementById('pImage').value = p.image || '';
     document.getElementById('pDescription').value = p.description || '';
-
+    document.getElementById('pOriginalPrice').value = p.originalPrice || '';
 
     document.getElementById('modalTitle').textContent = 'Cập nhật Sản Phẩm';
     document.getElementById('productModal').classList.remove('hidden');
@@ -528,7 +538,8 @@ async function handleProductSubmit(e) {
         category: finalCategory,
         tag: finalTag,
         image: document.getElementById('pImage').value,
-        description: document.getElementById('pDescription').value
+        description: document.getElementById('pDescription').value,
+        originalPrice: Number(document.getElementById('pOriginalPrice').value) || 0
     };
 
     try {

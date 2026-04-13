@@ -22,6 +22,7 @@ const transformProduct = (p) => {
     ...json,
     _id: json.id,
     size: Array.isArray(parsedSize) ? parsedSize : [],
+    originalPrice: json.originalPrice || 0,
   };
 };
 
