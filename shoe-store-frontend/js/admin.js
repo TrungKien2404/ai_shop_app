@@ -1,8 +1,10 @@
 /**
  * admin.js - Script xử lý logic riêng cho trang Dashboard Admin
  */
-
-const API_BASE = 'http://localhost:8000/api';
+// Phần này dành cho local
+// const API_BASE = 'http://localhost:8000/api';
+// Phần này dành cho deploy render
+const API_BASE = 'https://ai-shop-app-backend.onrender.com/';
 // Kiểm tra quyền truy cập ngay khi load script
 checkAdminAuth();
 
@@ -24,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gắn sự kiện submit form Product
     document.getElementById('productForm').addEventListener('submit', handleProductSubmit);
-    
+
     // Gắn sự kiện submit form User
     const userForm = document.getElementById('userForm');
     if (userForm) {
@@ -36,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase().trim();
-            const filtered = products.filter(p => 
-                (p.name || '').toLowerCase().includes(keyword) || 
+            const filtered = products.filter(p =>
+                (p.name || '').toLowerCase().includes(keyword) ||
                 (p.brand || '').toLowerCase().includes(keyword)
             );
             renderProducts(filtered);
@@ -107,7 +109,7 @@ function switchTab(tabId) {
         targetContent.classList.remove('hidden');
         targetContent.classList.add('block');
     }
-    
+
     // Active tab link được chọn
     const activeLink = document.querySelector(`.tab-link[data-tab="${tabId}"]`);
     if (activeLink) {
@@ -260,11 +262,11 @@ function renderTopProducts(ordersData) {
         if (o.orderItems) {
             o.orderItems.forEach(item => {
                 if (!productStats[item.name]) {
-                    productStats[item.name] = { 
-                        name: item.name, 
-                        image: item.image, 
-                        sold: 0, 
-                        revenue: 0 
+                    productStats[item.name] = {
+                        name: item.name,
+                        image: item.image,
+                        sold: 0,
+                        revenue: 0
                     };
                 }
                 productStats[item.name].sold += (Number(item.quantity) || 0);
@@ -313,7 +315,7 @@ function renderRecentActivity(ordersData, usersData, productsData) {
             icon: 'fa-shopping-bag',
             color: 'text-green-500',
             bg: 'bg-green-50',
-            text: `Đơn hàng mới <b>#${o.orderCode || o._id.substring(o._id.length-6).toUpperCase()}</b> từ ${o.buyerName || 'Khách'}`,
+            text: `Đơn hàng mới <b>#${o.orderCode || o._id.substring(o._id.length - 6).toUpperCase()}</b> từ ${o.buyerName || 'Khách'}`,
             time: o.createdAt || new Date()
         });
     });
@@ -321,7 +323,7 @@ function renderRecentActivity(ordersData, usersData, productsData) {
     // 2. Thu thập Người dùng mới
     usersData.forEach(u => {
         // Không hiện Admin trong hoạt động gần đây để tránh loãng
-        if (u.role === 'admin') return; 
+        if (u.role === 'admin') return;
         activities.push({
             icon: 'fa-user-plus',
             color: 'text-purple-500',
@@ -359,7 +361,7 @@ function renderRecentActivity(ordersData, usersData, productsData) {
         const d = new Date(act.time);
         const timeStr = d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
         const dateStr = d.toLocaleDateString('vi-VN');
-        
+
         container.innerHTML += `
             <div class="flex gap-3 items-start p-2 rounded-lg hover:bg-gray-50 transition">
                 <div class="w-8 h-8 rounded-full ${act.bg} ${act.color} flex items-center justify-center flex-shrink-0">
@@ -380,7 +382,7 @@ function renderRecentActivity(ordersData, usersData, productsData) {
 async function fetchProducts() {
     const tbody = document.getElementById('productsTableBody');
     tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Đang tải dữ liệu sản phẩm...</td></tr>`;
-    
+
     try {
         const response = await fetch(`${API_BASE}/products`);
         const data = await response.json();
@@ -408,10 +410,10 @@ function renderProducts(dataToRender = null) {
         const priceFmt = p.price ? p.price.toLocaleString('vi-VN') + ' đ' : 'Liên hệ';
         const imgRaw = p.image || 'https://via.placeholder.com/50';
         const img = encodeURI(imgRaw);
-        
+
         html += `
             <tr class="hover:bg-gray-50/50 transition">
-                <td class="p-4 text-gray-500">#${index+1}</td>
+                <td class="p-4 text-gray-500">#${index + 1}</td>
                 <td class="p-4">
                     <div class="flex items-center gap-3">
                         <img src="${img}" alt="${p.name}" class="w-12 h-12 object-cover rounded-lg border">
@@ -464,7 +466,7 @@ function closeProductModal() {
 function toggleCategorySelect(val) {
     const sub = document.getElementById('categorySubSelect');
     const oriGroup = document.getElementById('originalPriceGroup');
-    
+
     // Hiện category phụ nếu chọn 'Category'
     if (val === 'Category') {
         sub.classList.remove('hidden');
@@ -489,7 +491,7 @@ function editProduct(id) {
     document.getElementById('pName').value = p.name || '';
     document.getElementById('pPrice').value = p.price || '';
     document.getElementById('pBrand').value = p.brand || 'Nike';
-    
+
     const sectionSelect = document.getElementById('pSection');
     if (p.tag === 'Độc quyền' || p.tag === 'Trending' || p.tag === 'Bestseller') {
         sectionSelect.value = p.tag;
@@ -520,7 +522,7 @@ async function handleProductSubmit(e) {
     btn.disabled = true;
 
     const id = document.getElementById('productId').value;
-    
+
     const sectionValue = document.getElementById('pSection').value;
     let finalTag = "";
     let finalCategory = "";
@@ -606,12 +608,12 @@ async function deleteProduct(id) {
 async function fetchOrders() {
     const tbody = document.getElementById('ordersTableBody');
     tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Đang tải dữ liệu đơn hàng...</td></tr>`;
-    
+
     try {
         const response = await fetch(`${API_BASE}/orders`, {
             headers: getAuthHeaders()
         });
-        
+
         let data = await response.json();
         // Có thể backend trả về format {success: true, orders: [...]} hoặc [...]
         orders = Array.isArray(data) ? data : (data.orders || []);
@@ -634,7 +636,7 @@ function renderOrders() {
     orders.forEach((o) => {
         // Lấy mã đơn, mặc định xài orderCode mới, nếu không có cắt từ _id
         const code = o.orderCode || (o._id ? o._id.substring(o._id.length - 8).toUpperCase() : 'UNKNOWN');
-        
+
         let customer = o.buyerName || 'Khách viếng thăm';
         if (o.user) {
             if (typeof o.user === 'object' && o.user.name) customer = o.user.name;
@@ -643,9 +645,9 @@ function renderOrders() {
 
         const itemsCount = o.orderItems ? o.orderItems.length : 0;
         const total = o.totalPrice ? o.totalPrice.toLocaleString('vi-VN') + ' đ' : '0 đ';
-        
+
         const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('vi-VN') : 'N/A';
-        
+
         const stt = o.status || 'Chờ xử lý';
         const statusOptions = ['Chờ xử lý', 'Đang giao', 'Đã giao', 'Đã hủy']
             .map(opt => `<option value="${opt}" ${opt === stt ? 'selected' : ''}>${opt}</option>`)
@@ -751,12 +753,12 @@ async function changeOrderStatus(orderId, newStatus) {
 async function fetchUsers() {
     const tbody = document.getElementById('usersTableBody');
     tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Đang tải dữ liệu khách hàng...</td></tr>`;
-    
+
     try {
         const response = await fetch(`${API_BASE}/auth/users`, {
             headers: getAuthHeaders()
         });
-        
+
         const data = await response.json();
         users = Array.isArray(data) ? data : [];
         renderUsers();

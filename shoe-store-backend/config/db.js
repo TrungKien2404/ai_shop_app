@@ -16,7 +16,12 @@ if (process.env.DB_URL) {
     }
   });
 } else {
-  // 2. Dự phòng: Chạy với Local Database (máy tính không có DB_URL)
+  console.log('Connecting to database with:');
+  console.log(`- DB_NAME: ${process.env.DB_NAME || 'shoe_shop'}`);
+  console.log(`- DB_USER: ${process.env.DB_USER || 'postgres'}`);
+  console.log(`- DB_HOST: ${process.env.DB_HOST || '127.0.0.1'}`);
+  console.log(`- DB_PORT: ${process.env.DB_PORT || 5432}`);
+
   sequelize = new Sequelize(
     process.env.DB_NAME || 'shoe_shop',
     process.env.DB_USER || 'postgres',

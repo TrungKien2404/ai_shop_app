@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "seed:users": "node seed_users.js",
     "backup:users": "node backup_users.js",
     "restore:users": "node restore_users_backup.js"
   },
