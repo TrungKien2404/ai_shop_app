@@ -1,5 +1,5 @@
 // src/js/products.js
-const API_BASE = 'http://localhost:8000/api';
+
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchProductsForCurrentPage();
@@ -9,11 +9,11 @@ async function fetchProductsForCurrentPage() {
     try {
         const response = await fetch(`${API_BASE}/products`);
         if (!response.ok) throw new Error("Failed to fetch products");
-        
+
         const products = await response.json();
-        
+
         const isHomePage = location.pathname.includes('home.html') || location.pathname.endsWith('/');
-        
+
         // Render mục Best Seller
         const bestsellerGrid = document.getElementById('bestsellerGrid');
         if (bestsellerGrid) {
@@ -24,9 +24,9 @@ async function fetchProductsForCurrentPage() {
             }).reverse();
 
             if (bestsellItems.length === 0) {
-                bestsellItems = products.slice(-8).reverse(); 
+                bestsellItems = products.slice(-8).reverse();
             } else if (isHomePage) {
-                bestsellItems = bestsellItems.slice(0, 12); 
+                bestsellItems = bestsellItems.slice(0, 12);
             }
             renderProductCards(bestsellerGrid, bestsellItems);
         }
@@ -37,7 +37,7 @@ async function fetchProductsForCurrentPage() {
             trendingGrid.innerHTML = '';
             let trendingItems = products.filter(p => (p.tag || "").toLowerCase().includes('trending')).reverse();
             if (trendingItems.length === 0) {
-                trendingItems = products.slice(-8).reverse(); 
+                trendingItems = products.slice(-8).reverse();
             } else if (isHomePage) {
                 trendingItems = trendingItems.slice(0, 12);
             }
@@ -52,9 +52,9 @@ async function fetchProductsForCurrentPage() {
                 const t = (p.tag || "").toLowerCase();
                 return t.includes('độc quyền') || t.includes('exclusive');
             }).reverse();
-            
+
             if (exclusiveItems.length === 0) {
-                exclusiveItems = products.slice(-4).reverse(); 
+                exclusiveItems = products.slice(-4).reverse();
             } else if (isHomePage) {
                 exclusiveItems = exclusiveItems.slice(0, 8);
             }
@@ -67,13 +67,13 @@ async function fetchProductsForCurrentPage() {
             const brand = categoryGrid.getAttribute('data-brand'); // VD: Nike, Adidas...
             const type = categoryGrid.getAttribute('data-type');   // VD: sport, running...
             categoryGrid.innerHTML = '';
-            
+
             let filtered = products;
-            
+
             if (brand) {
                 // Lọc theo cột brand (Hãng) hoặc category (dành cho dữ liệu cũ)
-                filtered = products.filter(p => 
-                    (p.brand || "").toLowerCase() === brand.toLowerCase() || 
+                filtered = products.filter(p =>
+                    (p.brand || "").toLowerCase() === brand.toLowerCase() ||
                     (p.category || "").toLowerCase() === brand.toLowerCase()
                 );
             } else if (type) {
@@ -84,19 +84,19 @@ async function fetchProductsForCurrentPage() {
                 filtered = products.filter(p => {
                     // 1. Ưu tiên khớp chính xác cột category
                     if (p.category === targetType) return true;
-                    
+
                     // 2. Fallback: Quét từ khóa trong tên
                     const name = (p.name || "").toLowerCase();
                     const isSport = name.match(/bóng đá|cầu lông|pickleball|tennis|tf|club|academy|predator|f50|phantom|mercurial|alpha|morelia|gate sky|wave claw|wave fang|wave drive|wave medal|wave dimension|sky blaster|dribble|vapor lite|hyperwarp/i);
                     const isRunning = name.match(/chạy bộ|run|nitro|pureboost|galaxy|duramo|ultrarun|performance|speed|deviate|velocity|darter|reflect lite|fast|vomero|quest|downshifter|revolution|metcon|invincible|wave mujin/i);
-                    
+
                     if (type === 'sport') return isSport;
                     if (type === 'running') return isRunning;
                     if (type === 'casual') return !isSport && !isRunning;
                     return true;
                 });
             }
-            
+
             if (filtered.length === 0) {
                 categoryGrid.innerHTML = `<p class="col-span-full text-center text-gray-500">Chưa có sản phẩm phù hợp.</p>`;
             } else {
@@ -175,7 +175,7 @@ function renderProductCards(container, productsSet, page = 1) {
 function renderPagination(container, totalItems, page) {
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
     let paginationDiv = document.getElementById('dynamic-pagination');
-    
+
     if (!paginationDiv) {
         paginationDiv = document.createElement('div');
         paginationDiv.id = 'dynamic-pagination';
@@ -202,7 +202,7 @@ function renderPagination(container, totalItems, page) {
     paginationDiv.innerHTML = pHTML;
 }
 
-window.changePage = function(page) {
+window.changePage = function (page) {
     const container = document.getElementById(currentContainerId);
     if (container && currentProducts.length > 0) {
         renderProductCards(container, currentProducts, page);
@@ -236,14 +236,14 @@ function ensureSizePickerModal() {
 
 function openSizePicker(id, name, price, image) {
     if (!window.authUtils?.requireLogin?.('Vui lòng đăng nhập để thêm vào giỏ hàng.')) return;
-    
+
     pendingCartProduct = { id, name, price, image, selectedSize: null };
     document.getElementById('sizePickerName').textContent = name;
     const optionsGrid = document.getElementById('sizeOptions');
     optionsGrid.innerHTML = AVAILABLE_SIZES.map(s => `
         <button onclick="selectSize(this, '${s}')" class="size-btn py-2 border-2 border-gray-100 rounded-lg font-bold text-gray-600 hover:border-blue-200 transition">${s}</button>
     `).join('');
-    
+
     document.getElementById('sizePickerModal').classList.remove('hidden');
     document.getElementById('sizePickerModal').classList.add('flex');
 }

@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/constants.js"></script>
 </head>
+
 
 <body class="bg-gray-100 pb-10">
 
@@ -233,6 +235,7 @@
 
     <script src="js/auth.js"></script>
     <script>
+
         function toggleUserMenu() {
             const menu = document.getElementById("userMenu");
             menu.classList.toggle("hidden");
@@ -358,7 +361,7 @@
                     submitBtn.textContent = 'Đang cập nhật...';
                 }
 
-                const response = await fetch('http://localhost:8000/api/auth/change-password', {
+                const response = await fetch(`${API_BASE}/auth/change-password`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -472,7 +475,7 @@
             const paginationInfo = document.getElementById('orderPaginationInfo');
 
             try {
-                const response = await fetch(`http://localhost:8000/api/orders/myorders/${userId}`);
+                const response = await fetch(`${API_BASE}/orders/myorders/${userId}`);
                 if (!response.ok) throw new Error("Không lấy được đơn hàng");
 
                 const orders = await response.json();
@@ -510,7 +513,7 @@
                             <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></span>${status === 'Cancelled' ? 'Đã hủy' : status}
                         </span>`;
                     } else if (status === 'Chờ xử lý' || status === 'Pending') {
-                         statusBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                        statusBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
                             <i class="fa-solid fa-clock mr-1.5 text-[10px]"></i>Chờ xử lý
                         </span>`;
                     } else {

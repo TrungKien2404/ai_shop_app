@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +8,30 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/constants.js"></script>
 </head>
+
+
 <body class="bg-gray-50 min-h-screen">
   <!-- Header Menu (Chỉ lấy phần core thiết yếu hiển thị Back và User dropdown) -->
   <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
       <a href="home.html" class="flex items-center gap-2">
-        <i class="fa-solid fa-arrow-left"></i> <span class="font-bold text-lg hover:text-blue-600 transition">Quay lại Cửa Hàng</span>
+        <i class="fa-solid fa-arrow-left"></i> <span class="font-bold text-lg hover:text-blue-600 transition">Quay lại
+          Cửa Hàng</span>
       </a>
       <div class="relative group/user z-50 text-right">
-        <div onclick="toggleUserMenu()" class="cursor-pointer hover:text-blue-600 transition flex items-center gap-2 font-medium">
+        <div onclick="toggleUserMenu()"
+          class="cursor-pointer hover:text-blue-600 transition flex items-center gap-2 font-medium">
           <i class="fa-solid fa-circle-user text-2xl text-blue-600"></i>
           <span id="headerUserName">Khách</span>
         </div>
-        <div id="userMenu" class="hidden absolute right-0 mt-3 w-40 bg-white text-black rounded-lg shadow-xl border border-gray-100 py-1 text-sm">
-          <a href="history.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium text-blue-600"><i class="fa-solid fa-clock-rotate-left w-5"></i> Lịch sử đơn</a>
-          <a href="javascript:handleLogout()" class="block px-4 py-2 text-red-600 hover:bg-gray-100 font-medium"><i class="fa-solid fa-sign-out-alt w-5"></i> Đăng xuất</a>
+        <div id="userMenu"
+          class="hidden absolute right-0 mt-3 w-40 bg-white text-black rounded-lg shadow-xl border border-gray-100 py-1 text-sm">
+          <a href="history.html" class="block px-4 py-2 hover:bg-gray-100 transition font-medium text-blue-600"><i
+              class="fa-solid fa-clock-rotate-left w-5"></i> Lịch sử đơn</a>
+          <a href="javascript:handleLogout()" class="block px-4 py-2 text-red-600 hover:bg-gray-100 font-medium"><i
+              class="fa-solid fa-sign-out-alt w-5"></i> Đăng xuất</a>
         </div>
       </div>
     </div>
@@ -31,7 +40,8 @@
   <!-- Lịch sử mua hàng -->
   <main class="max-w-5xl mx-auto px-4 py-10">
     <div class="flex items-center justify-between mb-8">
-      <h1 class="text-3xl font-bold text-gray-800"><i class="fa-solid fa-box-open mr-2 text-blue-600"></i> Đơn hàng của bạn</h1>
+      <h1 class="text-3xl font-bold text-gray-800"><i class="fa-solid fa-box-open mr-2 text-blue-600"></i> Đơn hàng của
+        bạn</h1>
     </div>
 
     <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
@@ -60,6 +70,7 @@
 
   <script src="js/auth.js"></script>
   <script>
+
     document.addEventListener('DOMContentLoaded', () => {
       checkLoginAndLoadHistory();
     });
@@ -67,7 +78,7 @@
     async function checkLoginAndLoadHistory() {
       const userStr = sessionStorage.getItem('user');
       const token = sessionStorage.getItem('token');
-      
+
       if (!token || !userStr) {
         alert("Vui lòng đăng nhập để xem lịch sử đơn hàng!");
         window.location.href = "login.html";
@@ -78,9 +89,9 @@
       document.getElementById('headerUserName').textContent = userObj.name || userObj.fullname || "Người dùng";
 
       const tbody = document.getElementById('historyTableBody');
-      
+
       try {
-        const response = await fetch(`http://localhost:8000/api/orders/myorders/${userObj._id}`, {
+        const response = await fetch(`${API_BASE}/orders/myorders/${userObj._id}`, {
           headers: {
             "Authorization": "Bearer " + token
           }
@@ -89,7 +100,7 @@
         if (!response.ok) throw new Error("Fetch failed");
 
         let orders = await response.json();
-        
+
         // Render
         tbody.innerHTML = '';
         if (!orders || orders.length === 0) {
@@ -107,15 +118,15 @@
           if (stt === 'Đã hoàn thành' || stt === 'Đã giao' || stt === 'Completed') sttClass = 'bg-green-100 text-green-600';
           else if (stt === 'Đã hủy' || stt === 'Đã huỷ' || stt === 'Cancelled') sttClass = 'bg-red-100 text-red-600';
           else if (stt === 'Chờ xử lý' || stt === 'Pending') sttClass = 'bg-yellow-100 text-yellow-600';
-          
+
           let itemsText = "Trống";
           if (o.orderItems && o.orderItems.length > 0) {
-             const firstItem = o.orderItems[0];
-             if (firstItem && firstItem.name) {
-                itemsText = firstItem.name + (o.orderItems.length > 1 ? ` (+${o.orderItems.length - 1} món khác)` : "");
-             } else {
-                itemsText = `${o.orderItems.length} sản phẩm`;
-             }
+            const firstItem = o.orderItems[0];
+            if (firstItem && firstItem.name) {
+              itemsText = firstItem.name + (o.orderItems.length > 1 ? ` (+${o.orderItems.length - 1} món khác)` : "");
+            } else {
+              itemsText = `${o.orderItems.length} sản phẩm`;
+            }
           }
 
           tbody.innerHTML += `
@@ -131,11 +142,12 @@
           `;
         });
 
-      } catch(err) {
+      } catch (err) {
         console.error(err);
         tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Có lỗi khi tải dữ liệu! Vui lòng thử lại.</td></tr>`;
       }
     }
   </script>
 </body>
+
 </html>

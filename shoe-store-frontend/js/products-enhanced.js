@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000/api";
+
 const AVAILABLE_SIZES = ["38", "39", "40", "41", "42", "43"];
 const ITEMS_PER_PAGE = 8;
 
@@ -194,7 +194,7 @@ function updateListingHeading() {
       ? `Kết quả tìm kiếm cho "${currentSearchQuery}"`
       : "Tất cả sản phẩm";
   }
-// Fix đoạn tìm kiếm summary để hiển thị số lượng sản phẩm tìm được hoặc thông báo không tìm thấy nếu có truy vấn nhưng không có kết quả nào
+  // Fix đoạn tìm kiếm summary để hiển thị số lượng sản phẩm tìm được hoặc thông báo không tìm thấy nếu có truy vấn nhưng không có kết quả nào
   if (searchSummary) {
     if (currentSearchQuery && normalizeSearchText(currentSearchQuery).length < 5) {
       searchSummary.textContent = "";
@@ -262,10 +262,10 @@ function renderProductCards(container, productsSet, page = 1) {
           <h3 class="font-bold text-gray-800 text-lg mb-2 truncate" title="${safeName}">${safeName}</h3>
           
           <div class="flex flex-col">
-            ${(currentContainerId === "saleGrid" && product.originalPrice > 0) 
-              ? `<p class="text-gray-400 line-through text-xs">${Number(product.originalPrice).toLocaleString("vi-VN")} đ</p>` 
-              : ""
-            }
+            ${(currentContainerId === "saleGrid" && product.originalPrice > 0)
+        ? `<p class="text-gray-400 line-through text-xs">${Number(product.originalPrice).toLocaleString("vi-VN")} đ</p>`
+        : ""
+      }
             <p class="text-red-600 font-bold text-lg">${priceFmt}</p>
           </div>
         </div>
@@ -301,9 +301,8 @@ function renderPagination(container, totalItems, page) {
     page > 1
       ? "bg-white border text-blue-600 hover:bg-gray-100 cursor-pointer"
       : "bg-gray-100 border text-gray-400 cursor-not-allowed";
-  html += `<button ${
-    page > 1 ? `onclick="window.changePage(${page - 1})"` : "disabled"
-  } class="px-4 py-2 rounded font-bold transition ${prevClass}">&larr;</button>`;
+  html += `<button ${page > 1 ? `onclick="window.changePage(${page - 1})"` : "disabled"
+    } class="px-4 py-2 rounded font-bold transition ${prevClass}">&larr;</button>`;
 
   for (let i = 1; i <= totalPages; i++) {
     if (i === page) {
@@ -317,9 +316,8 @@ function renderPagination(container, totalItems, page) {
     page < totalPages
       ? "bg-white border text-blue-600 hover:bg-gray-100 cursor-pointer"
       : "bg-gray-100 border text-gray-400 cursor-not-allowed";
-  html += `<button ${
-    page < totalPages ? `onclick="window.changePage(${page + 1})"` : "disabled"
-  } class="px-4 py-2 rounded font-bold transition ${nextClass}">&rarr;</button>`;
+  html += `<button ${page < totalPages ? `onclick="window.changePage(${page + 1})"` : "disabled"
+    } class="px-4 py-2 rounded font-bold transition ${nextClass}">&rarr;</button>`;
 
   paginationDiv.innerHTML = html;
 }

@@ -1,7 +1,7 @@
 // src/js/auth.js - Frontend Authentication Handler
 
-const API_BASE_URL = 'http://localhost:8000/api/auth';
-const CHAT_API_URL = 'http://localhost:8000/api/chat';
+const API_BASE_URL = `${API_BASE}/auth`;
+const CHAT_API_URL = `${API_BASE}/chat`;
 
 // ================== SIGNUP ==================
 async function handleSignup(event) {
@@ -321,10 +321,10 @@ function updateUserMenu() {
   if (userMenu && isLoggedIn()) {
     const user = getUser();
     const displayName = user.name || user.fullname || 'Người dùng';
-    
+
     // Nếu là admin, hiển thị thêm link tới trang quản trị
-    const adminLink = (user.role === 'admin' || user.isAdmin === true) 
-      ? `<a href="admin.html" class="block px-4 py-2 text-blue-600 font-bold hover:bg-gray-100">🚀 Trang Quản Trị</a>` 
+    const adminLink = (user.role === 'admin' || user.isAdmin === true)
+      ? `<a href="admin.html" class="block px-4 py-2 text-blue-600 font-bold hover:bg-gray-100">🚀 Trang Quản Trị</a>`
       : '';
 
     userMenu.innerHTML = `

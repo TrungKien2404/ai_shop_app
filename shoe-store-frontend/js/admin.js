@@ -1,10 +1,7 @@
 /**
  * admin.js - Script xử lý logic riêng cho trang Dashboard Admin
  */
-// Phần này dành cho local
-// const API_BASE = 'http://localhost:8000/api';
-// Phần này dành cho deploy render
-const API_BASE = 'https://ai-shop-app-backend.onrender.com/';
+
 // Kiểm tra quyền truy cập ngay khi load script
 checkAdminAuth();
 

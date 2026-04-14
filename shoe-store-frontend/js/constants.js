@@ -1,0 +1,1 @@
+const API_BASE = 'https://ai-shop-app-backend.onrender.com/api';
