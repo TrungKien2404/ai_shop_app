@@ -1,20 +1,45 @@
 const { Sequelize } = require("sequelize");
-const path = require("path");
+require("dotenv").config(); // Load biến môi trường
 
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: path.join(__dirname, "..", "database.sqlite"),
-  logging: false,
-});
+let sequelize;
+
+if (process.env.DB_URL) {
+  // 1. Chạy với Cloud Database (Render, Supabase,...)
+  sequelize = new Sequelize(process.env.DB_URL, {
+    dialect: "postgres",
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // Bắt buộc thiết lập SSL khi kết nối từ ngoài vào Render
+      }
+    }
+  });
+} else {
+  // 2. Dự phòng: Chạy với Local Database (máy tính không có DB_URL)
+  sequelize = new Sequelize(
+    process.env.DB_NAME || 'shoe_shop',
+    process.env.DB_USER || 'postgres',
+    process.env.DB_PASSWORD || '',
+    {
+      host: process.env.DB_HOST || '127.0.0.1',
+      port: process.env.DB_PORT || 5432,
+      dialect: "postgres",
+      logging: false,
+    }
+  );
+}
 
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log("Database connected successfully.");
-    await sequelize.sync({ alter: true }); 
+    console.log("PostgreSQL Database connected successfully.");
+
+    // Đồng bộ model với database (sẽ tự động tạo bảng nếu chưa có)
+    await sequelize.sync({ alter: true });
     console.log("Database synchronized (altered).");
   } catch (error) {
-    console.error("Unable to connect to the SQLite database:", error);
+    console.error("Unable to connect to the PostgreSQL database:", error);
     process.exit(1);
   }
 };
