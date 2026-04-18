@@ -1,3 +1,10 @@
+require('dotenv').config({ path: __dirname + '/.env' });
+
+console.log("DEBUG ENV:", {
+  password: process.env.DB_PASSWORD,
+  user: process.env.DB_USER,
+  db: process.env.DB_NAME
+});
 const express = require("express");
 const cors = require("cors");
 const { connectDB } = require("./config/db");

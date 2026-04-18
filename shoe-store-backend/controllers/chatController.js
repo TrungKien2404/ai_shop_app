@@ -174,19 +174,25 @@ function scoreProduct(product, preferences) {
   const fullText = `${nameText} ${descText} ${brandText}`;
   let score = 0;
 
+  // Base score cho sản phẩm có hàng
+  if (product.stock > 0) score += 1;
+
+  // Chỉ áp dụng brand penalty nếu có chỉ định brand
   if (preferences.brand) {
     if (brandText === normalizeText(preferences.brand)) score += 8;
-    else score -= 4;
+    else score -= 2; // Giảm penalty từ -4 thành -2
   }
 
+  // Nhu cầu (needs)
   preferences.needs.forEach((need) => {
     if (matchesNeed(fullText, need)) score += 5;
   });
 
+  // Budget - chỉ penalize nếu vượt quá nhiều
   if (Number.isFinite(preferences.budget.max)) {
     if (product.price <= preferences.budget.max) score += 4;
-    else if (product.price <= preferences.budget.max * 1.15) score += 1;
-    else score -= 3;
+    else if (product.price <= preferences.budget.max * 1.2) score += 1;
+    else score -= 1; // Giảm penalty từ -3 thành -1
   }
 
   if (Number.isFinite(preferences.budget.min)) {
@@ -194,11 +200,16 @@ function scoreProduct(product, preferences) {
     else score -= 1;
   }
 
-  preferences.tokens.forEach((token) => {
-    if (fullText.includes(token)) score += 1;
-  });
+  // Token matching - nếu có token, tìm match
+  if (preferences.tokens.length > 0) {
+    preferences.tokens.forEach((token) => {
+      if (fullText.includes(token)) score += 1;
+    });
+  } else {
+    // Nếu không có token cụ thể, cho điểm cơ bản
+    score += 2;
+  }
 
-  if (product.stock > 0) score += 1;
   return score;
 }
 
@@ -223,8 +234,20 @@ function rankProducts(products, userMessage) {
       return (a.price || 0) - (b.price || 0);
     });
 
-  const matches = ranked.filter((product) => product._score > 0).slice(0, MAX_PRODUCT_SUGGESTIONS);
-  return { preferences, matches: matches.length ? matches : ranked.slice(0, MAX_PRODUCT_SUGGESTIONS) };
+  // Lấy sản phẩm có điểm > 0, nếu không có thì lấy tất cả sắp xếp theo giá
+  let matches = ranked.filter((product) => product._score > 0);
+  
+  // Nếu không có sản phẩm nào match, lấy những sản phẩm có stock
+  if (!matches.length) {
+    matches = ranked.filter((product) => product.stock > 0);
+  }
+  
+  // Nếu vẫn không có, lấy tất cả
+  if (!matches.length) {
+    matches = ranked;
+  }
+  
+  return { preferences, matches: matches.slice(0, MAX_PRODUCT_SUGGESTIONS) };
 }
 
 function toClientProduct(product) {
@@ -248,8 +271,13 @@ function buildFallbackReply(userMessage, preferences, products) {
 
   const summaryParts = [];
   if (preferences.brand) summaryParts.push(`hãng ${preferences.brand}`);
-  if (Number.isFinite(preferences.budget.max)) summaryParts.push(`ngân sách dưới ${formatCurrency(preferences.budget.max)}`);
-  if (Number.isFinite(preferences.budget.min) && !Number.isFinite(preferences.budget.max)) {
+  if (Number.isFinite(preferences.budget.max)) {
+    if (Number.isFinite(preferences.budget.min)) {
+      summaryParts.push(`ngân sách từ ${formatCurrency(preferences.budget.min)} đến ${formatCurrency(preferences.budget.max)}`);
+    } else {
+      summaryParts.push(`ngân sách dưới ${formatCurrency(preferences.budget.max)}`);
+    }
+  } else if (Number.isFinite(preferences.budget.min)) {
     summaryParts.push(`ngân sách từ ${formatCurrency(preferences.budget.min)}`);
   }
   if (preferences.needs.length) {
@@ -257,18 +285,113 @@ function buildFallbackReply(userMessage, preferences, products) {
   }
 
   const intro = summaryParts.length
-    ? `Mình đã lọc theo ${summaryParts.join(", ")} và có vài mẫu khá hợp cho bạn:`
-    : `Mình xem qua nhu cầu "${userMessage}" và có vài mẫu đáng cân nhắc:`;
+    ? `Dựa vào nhu cầu của bạn (${summaryParts.join(", ")}), mình gợi ý những mẫu này:`
+    : `Mình có gợi ý một số mẫu giày hot cho bạn:`;
 
   const lines = products.map((product) => {
     const desc = product.description ? ` - ${product.description}` : "";
     return `- ${product.name} (${product.brand}) - ${formatCurrency(product.price)}${desc}`;
   });
 
-  return `${intro}\n${lines.join("\n")}\n\nNếu bạn muốn, mình có thể lọc tiếp theo hãng, tầm giá hoặc nhu cầu như chạy bộ, đi học, đá bóng.`;
+  return `${intro}\n${lines.join("\n")}\n\nBạn có thích mẫu nào không? Mình có thể tư vấn thêm hoặc giúp bạn đặt hàng!`;
 }
 
-function buildSystemPrompt(products, preferences) {
+function isNewShoeQuery(userMessage) {
+  const normalized = normalizeText(userMessage);
+  const newShoeKeywords = [
+    "giay moi",
+    "san pham moi",
+    "co gi moi",
+    "moi ra",
+    "moi nhat",
+    "latest",
+    "new",
+    "tuyen chon",
+    "go y",
+    "tu van",
+    "chon ho",
+    "nen mua",
+    "hay nhat",
+    "tot nhat",
+    "pho bien",
+    "tren tren",
+    "hien tại",
+    "bây giờ",
+    "dang hot",
+  ];
+
+  return newShoeKeywords.some((keyword) => normalized.includes(keyword));
+}
+
+function classifyUserQuery(userMessage) {
+  const normalized = normalizeText(userMessage);
+  
+  // Từ khóa liên quan đến giày/sản phẩm
+  const shoeKeywords = [
+    "giay",
+    "shoe",
+    "nike",
+    "adidas",
+    "puma",
+    "bitis",
+    "mizuno",
+    "chay bo",
+    "running",
+    "jogging",
+    "da bong",
+    "football",
+    "soccer",
+    "cau long",
+    "badminton",
+    "gym",
+    "workout",
+    "basketball",
+    "bong ro",
+    "casual",
+    "sport",
+    "sneaker",
+    "boot",
+    "sandal",
+    "size",
+    "kich thuoc",
+    "gia",
+    "price",
+    "co",
+    "stock",
+    "mua",
+    "buy",
+    "order",
+    "dat hang",
+    "delivery",
+    "ship",
+    "giao hang",
+    "san pham",
+    "product",
+    "moi",
+    "nhat",
+    "hay nhat",
+    "tot nhat",
+    "go y",
+    "de xuat",
+    "tuyen chon",
+    "chon",
+    "hoai nhiem",
+  ];
+
+  // Kiểm tra xem có từ khóa giày không
+  const isShoeRelated = shoeKeywords.some((keyword) => normalized.includes(keyword));
+  
+  // Nếu liên quan đến giày → shoe_inquiry
+  if (isShoeRelated) {
+    return "shoe_inquiry";
+  }
+  
+  // Nếu không → general_conversation
+  return "general_conversation";
+}
+
+function buildSystemPrompt(products, preferences, userMessage) {
+  const queryType = classifyUserQuery(userMessage);
   const productContext = products.length
     ? products
         .map((product, index) => {
@@ -287,16 +410,38 @@ function buildSystemPrompt(products, preferences) {
     .filter(Boolean)
     .join("\n");
 
-  return [
-    "Bạn là trợ lý bán giày của MyShoes, luôn trả lời bằng tiếng Việt tự nhiên, ngắn gọn và hữu ích.",
-    "Chỉ ưu tiên giới thiệu sản phẩm có trong danh sách ngữ cảnh bên dưới, không bịa tên hoặc giá sản phẩm mới.",
-    "Nếu chưa có mẫu khớp hoàn toàn, hãy nói rõ là gần phù hợp nhất và mời người dùng bổ sung hãng, tầm giá hoặc nhu cầu.",
-    "Nếu có gợi ý, nên nhắc 2-4 sản phẩm kèm lý do ngắn gọn.",
-    preferenceSummary ? `Thông tin đã suy ra từ câu hỏi:\n${preferenceSummary}` : "",
-    `Danh sách sản phẩm có thể dùng để tư vấn:\n${productContext}`,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
+  if (queryType === "shoe_inquiry") {
+    // Chế độ TƯ VẤN GIÀY - hướng đến giới thiệu sản phẩm
+    return [
+      "Bạn là nhân viên tư vấn giày chuyên nghiệp của MyShoes. Khách hàng đang tìm kiếm sản phẩm.",
+      "⚠️ LƯU Ý QUAN TRỌNG: PHẢI giới thiệu sản phẩm CÓ TRONG DANH SÁCH DỰA đây. TUYỆT ĐỐI KHÔNG được bịa tên sản phẩm, giá, hoặc hãng không có trong danh sách.",
+      "CÁCH TRẢ LỜI:",
+      "1. Chào hỏi tự nhiên và thân thiện",
+      "2. Giới thiệu 2-4 sản phẩm THỰC từ danh sách phù hợp nhất với nhu cầu khách hàng",
+      "3. Nêu rõ: Tên sản phẩm, Hãng, Giá (theo đúng dữ liệu)",
+      "4. Mô tả ngắn gọn tại sao phù hợp",
+      "5. Mời khách hàng hỏi thêm hoặc xem sản phẩm",
+      "Luôn trả lời bằng tiếng Việt tự nhiên, không quá dài dòng.",
+      preferenceSummary ? `Nhu cầu khách hàng:\n${preferenceSummary}` : "",
+      `DANH SÁCH SẢN PHẨM THỰC (phải sử dụng từ danh sách này):\n${productContext}`,
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+  } else {
+    // Chế độ BÌNH THƯỜNG - trò chuyện thường, không tư vấn sản phẩm
+    return [
+      "Bạn là nhân viên bán hàng thân thiện của cửa hàng giày MyShoes.",
+      "Khách hàng đang hỏi một câu hỏi về những thứ không liên quan đến giày hoặc không cần tư vấn sản phẩm.",
+      "CÁCH TRẢ LỜI:",
+      "1. Trả lời tự nhiên, thân thiện và hữu ích",
+      "2. Không cần giới thiệu sản phẩm (trừ khi khách hàng nhắc tới)",
+      "3. Nếu câu hỏi liên quan đến giày ngành hàng, bạn có thể nhắc rằng điều đó liên quan đến sản phẩm của MyShoes",
+      "4. Luôn trả lời bằng tiếng Việt tự nhiên",
+      "Hãy tạo cảm giác thân cận và sẵn sàng giúp đỡ.",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+  }
 }
 
 function postToOllama(payload) {
@@ -343,14 +488,14 @@ function postToOllama(payload) {
   });
 }
 
-async function getAssistantReply(messages, preferences, products, fallbackReply) {
+async function getAssistantReply(messages, preferences, products, fallbackReply, userMessage) {
   const ollamaPayload = {
     model: OLLAMA_MODEL,
     stream: false,
     messages: [
       {
         role: "system",
-        content: buildSystemPrompt(products, preferences),
+        content: buildSystemPrompt(products, preferences, userMessage),
       },
       ...messages,
     ],
@@ -388,11 +533,23 @@ exports.chatWithAssistant = async (req, res) => {
       return res.status(400).json({ message: "Missing user message" });
     }
 
+    // Kiểm tra loại câu hỏi: giày hay trò chuyện thường
+    const queryType = classifyUserQuery(latestUserMessage);
+    console.log(`[CHAT] User message: "${latestUserMessage}"`);
+    console.log(`[CHAT] Query type: ${queryType}`);
+
     const products = await Product.findAll();
+    console.log(`[CHAT] Total products in DB: ${products.length}`);
+    
     const { preferences, matches } = rankProducts(products, latestUserMessage);
-    const suggestedProducts = matches.map(toClientProduct);
-    const fallbackReply = buildFallbackReply(latestUserMessage, preferences, suggestedProducts);
-    const assistantReply = await getAssistantReply(messages, preferences, suggestedProducts, fallbackReply);
+    console.log(`[CHAT] Matched products: ${matches.length}`);
+    
+    // Chỉ đưa sản phẩm nếu là hỏi giày
+    const suggestedProducts = queryType === "shoe_inquiry" ? matches.map(toClientProduct) : [];
+    console.log(`[CHAT] Suggested products count: ${suggestedProducts.length}`);
+    
+    const fallbackReply = buildFallbackReply(latestUserMessage, preferences, matches.map(toClientProduct));
+    const assistantReply = await getAssistantReply(messages, preferences, suggestedProducts, fallbackReply, latestUserMessage);
 
     res.json({
       message: {
@@ -401,13 +558,15 @@ exports.chatWithAssistant = async (req, res) => {
       },
       products: suggestedProducts,
       source: assistantReply.source,
-      filters: {
+      filters: queryType === "shoe_inquiry" ? {
         brand: preferences.brand,
         needs: preferences.needs,
         budget: preferences.budget,
-      },
+      } : null,
+      queryType: queryType,
     });
   } catch (error) {
+    console.error("[CHAT] Error:", error);
     res.status(500).json({ message: error.message });
   }
 };
