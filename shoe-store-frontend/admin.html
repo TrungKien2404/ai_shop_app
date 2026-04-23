@@ -198,6 +198,10 @@
                                 <i
                                     class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                             </div>
+                            <button onclick="openBulkProductModal()"
+                                class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group"></i> Thêm nhiều
+                            </button>
                             <button onclick="openProductModal()"
                                 class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
                                 <i class="fa-solid fa-plus"></i> Thêm giày
@@ -502,6 +506,94 @@
             <div class="p-4 border-t bg-gray-50 flex justify-end">
                 <button onclick="closeOrderDetailModal()"
                     class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-black transition font-semibold shadow-md">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Nhiều Sản Phẩm (Bulk) -->
+    <div id="bulkProductModal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[92vh] overflow-hidden m-4 shadow-2xl relative flex flex-col">
+            <!-- Header -->
+            <div class="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10 rounded-t-2xl">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Thêm Nhiều Sản Phẩm</h3>
+                        <p class="text-xs text-gray-400">Thêm hàng loạt sản phẩm vào kho giày</p>
+                    </div>
+                </div>
+                <button onclick="closeBulkProductModal()" class="text-gray-400 hover:text-gray-600 transition w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="px-6 py-3 bg-gray-50 border-b flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="addBulkRow()"
+                        class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition flex items-center gap-2 text-sm font-medium shadow-sm">
+                        <i class="fa-solid fa-plus"></i> Thêm dòng
+                    </button>
+                    <button type="button" onclick="removeLastBulkRow()"
+                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition flex items-center gap-2 text-sm font-medium">
+                        <i class="fa-solid fa-minus"></i> Xóa dòng cuối
+                    </button>
+                    <span class="text-sm text-gray-500 ml-2">
+                        Tổng: <span id="bulkRowCount" class="font-bold text-emerald-600">1</span> sản phẩm
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="clearAllBulkRows()"
+                        class="text-red-500 hover:text-red-700 px-3 py-2 rounded-lg hover:bg-red-50 transition flex items-center gap-2 text-sm font-medium">
+                        <i class="fa-solid fa-trash-can"></i> Xóa tất cả
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Body -->
+            <div class="flex-1 overflow-auto p-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[900px]">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 text-xs uppercase border-b sticky top-0 z-[5]">
+                                <th class="p-3 font-semibold w-10 text-center">#</th>
+                                <th class="p-3 font-semibold min-w-[180px]">Tên giày <span class="text-red-500">*</span></th>
+                                <th class="p-3 font-semibold w-[120px]">Giá bán <span class="text-red-500">*</span></th>
+                                <th class="p-3 font-semibold w-[110px]">Hãng</th>
+                                <th class="p-3 font-semibold w-[140px]">Khu vực</th>
+                                <th class="p-3 font-semibold w-[140px]">Danh mục</th>
+                                <th class="p-3 font-semibold min-w-[200px]">URL Hình ảnh</th>
+                                <th class="p-3 font-semibold w-10 text-center">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulkProductsTableBody">
+                            <!-- Dynamic rows will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div id="bulkProgressBar" class="hidden px-6">
+                <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div id="bulkProgressFill" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p id="bulkProgressText" class="text-xs text-gray-500 text-center mt-1">Đang xử lý...</p>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-4 border-t bg-gray-50 flex items-center justify-between rounded-b-2xl">
+                <p class="text-xs text-gray-400"><i class="fa-solid fa-info-circle mr-1"></i>Các trường có dấu <span class="text-red-500">*</span> là bắt buộc</p>
+                <div class="flex items-center gap-3 font-medium">
+                    <button type="button" onclick="closeBulkProductModal()"
+                        class="px-5 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition">Hủy</button>
+                    <button type="button" onclick="handleBulkProductSubmit()" id="btnBulkSubmit"
+                        class="px-6 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Lưu tất cả
+                    </button>
+                </div>
             </div>
         </div>
     </div>

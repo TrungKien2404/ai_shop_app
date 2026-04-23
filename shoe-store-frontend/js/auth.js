@@ -225,7 +225,7 @@ function getCartItemCount() {
 }
 
 function updateCartBadge() {
-  const cartLinks = document.querySelectorAll('a[href="cart.html"]');
+  const cartLinks = document.querySelectorAll('.custom-navbar a[href="cart.html"]');
 
   cartLinks.forEach((link) => {
     let badge = link.querySelector('.js-cart-badge');
@@ -265,11 +265,19 @@ window.cartUtils = {
   normalizeCartQuantity
 };
 
+// ================== CHECK IF ADMIN ==================
+function isAdmin() {
+  const user = getUser();
+  if (!user) return false;
+  return user.role === 'admin' || user.isAdmin === true;
+}
+
 window.authUtils = {
   getToken,
   getUser,
   isLoggedIn,
-  requireLogin
+  requireLogin,
+  isAdmin
 };
 
 function getNavbarSearchElements() {

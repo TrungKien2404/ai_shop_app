@@ -876,3 +876,254 @@ async function deleteUser(id) {
     }
 }
 
+// ================== THÊM NHIỀU SẢN PHẨM (BULK) ================== //
+
+let bulkRowCounter = 0;
+
+function openBulkProductModal() {
+    const modal = document.getElementById('bulkProductModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    // Reset
+    const tbody = document.getElementById('bulkProductsTableBody');
+    tbody.innerHTML = '';
+    bulkRowCounter = 0;
+    // Thêm 3 dòng mặc định
+    for (let i = 0; i < 3; i++) addBulkRow();
+    updateBulkRowCount();
+    // Reset progress
+    document.getElementById('bulkProgressBar').classList.add('hidden');
+}
+
+function closeBulkProductModal() {
+    const modal = document.getElementById('bulkProductModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function createBulkRowHTML(index) {
+    return `
+        <tr class="bulk-row border-b border-gray-100 hover:bg-emerald-50/30 transition group" data-row-index="${index}">
+            <td class="p-2 text-center text-gray-400 font-mono text-xs bulk-row-num">${index}</td>
+            <td class="p-2">
+                <input type="text" name="bulk_name_${index}" required placeholder="VD: Nike Air Max 90"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white transition">
+            </td>
+            <td class="p-2">
+                <input type="number" name="bulk_price_${index}" required placeholder="VD: 2500000"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white transition">
+            </td>
+            <td class="p-2">
+                <select name="bulk_brand_${index}"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white transition">
+                    <option value="Nike">Nike</option>
+                    <option value="Adidas">Adidas</option>
+                    <option value="Puma">Puma</option>
+                    <option value="Biti's">Biti's</option>
+                    <option value="Mizuno">Mizuno</option>
+                </select>
+            </td>
+            <td class="p-2">
+                <select name="bulk_section_${index}" onchange="toggleBulkCategory(${index}, this.value)"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white transition">
+                    <option value="">(Chọn)</option>
+                    <option value="Độc quyền">Độc quyền</option>
+                    <option value="Trending">Trending</option>
+                    <option value="Bestseller">Best Seller</option>
+                    <option value="Sale">Sale</option>
+                    <option value="Category">Danh mục</option>
+                </select>
+            </td>
+            <td class="p-2">
+                <select name="bulk_category_${index}" disabled
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 bg-white transition disabled:opacity-40 disabled:cursor-not-allowed">
+                    <option value="Bóng đá">Bóng đá</option>
+                    <option value="Chạy bộ">Chạy bộ</option>
+                    <option value="Casual">Casual</option>
+                </select>
+            </td>
+            <td class="p-2">
+                <input type="text" name="bulk_image_${index}" placeholder="https://..."
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white transition">
+            </td>
+            <td class="p-2 text-center">
+                <button type="button" onclick="removeBulkRow(this)"
+                    class="w-8 h-8 rounded-lg bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center mx-auto opacity-0 group-hover:opacity-100" title="Xóa dòng này">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </td>
+        </tr>
+    `;
+}
+
+function addBulkRow() {
+    bulkRowCounter++;
+    const tbody = document.getElementById('bulkProductsTableBody');
+    tbody.insertAdjacentHTML('beforeend', createBulkRowHTML(bulkRowCounter));
+    updateBulkRowCount();
+    // Scroll to new row
+    const newRow = tbody.lastElementChild;
+    if (newRow) newRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function removeBulkRow(btnEl) {
+    const row = btnEl.closest('tr');
+    if (row) {
+        row.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            row.remove();
+            updateBulkRowNumbers();
+            updateBulkRowCount();
+        }, 150);
+    }
+}
+
+function removeLastBulkRow() {
+    const tbody = document.getElementById('bulkProductsTableBody');
+    const rows = tbody.querySelectorAll('.bulk-row');
+    if (rows.length > 1) {
+        const last = rows[rows.length - 1];
+        last.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            last.remove();
+            updateBulkRowNumbers();
+            updateBulkRowCount();
+        }, 150);
+    } else {
+        alert('Phải giữ lại ít nhất 1 dòng!');
+    }
+}
+
+function clearAllBulkRows() {
+    if (!confirm('Bạn có chắc chắn muốn xóa tất cả các dòng?')) return;
+    const tbody = document.getElementById('bulkProductsTableBody');
+    tbody.innerHTML = '';
+    bulkRowCounter = 0;
+    addBulkRow();
+}
+
+function updateBulkRowNumbers() {
+    const rows = document.querySelectorAll('#bulkProductsTableBody .bulk-row');
+    rows.forEach((row, i) => {
+        const numCell = row.querySelector('.bulk-row-num');
+        if (numCell) numCell.textContent = i + 1;
+    });
+}
+
+function updateBulkRowCount() {
+    const count = document.querySelectorAll('#bulkProductsTableBody .bulk-row').length;
+    const el = document.getElementById('bulkRowCount');
+    if (el) el.textContent = count;
+}
+
+function toggleBulkCategory(index, val) {
+    const catSelect = document.querySelector(`[name="bulk_category_${index}"]`);
+    if (catSelect) {
+        catSelect.disabled = (val !== 'Category');
+    }
+}
+
+async function handleBulkProductSubmit() {
+    const rows = document.querySelectorAll('#bulkProductsTableBody .bulk-row');
+    if (rows.length === 0) {
+        alert('Chưa có sản phẩm nào để thêm!');
+        return;
+    }
+
+    const productsToAdd = [];
+    let hasError = false;
+
+    rows.forEach((row, i) => {
+        const idx = row.dataset.rowIndex;
+        const name = row.querySelector(`[name="bulk_name_${idx}"]`)?.value?.trim();
+        const price = row.querySelector(`[name="bulk_price_${idx}"]`)?.value;
+        const brand = row.querySelector(`[name="bulk_brand_${idx}"]`)?.value;
+        const section = row.querySelector(`[name="bulk_section_${idx}"]`)?.value;
+        const category = row.querySelector(`[name="bulk_category_${idx}"]`)?.value;
+        const image = row.querySelector(`[name="bulk_image_${idx}"]`)?.value?.trim();
+
+        if (!name || !price) {
+            hasError = true;
+            // Highlight dòng lỗi
+            row.classList.add('bg-red-50');
+            setTimeout(() => row.classList.remove('bg-red-50'), 2000);
+            return;
+        }
+
+        let tag = '';
+        let cat = '';
+        if (section === 'Category') {
+            cat = category;
+        } else {
+            tag = section;
+        }
+
+        productsToAdd.push({
+            name,
+            price: Number(price),
+            brand: brand || 'Nike',
+            category: cat,
+            tag,
+            image: image || '',
+            description: '',
+            originalPrice: 0
+        });
+    });
+
+    if (hasError) {
+        alert('Vui lòng điền đầy đủ Tên giày và Giá bán cho tất cả các dòng!');
+        return;
+    }
+
+    // Show progress
+    const btn = document.getElementById('btnBulkSubmit');
+    const oriText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang lưu...';
+    btn.disabled = true;
+
+    const progressBar = document.getElementById('bulkProgressBar');
+    const progressFill = document.getElementById('bulkProgressFill');
+    const progressText = document.getElementById('bulkProgressText');
+    progressBar.classList.remove('hidden');
+    progressFill.style.width = '30%';
+    progressText.textContent = `Đang gửi ${productsToAdd.length} sản phẩm...`;
+
+    try {
+        const res = await fetch(`${API_BASE}/products/bulk`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ products: productsToAdd })
+        });
+
+        progressFill.style.width = '80%';
+
+        const data = await res.json();
+
+        if (res.ok || data.success) {
+            progressFill.style.width = '100%';
+            progressFill.classList.remove('bg-emerald-500');
+            progressFill.classList.add('bg-green-500');
+            progressText.textContent = `✅ ${data.message || `Đã thêm ${productsToAdd.length} sản phẩm thành công!`}`;
+
+            setTimeout(() => {
+                alert(`🎉 Thêm thành công ${productsToAdd.length} sản phẩm!`);
+                closeBulkProductModal();
+                fetchProducts();
+            }, 600);
+        } else {
+            progressFill.classList.remove('bg-emerald-500');
+            progressFill.classList.add('bg-red-500');
+            progressText.textContent = `❌ Lỗi: ${data.message || 'Không thể thêm sản phẩm.'}`;
+            alert('Lỗi: ' + (data.message || 'Không thể thêm sản phẩm.'));
+        }
+    } catch (err) {
+        console.error('Bulk submit err:', err);
+        progressFill.classList.remove('bg-emerald-500');
+        progressFill.classList.add('bg-red-500');
+        progressText.textContent = '❌ Lỗi kết nối máy chủ!';
+        alert('Lỗi kết nối máy chủ!');
+    } finally {
+        btn.innerHTML = oriText;
+        btn.disabled = false;
+    }
+}

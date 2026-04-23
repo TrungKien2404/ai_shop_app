@@ -246,6 +246,16 @@
     }
 
     renderCart();
+
+    // Ẩn nút thanh toán nếu là admin
+    if (window.authUtils?.isAdmin?.()) {
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      if (checkoutBtn) checkoutBtn.style.display = 'none';
+      const notice = document.createElement('div');
+      notice.className = 'mt-4 bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-lg text-sm text-center';
+      notice.innerHTML = '<i class="fa-solid fa-circle-info mr-2"></i>Tài khoản Admin không thể đặt hàng. Vui lòng sử dụng tài khoản khách hàng.';
+      checkoutBtn?.parentElement?.appendChild(notice);
+    }
   </script>
   <script src="js/theme.js"></script>
 </body>

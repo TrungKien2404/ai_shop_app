@@ -128,7 +128,11 @@
   <script src="js/auth.js"></script>
 
   <script>
-
+    // Chặn admin truy cập trang thanh toán
+    if (window.authUtils?.isAdmin?.()) {
+      alert('Tài khoản Admin không thể đặt hàng. Vui lòng sử dụng tài khoản khách hàng.');
+      window.location.href = 'home.html';
+    }
     function formatVnd(value) {
       return Number(value || 0).toLocaleString("vi-VN") + "đ";
     }

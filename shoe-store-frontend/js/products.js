@@ -147,16 +147,21 @@ function renderProductCards(container, productsSet, page = 1) {
         const safeName = (p.name || "").replace(/"/g, "&quot;").replace(/'/g, "\\'");
         const orderUrl = `order.html?name=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price)}&image=${encodeURIComponent(img)}`.replace(/'/g, "%27");
 
-        html += `
-            <div class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer" onclick="location.href='${orderUrl}'">
-                <div class="relative overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4">
-                    <img src="${img}" alt="${safeName}" class="object-contain w-full h-full group-hover:scale-105 transition duration-500">
+        // Ẩn nút "Thêm vào giỏ" nếu là admin
+        const isAdminUser = window.authUtils?.isAdmin?.();
+        const addToCartOverlay = isAdminUser ? '' : `
                     <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                         <button onclick="event.stopPropagation(); openSizePicker('${p._id}', '${safeName}', ${p.price}, '${img}')" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transform translate-y-4 group-hover:translate-y-0 transition">
                             Thêm vào giỏ
                         </button>
-                    </div>
+                    </div>`;
+
+        html += `
+            <div class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer" onclick="location.href='${orderUrl}'">
+                <div class="relative overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4">
+                    <img src="${img}" alt="${safeName}" class="object-contain w-full h-full group-hover:scale-105 transition duration-500">
+                    ${addToCartOverlay}
                 </div>
                 <div class="p-4">
                     <p class="text-[10px] text-blue-500 font-bold uppercase tracking-wider mb-1">${p.brand || 'Brand'}</p>

@@ -62,6 +62,30 @@ exports.createProduct = async (req, res) => {
   }
 };
 
+exports.bulkCreateProducts = async (req, res) => {
+  try {
+    const { products } = req.body;
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ message: "Vui lòng cung cấp danh sách sản phẩm." });
+    }
+
+    const dataList = products.map(p => {
+      const d = { ...p };
+      if (Array.isArray(d.size)) d.size = JSON.stringify(d.size);
+      return d;
+    });
+
+    const created = await Product.bulkCreate(dataList, { returning: true });
+    res.status(201).json({
+      success: true,
+      message: `Đã thêm thành công ${created.length} sản phẩm.`,
+      products: created.map(transformProduct)
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.updateProduct = async (req, res) => {
   try {
     const data = { ...req.body };

@@ -51,6 +51,15 @@ exports.createOrder = async (req, res) => {
       orderItems,
     } = req.body;
 
+    // Chặn admin đặt hàng
+    if (user) {
+      const orderUser = await User.findByPk(user);
+      if (orderUser && orderUser.isAdmin) {
+        await transaction.rollback();
+        return res.status(403).json({ message: "Tài khoản Admin không được phép đặt hàng." });
+      }
+    }
+
     const normalizedItems = normalizeOrderItems(orderItems);
 
     if (!user || normalizedItems.length === 0) {
