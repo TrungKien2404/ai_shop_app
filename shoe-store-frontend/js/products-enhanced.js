@@ -8,6 +8,7 @@ let currentContainerId = null;
 let currentContainerElement = null;
 let currentSearchQuery = "";
 let pendingCartProduct = null;
+let pendingAction = "cart"; // "cart" or "buy"
 
 document.addEventListener("DOMContentLoaded", () => {
   ensureSizePickerModal();
@@ -244,7 +245,7 @@ function renderProductCards(container, productsSet, page = 1) {
       <div class="js-product-card bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer" data-order-url="${safeOrderUrl}">
         <div class="relative overflow-hidden h-64 bg-gray-100 flex items-center justify-center">
           <img src="${safeImage}" alt="${safeName}" class="object-cover w-full h-full group-hover:scale-105 transition duration-500">
-          <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+          <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2">
             <button
               type="button"
               class="js-open-size-picker bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transform translate-y-4 group-hover:translate-y-0 transition"
@@ -252,8 +253,20 @@ function renderProductCards(container, productsSet, page = 1) {
               data-name="${safeName}"
               data-price="${Number(product.price) || 0}"
               data-image="${safeImage}"
-              data-order-url="${safeOrderUrl}">
-              Thêm vào giỏ
+              data-order-url="${safeOrderUrl}"
+              data-action="cart">
+              <i class="fa-solid fa-cart-plus mr-1"></i> Thêm vào giỏ
+            </button>
+            <button
+              type="button"
+              class="js-open-size-picker bg-green-600 text-white px-4 py-2 rounded-full font-medium hover:bg-green-700 transform translate-y-4 group-hover:translate-y-0 transition delay-75"
+              data-id="${escapeHtml(product._id || "")}"
+              data-name="${safeName}"
+              data-price="${Number(product.price) || 0}"
+              data-image="${safeImage}"
+              data-order-url="${safeOrderUrl}"
+              data-action="buy">
+              <i class="fa-solid fa-bolt mr-1"></i> Mua ngay
             </button>
           </div>
         </div>
@@ -335,13 +348,14 @@ function bindProductCardInteractions(container) {
   container.querySelectorAll(".js-open-size-picker").forEach((button) => {
     button.addEventListener("click", (event) => {
       event.stopPropagation();
+      const action = button.dataset.action || "cart";
       openSizePicker({
         id: button.dataset.id,
         name: button.dataset.name,
         price: Number(button.dataset.price) || 0,
         image: button.dataset.image || "",
         orderUrl: button.dataset.orderUrl || ""
-      });
+      }, action);
     });
   });
 }
@@ -356,7 +370,7 @@ function ensureSizePickerModal() {
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
       <div class="flex items-start justify-between gap-4">
         <div>
-          <h3 class="text-xl font-bold text-gray-900">Chọn size trước khi thêm vào giỏ</h3>
+          <h3 class="text-xl font-bold text-gray-900" id="sizePickerTitle">Chọn size</h3>
           <p class="text-sm text-gray-500 mt-1" id="sizePickerProductName"></p>
         </div>
         <button type="button" id="closeSizePickerBtn" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
@@ -365,12 +379,17 @@ function ensureSizePickerModal() {
       <div class="mt-5">
         <p class="text-sm font-medium text-gray-700 mb-3">Size có sẵn</p>
         <div id="sizePickerOptions" class="flex flex-wrap gap-2"></div>
-        <p id="sizePickerError" class="text-sm text-red-500 mt-3 hidden">Vui lòng chọn size trước khi thêm vào giỏ hàng.</p>
+        <p id="sizePickerError" class="text-sm text-red-500 mt-3 hidden">Vui lòng chọn size.</p>
       </div>
 
       <div class="mt-6 flex gap-3">
         <button type="button" id="goToDetailBtn" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">Xem chi tiết</button>
-        <button type="button" id="confirmSizeBtn" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Thêm vào giỏ</button>
+        <button type="button" id="confirmSizeBtn" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2">
+          <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+        </button>
+        <button type="button" id="confirmBuyNowBtn" class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 flex items-center gap-2">
+          <i class="fa-solid fa-bolt"></i> Mua ngay
+        </button>
       </div>
     </div>
   `;
@@ -411,11 +430,12 @@ function ensureSizePickerModal() {
       window.location.href = pendingCartProduct.orderUrl;
     }
   });
-  modal.querySelector("#confirmSizeBtn").addEventListener("click", confirmSizeSelection);
+  modal.querySelector("#confirmSizeBtn").addEventListener("click", () => confirmSizeSelection("cart"));
+  modal.querySelector("#confirmBuyNowBtn").addEventListener("click", () => confirmSizeSelection("buy"));
 }
 
-function openSizePicker(product) {
-  if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi thêm sản phẩm vào giỏ hàng.")) {
+function openSizePicker(product, action = "cart") {
+  if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi tiếp tục.")) {
     return;
   }
 
@@ -423,8 +443,23 @@ function openSizePicker(product) {
     ...product,
     selectedSize: ""
   };
+  pendingAction = action;
 
   const modal = document.getElementById("sizePickerModal");
+  const titleEl = modal.querySelector("#sizePickerTitle");
+  const confirmBtn = modal.querySelector("#confirmSizeBtn");
+  const buyNowBtn = modal.querySelector("#confirmBuyNowBtn");
+
+  if (action === "buy") {
+    titleEl.textContent = "Chọn size để mua ngay";
+    confirmBtn.classList.add("hidden");
+    buyNowBtn.classList.remove("hidden");
+  } else {
+    titleEl.textContent = "Chọn size trước khi thêm vào giỏ";
+    confirmBtn.classList.remove("hidden");
+    buyNowBtn.classList.remove("hidden");
+  }
+
   modal.querySelector("#sizePickerProductName").textContent = product.name || "";
   modal.querySelector("#sizePickerError").classList.add("hidden");
   modal.querySelectorAll(".js-size-option").forEach((option) => {
@@ -443,8 +478,8 @@ function closeSizePicker() {
   pendingCartProduct = null;
 }
 
-function confirmSizeSelection() {
-  if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi thêm sản phẩm vào giỏ hàng.")) {
+function confirmSizeSelection(action) {
+  if (!window.authUtils?.requireLogin?.("Xin vui lòng đăng nhập trước khi tiếp tục.")) {
     closeSizePicker();
     return;
   }
@@ -454,6 +489,26 @@ function confirmSizeSelection() {
     return;
   }
 
+  const finalAction = action || pendingAction || "cart";
+
+  if (finalAction === "buy") {
+    // Mua ngay: chuyển thẳng đến trang thanh toán
+    const item = {
+      name: pendingCartProduct.name,
+      image: pendingCartProduct.image,
+      price: pendingCartProduct.price,
+      quantity: 1,
+      size: pendingCartProduct.selectedSize
+    };
+    const totalAmount = item.price * item.quantity;
+    sessionStorage.setItem("checkoutCartItems", JSON.stringify([{ ...item, total: totalAmount }]));
+    sessionStorage.setItem("checkoutTotalAmount", String(totalAmount));
+    closeSizePicker();
+    window.location.href = "checkout.html";
+    return;
+  }
+
+  // Thêm vào giỏ hàng
   const currentCart = window.cartUtils?.getCartItems?.() || [];
   window.cartUtils?.saveCartItems?.([
     ...currentCart,
