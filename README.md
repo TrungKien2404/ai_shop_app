@@ -1,4 +1,4 @@
-# 👟 MyShoes - AI Shop App (Full-Stack SQLite Version)
+# 👟 MyShoes - AI Shop App 
 
 <div align="center">
 
@@ -84,7 +84,7 @@ ai_shop_app/
 | :--- | :--- | :--- |
 | **Node.js** | ^18.x / ^20.x | Môi trường runtime chạy code |
 | **Express.js** | ^4.18.2 | Web framework xây dựng RESTful API |
-| **SQLite3** | ^6.0.1 | Cơ sở dữ liệu nhẹ dạng file di động |
+| **PostgreSQL** | ^6.0.1 | Hệ quản trị CSDL quan hệ |
 | **Sequelize** | ^6.37.8 | ORM ánh xạ dữ liệu và đồng bộ database |
 | **JWT** | ^9.0.3 | Quản lý phiên làm việc & xác thực token |
 | **Bcryptjs** | ^2.4.3 | Mã hóa mật khẩu bảo vệ tài khoản |
@@ -114,10 +114,12 @@ ai_shop_app/
 - **Dashboard Thống kê:**
   - Tổng doanh thu thực tế (đã lọc loại bỏ các đơn hàng bị hủy bỏ).
   - Biểu đồ biến động doanh thu 7 ngày qua & Tỷ lệ trạng thái đơn hàng (sử dụng **Chart.js**).
-  - Danh sách Top 5 sản phẩm bán chạy nhất.
 - **Quản lý Sản phẩm (CRUD):** Thêm mới, cập nhật thông tin (tên, hãng, giá, mô tả, ảnh) hoặc xóa giày khỏi kho.
 - **Quản lý Đơn hàng:** Xem danh sách, cập nhật trạng thái đơn, gán đơn hàng cho shipper chuyên biệt.
 - **Quản lý Người dùng:** Xem danh sách thành viên, quản lý phân quyền và xóa tài khoản vi phạm (Cascade dữ liệu liên quan).
+### 🚚 Dành Cho Người Dùng
+- Tạo và quản lý tài khoản của mình.
+- Đăng ký tài khoản, đăng nhập và quản lý thông tin cá nhân.
 
 ### 🚚 Dành Cho Người Giao Hàng (Shipper)
 - Giao diện quản lý đơn hàng riêng biệt.
@@ -145,7 +147,6 @@ Hệ thống đã được đóng gói hoàn chỉnh trong container Docker, gi�
      ```powershell
      .\setup.bat
      ```
-     > 💡 *Mẹo nhỏ:* Trên PowerShell, bạn bắt buộc phải thêm `.\` trước tên script `setup.bat` để được cấp quyền thực thi kịch bản cục bộ.
    * **Trong Command Prompt (cmd.exe):**
      ```cmd
      setup.bat
@@ -164,26 +165,7 @@ Sau khi hoàn tất, hệ thống sẽ tự động in ra các đường dẫn t
 
 ---
 
-## 🔌 5. Tùy Chọn Kết Nối: Chạy Offline Local hoặc Đồng Bộ Hóa Render Cloud
-
-Bạn có thể chỉnh sửa file `.env` nằm ở thư mục gốc trước khi chạy script để chuyển đổi môi trường nhanh chóng:
-
-### 🟢 Kịch bản A: Chạy Offline Local Độc Lập (Mặc định)
-Để trống biến `DB_URL` và gán `API_BASE=/api`. Toàn bộ dữ liệu của bạn sẽ được lưu cục bộ thông qua SQLite trong container Docker.
-
-### 🔵 Kịch bản B: Chạy Giao Diện Local Kết Nối DB và API trên Render Cloud
-Nếu bạn đã deploy hệ thống lên đám mây và muốn giao diện local tương tác với dữ liệu thật, hãy sửa `.env` như sau:
-```env
-# Kết nối PostgreSQL Cloud của bạn
-DB_URL=postgresql://user:j2DltWT7nLro1qGqbIB0TwhQrRcdA2Bw@dpg-d87gregg4nts73dtoq0g-a.singapore-postgres.render.com/shoe_shop_n6zr
-
-# URL API của Backend đã deploy trên Render
-API_BASE=https://ai-shop-app-backend.onrender.com/api
-```
-
----
-
-## 🔑 6. Danh Sách Tài Khoản Kiểm Thử (Test Accounts)
+## 🔑 5. Danh Sách Tài Khoản Kiểm Thử (Test Accounts)
 
 Sau khi cài đặt thành công, hệ thống tự động khởi tạo dữ liệu seed mẫu của các tài khoản sau để phục vụ cho việc chấm bài và demo tính năng nhanh:
 
@@ -195,29 +177,11 @@ Sau khi cài đặt thành công, hệ thống tự động khởi tạo dữ li
 
 ---
 
-## 🛡️ Bảo Mật Dự Án
-
-* ✅ **Mã hóa một chiều:** Bcryptjs băm mật khẩu khách hàng 10 rounds bảo mật tối ưu trước khi lưu trữ vào DB.
-* ✅ **Xác thực phi trạng thái:** Phiên làm việc được quản lý bảo mật thông qua JWT (JSON Web Tokens).
-* ✅ **Phòng vệ SQL Injection:** Toàn bộ truy vấn dữ liệu được thực thi thông qua Sequelize ORM parameterized queries.
-* ✅ **CORS Management:** Giới hạn nguồn chia sẻ tài nguyên API nhằm phòng tránh các cuộc tấn công CSRF chéo website.
-
----
-
-## 🚧 Kế Hoạch Phát Triển (Todo / Features Coming Soon)
-
-- [ ] Tích hợp API Chatbot AI thực tế (Sử dụng OpenAI/Gemini API).
-- [ ] Tích hợp cổng thanh toán trực tuyến MoMo / VNPay.
-- [ ] Bổ sung tính năng Mã Khuyến Mãi (Voucher) cho giỏ hàng.
-- [ ] Bổ sung chức năng đánh giá, bình luận sản phẩm có kèm ảnh.
-- [ ] Tối ưu hóa SEO nâng cao và tự động gửi email thông báo khi đơn hàng được giao thành công.
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by the MyShoes Team**
-
-⭐ If you found this helpful, please give it a star!
+**Made with ❤️ by the 2PKN Team**
 
 </div>
