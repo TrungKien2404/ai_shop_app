@@ -266,6 +266,10 @@ function renderOrders() {
 async function updateStatus(orderId, newStatus) {
     if (!newStatus) return;
 
+    // Tìm select element đang được thao tác để disable trong lúc chờ
+    const allSelects = document.querySelectorAll(`select[onchange*="${orderId}"]`);
+    allSelects.forEach(s => { s.disabled = true; s.style.opacity = '0.5'; });
+
     try {
         const response = await fetch(`${ORDER_API_URL}/${orderId}`, {
             method: 'PUT',
@@ -273,23 +277,41 @@ async function updateStatus(orderId, newStatus) {
             body: JSON.stringify({ status: newStatus })
         });
 
-        if (!response.ok) throw new Error('Cập nhật trạng thái thất bại');
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.message || `Lỗi server: ${response.status}`);
+        }
 
         const updatedOrder = await response.json();
         
-        // Update local data
-        const index = allOrders.findIndex(o => o._id === orderId);
+        // Cập nhật mảng local
+        const index = allOrders.findIndex(o => String(o._id) === String(orderId));
         if (index !== -1) {
             allOrders[index] = updatedOrder;
         }
 
         updateStats();
-        renderOrders();
-        
-        // If modal is open, update it
+
+        // Cập nhật badge trực tiếp trên DOM (không re-render toàn trang)
+        const card = allSelects[0]?.closest('.shipper-card');
+        if (card) {
+            // Cập nhật badge status
+            const badge = card.querySelector('.status-badge');
+            if (badge) {
+                badge.className = `status-badge ${getBadgeClass(newStatus)}`;
+                badge.textContent = newStatus;
+            }
+            // Cập nhật class card
+            card.className = `bg-white rounded-2xl p-6 shadow-sm border border-gray-100 shipper-card ${getStatusClass(newStatus)}`;
+        }
+
+        // Nếu modal đang mở, cập nhật luôn
         if (!document.getElementById('orderModal').classList.contains('hidden')) {
             viewDetail(orderId);
         }
+
+        // Toast thành công
+        showShipperToast(`✅ Đã cập nhật: ${newStatus}`, 'success');
 
         // Thông báo sang tab Admin nếu đang mở
         adminSyncChannel.postMessage({
@@ -299,8 +321,39 @@ async function updateStatus(orderId, newStatus) {
         });
     } catch (error) {
         console.error('Update status error:', error);
-        alert(error.message);
+        showShipperToast(`❌ ${error.message}`, 'error');
+    } finally {
+        // Re-enable select
+        allSelects.forEach(s => { s.disabled = false; s.style.opacity = '1'; });
     }
+}
+
+function showShipperToast(message, type = 'success') {
+    const existing = document.getElementById('shipperToast');
+    if (existing) existing.remove();
+
+    const colors = { success: '#16a34a', error: '#dc2626', info: '#2563eb' };
+    const toast = document.createElement('div');
+    toast.id = 'shipperToast';
+    toast.style.cssText = `
+        position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+        background: ${colors[type] || colors.success}; color: white;
+        padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        transform: translateY(20px); opacity: 0;
+        transition: all 0.3s ease;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.style.transform = 'translateY(0)';
+        toast.style.opacity = '1';
+    });
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
 
 function viewDetail(id) {
