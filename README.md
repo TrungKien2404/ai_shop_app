@@ -1,98 +1,223 @@
 # 👟 MyShoes - AI Shop App (Full-Stack SQLite Version)
 
-**MyShoes** là một hệ thống quản lý và bán giày trực tuyến hoàn chỉnh. Dự án được thiết kế theo kiến trúc **Full-stack**, sử dụng **SQLite** làm cơ sở dữ liệu để đảm bảo tính gọn nhẹ, di động và cực kỳ dễ triển khai.
+<div align="center">
+
+**A modern full-stack e-commerce platform for premium shoe retail**
+
+[![Node.js](https://img.shields.io/badge/Node.js-v18+-green)](https://nodejs.org)
+[![Express.js](https://img.shields.io/badge/Express.js-v4.18-gray)](https://expressjs.com)
+[![Sequelize](https://img.shields.io/badge/Sequelize-v6.37-blue)](https://sequelize.org)
+[![SQLite](https://img.shields.io/badge/SQLite-v3-003B57)](https://www.sqlite.org)
+
+</div>
 
 ---
 
-## 🌟 1. Tính năng nổi bật
+## 📋 Tổng Quan Dự Án
 
-### 👤 Dành cho Khách hàng
-- **Modern UI**: Giao diện thiết kế theo phong cách Glassmorphism, đồng nhất Dark mode bằng Tailwind CSS.
-- **Smart Shopping**: Phân loại giày theo thương hiệu (Nike, Adidas, Puma, Biti's...).
-- **Shopping Cart**: Giỏ hàng lưu trữ theo từng tài khoản cá nhân thông qua `localStorage`.
-- **Order Tracking**: Khách hàng có thể xem lại lịch sử và trạng thái đơn hàng của mình.
-- **AI Consultation**: Tích hợp UI chatbot hỗ trợ tư vấn (Sẵn sàng để kết nối API AI).
+**MyShoes** là một hệ thống quản lý và bán giày trực tuyến hoàn chỉnh. Dự án được thiết kế theo kiến trúc **Full-stack**, sử dụng **SQLite** làm cơ sở dữ liệu để đảm bảo tính gọn nhẹ, di động và cực kỳ dễ triển khai trên bất kỳ máy mới nào. 
 
-### 🛠️ Dành cho Quản trị viên (Admin)
-- **Dashboard Thống kê Nâng cao**:
-    - Thống kê tổng doanh thu thực tế (đã loại bỏ đơn hàng bị hủy).
-    - Biểu đồ **Chart.js** trực quan: Biến động doanh thu 7 ngày qua và Tỷ lệ trạng thái đơn hàng.
-    - Danh sách **Top 5 Sản phẩm bán chạy nhất**.
-- **Quản lý Kho hàng (CRUD)**: Toàn quyền Thêm/Sửa/Xóa sản phẩm kèm hình ảnh và mô tả.
-- **Quản lý Đơn hàng**: Xem chi tiết từng món hàng trong đơn, cập nhật trạng thái giao hàng.
-- **Quản lý Người dùng**: Tạo tài khoản admin/user, xóa người dùng và tự động xóa dữ liệu liên quan (Cascade).
+Ứng dụng cung cấp các chức năng bán lẻ trực tuyến hoàn thiện kết hợp trang quản trị chuyên nghiệp, hỗ trợ phân quyền người dùng và quy trình giao hàng của Shipper.
 
 ---
 
-## 💻 2. Công nghệ sử dụng
+## 🏗️ Kiến Trúc Dự Án
 
-- **Frontend**: HTML5, Vanilla JavaScript (ES6+), FontAwesome, Tailwind CSS (CDN), **Chart.js** (Statistical visuals).
-- **Backend**: Node.js, Express.js.
-- **Database Layer**: **SQLite3** với **Sequelize ORM** (Giúp đồng bộ hóa bảng và quản lý quan hệ dữ liệu).
-- **Security**: 
-    - **JWT (JSON Web Token)**: Xác thực phiên làm việc.
-    - **Bcryptjs**: Mã hóa mật khẩu một chiều trước khi lưu vào DB.
-    - **Auth Middleware**: Phân quyền nghiêm ngặt giữa người dùng thường và quản trị viên.
+```
+ai_shop_app/
+├── shoe-store-backend/          # Backend (Node.js + Express)
+│   ├── config/                  # Cấu hình Sequelize & Cơ sở dữ liệu
+│   │   └── db.js
+│   ├── controllers/             # Logic nghiệp vụ (auth, product, order, chat)
+│   │   ├── authController.js
+│   │   ├── chatController.js
+│   │   ├── orderController.js
+│   │   └── productController.js
+│   ├── middleware/              # Middlewares tùy chỉnh (authMiddleware)
+│   │   └── authMiddleware.js
+│   ├── models/                  # Định nghĩa cấu trúc bảng Database
+│   │   ├── Order.js
+│   │   ├── OrderItem.js
+│   │   ├── Product.js
+│   │   └── User.js
+│   ├── routes/                  # Định nghĩa endpoints API
+│   │   ├── authRoutes.js
+│   │   ├── chatRoutes.js
+│   │   ├── orderRoutes.js
+│   │   └── productRoutes.js
+│   ├── server.js                # Server entry point
+│   ├── database.sqlite          # Cơ sở dữ liệu SQLite di động
+│   └── package.json
+│
+├── shoe-store-frontend/         # Frontend (HTML + Nginx)
+│   ├── js/                      # Các script xử lý phía client
+│   │   ├── admin.js             # Logic thống kê, biểu đồ & CRUD
+│   │   ├── auth.js              # Quản lý JWT token & bảo mật route
+│   │   ├── constants.js         # Lưu cấu hình API_BASE URL
+│   │   ├── products-enhanced.js # Xử lý danh sách & phân trang sản phẩm
+│   │   └── shipper.js           # Logic đơn hàng dành cho shipper
+│   ├── pages/                   # Giao diện HTML của trang web
+│   │   ├── index.html           # Trang chủ
+│   │   ├── admin.html           # Dashboard quản trị Admin
+│   │   ├── login.html           # Đăng nhập
+│   │   ├── signup.html          # Đăng ký
+│   │   ├── cart.html            # Chi tiết giỏ hàng
+│   │   ├── checkout.html        # Trang thanh toán
+│   │   ├── profile.html         # Trang thông tin cá nhân
+│   │   ├── shipper.html         # Giao diện tài xế giao hàng
+│   │   └── [brand].html         # Các trang thương hiệu (nike, adidas...)
+│   ├── styles.css               # CSS styling chính cho giao diện
+│   └── Dockerfile               # Build image Nginx phục vụ frontend static
+│
+├── docker-compose.yml           # File docker-compose trung tâm
+├── setup.bat                    # Script cài đặt nhanh trên Windows
+├── setup.sh                     # Script cài đặt nhanh trên macOS/Linux
+└── README.md                    # Tài liệu hướng dẫn dự án
+```
 
 ---
 
-## 📂 3. Cấu trúc thư mục & Giải thích File
+## 🛠️ Tech Stack
 
-### 🏠 Frontend (`shoe-store-frontend/`)
-- `index.html`: Trang chủ hiển thị sản phẩm theo brand/category.
-- `admin.html`: Dashboard quản trị (Yêu cầu quyền Admin).
-- `login.html` / `signup.html`: Xử lý đăng ký & đăng nhập.
-- `cart.html`: Giỏ hàng chi tiết.
-- `checkout.html`: Form nhập thông tin thanh toán và tạo đơn hàng.
-- `js/auth.js`: "Trái tim" của frontend, xử lý JWT, menu, login, logout và bảo mật route.
-- `js/admin.js`: Toàn bộ logic thống kê, biểu đồ và CRUD trong trang quản trị.
-- `js/products.js`: Xử lý hiển thị danh sách giày linh hoạt.
+### Backend
+| Công nghệ | Phiên bản | Vai trò |
+| :--- | :--- | :--- |
+| **Node.js** | ^18.x / ^20.x | Môi trường runtime chạy code |
+| **Express.js** | ^4.18.2 | Web framework xây dựng RESTful API |
+| **SQLite3** | ^6.0.1 | Cơ sở dữ liệu nhẹ dạng file di động |
+| **Sequelize** | ^6.37.8 | ORM ánh xạ dữ liệu và đồng bộ database |
+| **JWT** | ^9.0.3 | Quản lý phiên làm việc & xác thực token |
+| **Bcryptjs** | ^2.4.3 | Mã hóa mật khẩu bảo vệ tài khoản |
+| **CORS** | ^2.8.5 | Quản lý quyền chia sẻ tài nguyên nguồn chéo |
 
-### ⚙️ Backend (`shoe-store-backend/`)
-- `server.js`: Điểm khởi chạy API (Express server).
-- `database.sqlite`: **File chứa toàn bộ dữ liệu** của ứng dụng.
-- `models/`: Định nghĩa cấu trúc các bảng (User, Product, Order, OrderItem).
-- `controllers/`: Nơi xử lý logic nghiệp vụ cho từng API.
-- `routes/`: Định nghĩa các endpoint (đường dẫn) API.
-- `config/db.js`: Cấu hình kết nối Sequelize tới SQLite.
+### Frontend
+| Công nghệ | Phiên bản | Vai trò |
+| :--- | :--- | :--- |
+| **HTML5 / CSS3** | Tiêu chuẩn | Cấu trúc trang và tùy biến giao diện cơ bản |
+| **Vanilla JS** | ES6+ | Logic tương tác Client-side không dùng framework cồng kềnh |
+| **Tailwind CSS** | CDN | Hệ thống CSS utility thiết kế giao diện Glassmorphism |
+| **FontAwesome** | CDN | Thư viện biểu tượng & Icon giao diện |
+| **Chart.js** | CDN | Thiết lập biểu đồ trực quan hóa dữ liệu thống kê doanh số |
 
 ---
 
-## ⚡ 4. Hướng Dẫn Khởi Chạy Nhanh Bằng Kịch Bản Tự Động (`setup.bat`)
+## ✨ Chức Năng Chính
 
-Dự án đã được tối ưu hóa hoàn chỉnh bằng Docker. Bạn chỉ cần khởi động **Docker Desktop** trên máy trước khi chạy script:
+### 👤 Dành Cho Khách Hàng (User)
+- **Modern UI:** Giao diện tối giản thiết kế theo phong cách Glassmorphism với Dark mode đồng nhất.
+- **Smart Shopping:** Phân loại sản phẩm linh hoạt theo thương hiệu (Nike, Adidas, Puma, Biti's...) và mục đích (Running, Sport, Casual...).
+- **Shopping Cart:** Giỏ hàng thông minh lưu trữ theo từng tài khoản cá nhân thông qua `localStorage`.
+- **Order Tracking:** Khách hàng có thể kiểm tra danh sách đơn hàng đã đặt, theo dõi tiến trình giao hàng trực tiếp.
+- **AI Consultation:** Tích hợp sẵn khung Chatbot UI hỗ trợ tư vấn giày thông minh.
 
-### 🔹 Trên Windows (PowerShell hoặc Command Prompt)
+### 🛠️ Dành Cho Quản Trị Viên (Admin)
+- **Dashboard Thống kê:**
+  - Tổng doanh thu thực tế (đã lọc loại bỏ các đơn hàng bị hủy bỏ).
+  - Biểu đồ biến động doanh thu 7 ngày qua & Tỷ lệ trạng thái đơn hàng (sử dụng **Chart.js**).
+  - Danh sách Top 5 sản phẩm bán chạy nhất.
+- **Quản lý Sản phẩm (CRUD):** Thêm mới, cập nhật thông tin (tên, hãng, giá, mô tả, ảnh) hoặc xóa giày khỏi kho.
+- **Quản lý Đơn hàng:** Xem danh sách, cập nhật trạng thái đơn, gán đơn hàng cho shipper chuyên biệt.
+- **Quản lý Người dùng:** Xem danh sách thành viên, quản lý phân quyền và xóa tài khoản vi phạm (Cascade dữ liệu liên quan).
 
-1. Mở thư mục dự án `ai_shop_app` trong cửa sổ dòng lệnh.
-2. Gõ lệnh sau để khởi chạy:
+### 🚚 Dành Cho Người Giao Hàng (Shipper)
+- Giao diện quản lý đơn hàng riêng biệt.
+- Nhận đơn hàng, theo dõi thông tin người mua, cập nhật trạng thái (Đang giao, Giao thành công, Hủy đơn).
+
+### 🔐 Xác Thực & Bảo Mật
+- Đăng ký và Đăng nhập bằng mã hóa một chiều Bcryptjs bảo vệ mật khẩu.
+- Xác thực phiên bằng JWT Token lưu trữ ở Client.
+- Auth Middleware phân quyền chặt chẽ giữa Khách hàng, Shipper và Quản trị viên.
+
+---
+
+## 🚀 Hướng Dẫn Cài Đặt & Khởi Chạy Nhanh
+
+Hệ thống đã được đóng gói hoàn chỉnh trong container Docker, giúp bạn dễ dàng chạy dự án trên máy mới chưa có bất kỳ cài đặt nào khác.
+
+### Yêu Cầu Tiên Quyết
+* Đã cài đặt và đang bật **Docker Desktop** trên máy.
+
+### 1️⃣ Khởi Chạy Trên Windows (Sử dụng PowerShell hoặc cmd)
+
+1. Mở thư mục dự án `ai_shop_app`.
+2. Chạy lệnh:
    * **Trong PowerShell (Khuyên dùng):**
      ```powershell
      .\setup.bat
      ```
-     > 💡 *Lưu ý quan trọng:* Trong Windows PowerShell, theo mặc định bảo mật, bạn bắt buộc phải thêm dấu chấm gạch chéo `.\` phía trước tên file script để hệ thống nhận diện và chạy được.
+     > 💡 *Mẹo nhỏ:* Trên PowerShell, bạn bắt buộc phải thêm `.\` trước tên script `setup.bat` để được cấp quyền thực thi kịch bản cục bộ.
    * **Trong Command Prompt (cmd.exe):**
      ```cmd
      setup.bat
      ```
 
-### 🔹 Trên macOS / Linux
+### 2️⃣ Khởi Chạy Trên macOS / Linux
 Mở terminal tại thư mục dự án và chạy:
 ```bash
 chmod +x setup.sh
 ./setup.sh
 ```
 
+Sau khi hoàn tất, hệ thống sẽ tự động in ra các đường dẫn truy cập cục bộ:
+* **Frontend:** `http://localhost:3000`
+* **Backend API:** `http://localhost:8000`
+
+---
+
+## 🔌 5. Tùy Chọn Kết Nối: Chạy Offline Local hoặc Đồng Bộ Hóa Render Cloud
+
+Bạn có thể chỉnh sửa file `.env` nằm ở thư mục gốc trước khi chạy script để chuyển đổi môi trường nhanh chóng:
+
+### 🟢 Kịch bản A: Chạy Offline Local Độc Lập (Mặc định)
+Để trống biến `DB_URL` và gán `API_BASE=/api`. Toàn bộ dữ liệu của bạn sẽ được lưu cục bộ thông qua SQLite trong container Docker.
+
+### 🔵 Kịch bản B: Chạy Giao Diện Local Kết Nối DB và API trên Render Cloud
+Nếu bạn đã deploy hệ thống lên đám mây và muốn giao diện local tương tác với dữ liệu thật, hãy sửa `.env` như sau:
+```env
+# Kết nối PostgreSQL Cloud của bạn
+DB_URL=postgresql://user:j2DltWT7nLro1qGqbIB0TwhQrRcdA2Bw@dpg-d87gregg4nts73dtoq0g-a.singapore-postgres.render.com/shoe_shop_n6zr
+
+# URL API của Backend đã deploy trên Render
+API_BASE=https://ai-shop-app-backend.onrender.com/api
+```
+
 ---
 
 ## 🔑 6. Danh Sách Tài Khoản Kiểm Thử (Test Accounts)
 
-Hệ thống sau khi khởi động sẽ tự động seed sẵn dữ liệu các tài khoản mẫu dưới đây để phục vụ cho việc chấm bài và demo tính năng:
+Sau khi cài đặt thành công, hệ thống tự động khởi tạo dữ liệu seed mẫu của các tài khoản sau để phục vụ cho việc chấm bài và demo tính năng nhanh:
 
 | Vai trò (Role) | Email | Mật khẩu | Tính năng chính |
 | :--- | :--- | :--- | :--- |
-| **Quản trị viên (Admin)** | `admin@gmail.com` | `123456` | Quản lý sản phẩm, đơn hàng, người dùng, chat hỗ trợ, xem dashboard doanh thu |
-| **Khách mua hàng (User)** | `user@gmail.com` | `123456` | Xem sản phẩm, giỏ hàng, đặt hàng, cập nhật thông tin cá nhân, chat với Admin |
-| **Shipper** | `shipper@gmail.com` | `123456` | Nhận và giao đơn hàng |
+| **Quản trị viên (Admin)** | `admin@gmail.com` | `123456` | Toàn quyền kiểm soát, xem dashboard Chart.js doanh số, CRUD sản phẩm, phân đơn |
+| **Khách mua hàng (User)** | `user@gmail.com` | `123456` | Đăng nhập mua hàng, thêm giỏ hàng, đặt hàng, quản lý đơn cá nhân, chat tư vấn |
+| **Người giao hàng (Shipper)** | `shipper@gmail.com` | `123456` | Giao diện nhận đơn hàng, thay đổi trạng thái giao hàng thực tế |
 
 ---
+
+## 🛡️ Bảo Mật Dự Án
+
+* ✅ **Mã hóa một chiều:** Bcryptjs băm mật khẩu khách hàng 10 rounds bảo mật tối ưu trước khi lưu trữ vào DB.
+* ✅ **Xác thực phi trạng thái:** Phiên làm việc được quản lý bảo mật thông qua JWT (JSON Web Tokens).
+* ✅ **Phòng vệ SQL Injection:** Toàn bộ truy vấn dữ liệu được thực thi thông qua Sequelize ORM parameterized queries.
+* ✅ **CORS Management:** Giới hạn nguồn chia sẻ tài nguyên API nhằm phòng tránh các cuộc tấn công CSRF chéo website.
+
+---
+
+## 🚧 Kế Hoạch Phát Triển (Todo / Features Coming Soon)
+
+- [ ] Tích hợp API Chatbot AI thực tế (Sử dụng OpenAI/Gemini API).
+- [ ] Tích hợp cổng thanh toán trực tuyến MoMo / VNPay.
+- [ ] Bổ sung tính năng Mã Khuyến Mãi (Voucher) cho giỏ hàng.
+- [ ] Bổ sung chức năng đánh giá, bình luận sản phẩm có kèm ảnh.
+- [ ] Tối ưu hóa SEO nâng cao và tự động gửi email thông báo khi đơn hàng được giao thành công.
+
+---
+
+<div align="center">
+
+**Made with ❤️ by the MyShoes Team**
+
+⭐ If you found this helpful, please give it a star!
+
+</div>
