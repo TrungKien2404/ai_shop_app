@@ -384,10 +384,25 @@ async function fetchProducts() {
         const response = await fetch(`${API_BASE}/products`);
         const data = await response.json();
         products = Array.isArray(data) ? data : (data.products || []);
-        renderProducts();
+        renderProductsWithFilter();
     } catch (err) {
         tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Lỗi kết nối đến máy chủ!</td></tr>`;
         console.error("Fetch products error", err);
+    }
+}
+
+// Luôn giữ nguyên từ khoá tìm kiếm khi re-render
+function renderProductsWithFilter() {
+    const searchInput = document.getElementById('searchProduct');
+    const keyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    if (keyword) {
+        const filtered = products.filter(p =>
+            (p.name || '').toLowerCase().includes(keyword) ||
+            (p.brand || '').toLowerCase().includes(keyword)
+        );
+        renderProducts(filtered);
+    } else {
+        renderProducts();
     }
 }
 
@@ -563,7 +578,7 @@ async function handleProductSubmit(e) {
         if (res.ok || data.success) {
             alert(id ? 'Cập nhật thành công!' : 'Thêm sản phẩm thành công!');
             closeProductModal();
-            fetchProducts(); // Tải lại bảng
+            fetchProducts(); // Tải lại bảng, giữ keyword tìm kiếm
         } else {
             alert('Lỗi: ' + (data.message || 'Không thể lưu sản phẩm.'));
         }
@@ -588,7 +603,9 @@ async function deleteProduct(id) {
 
         if (res.ok) {
             alert('Đã xóa thành công!');
-            fetchProducts();
+            // Xóa local + giữ keyword tìm kiếm, không cần fetch lại từ server
+            products = products.filter(p => String(p._id) !== String(id));
+            renderProductsWithFilter();
         } else {
             const row = await res.json();
             alert('Không thể xóa: ' + (row.message || 'Lỗi server'));
