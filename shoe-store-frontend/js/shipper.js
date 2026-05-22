@@ -506,7 +506,7 @@ async function submitChangePassword() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw })
+            body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw, confirmPassword: confirmPw })
         });
 
         const data = await res.json();
