@@ -576,9 +576,18 @@ async function handleProductSubmit(e) {
 
         const data = await res.json();
         if (res.ok || data.success) {
-            alert(id ? 'Cập nhật thành công!' : 'Thêm sản phẩm thành công!');
             closeProductModal();
-            fetchProducts(); // Tải lại bảng, giữ keyword tìm kiếm
+            if (id) {
+                // Cập nhật: update trực tiếp mảng local, giữ nguyên keyword tìm kiếm
+                const idx = products.findIndex(p => String(p._id) === String(id));
+                if (idx !== -1) products[idx] = { ...products[idx], ...payload };
+                renderProductsWithFilter();
+                showToast('Cập nhật sản phẩm thành công!', 'success');
+            } else {
+                // Tạo mới: cần fetch để có _id mới từ server
+                await fetchProducts();
+                showToast('Thêm sản phẩm thành công!', 'success');
+            }
         } else {
             alert('Lỗi: ' + (data.message || 'Không thể lưu sản phẩm.'));
         }
