@@ -1,6 +1,7 @@
 #!/bin/sh
+set -e
 
-# Chay script kiem tra va seed du lieu neu database trong
+# Chay script kiem tra va seed du lieu neu can
 echo "Running database checks and automatic seeding if needed..."
 node check-and-seed.js
 

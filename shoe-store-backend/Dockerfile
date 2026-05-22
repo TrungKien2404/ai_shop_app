@@ -2,20 +2,16 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Coppy files package.json va package-lock.json (hoac yarn.lock)
-COPY package*.json yarn.lock* ./
+COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy toan bo code backend
 COPY . .
 
-# Copy script docker-entrypoint va phan quyen
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN apk add --no-cache dos2unix && dos2unix /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN apk add --no-cache dos2unix \
+  && dos2unix /app/docker-entrypoint.sh \
+  && chmod +x /app/docker-entrypoint.sh
 
 EXPOSE 8000
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["npm", "start"]
