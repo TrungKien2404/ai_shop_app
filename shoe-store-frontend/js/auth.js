@@ -415,7 +415,7 @@ if (loginForm && window.location.pathname.includes('login.html')) {
 function injectChatWidget() {
   return; // Legacy widget disabled: live chat widget is initialized below.
   const currentPath = window.location.pathname;
-  if (currentPath.includes('login.html') || currentPath.includes('signup.html')) {
+  if (currentPath.includes('login.html') || currentPath.includes('signup.html') || currentPath.includes('shipper.html')) {
     return;
   }
 
@@ -657,7 +657,7 @@ function ensureLiveChatWelcomeMessage() {
 
 function injectLiveChatWidget() {
   const currentPath = window.location.pathname;
-  if (currentPath.includes('login.html') || currentPath.includes('signup.html')) {
+  if (currentPath.includes('login.html') || currentPath.includes('signup.html') || currentPath.includes('shipper.html')) {
     return;
   }
 
