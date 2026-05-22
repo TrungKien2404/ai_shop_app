@@ -28,7 +28,7 @@ services:
     container_name: shoestore_backend
     restart: unless-stopped
     environment:
-      DB_URL: ""
+      DB_URL: ${DB_URL:-}
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: ${POSTGRES_USER:-postgres}

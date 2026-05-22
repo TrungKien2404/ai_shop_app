@@ -44,12 +44,22 @@ sh -c "$COMPOSE_CMD up -d"
 
 echo "[5/5] Done."
 echo
-echo "Frontend: http://localhost:${FRONTEND_PORT}"
-echo "Backend/API: http://localhost:${BACKEND_PORT}"
-echo "Database: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DB_PORT_FORWARD}/${POSTGRES_DB}"
+echo "=========================================================="
+echo "                  AI SHOE SHOP APP STATUS"
+echo "=========================================================="
+echo
+echo "[1] LOCAL RUN (DOCKER CONTAINER):"
+echo "  - Frontend:    http://localhost:${FRONTEND_PORT}"
+echo "  - Backend/API: http://localhost:${BACKEND_PORT}"
+echo "  - Local DB:    postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DB_PORT_FORWARD}/${POSTGRES_DB}"
+echo
+echo "[2] CLOUD DEPLOYMENT (RENDER):"
+echo "  - API/Backend Render: https://ai-shop-app-backend.onrender.com/api"
+echo "  - Web App Render (If any): https://ai-shop-app-backend.onrender.com"
 echo
 echo "Test accounts:"
-echo "Admin - Email: admin@gmail.com / Password: 123456"
-echo "User  - Email: user@gmail.com / Password: 123456"
+echo "  - Admin: email: admin@gmail.com / password: 123456"
+echo "  - User:  email: user@gmail.com  / password: 123456"
+echo "=========================================================="
 echo
 sh -c "$COMPOSE_CMD ps"
