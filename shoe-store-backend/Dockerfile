@@ -13,7 +13,7 @@ COPY . .
 
 # Copy script docker-entrypoint va phan quyen
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN apk add --no-cache dos2unix && dos2unix /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 8000
 

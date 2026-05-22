@@ -8,7 +8,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy entrypoint script de thay the dong API_BASE trong constants.js luc container run
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN apk add --no-cache dos2unix && dos2unix /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 80
 
