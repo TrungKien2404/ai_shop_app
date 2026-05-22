@@ -4,6 +4,9 @@
 
 const ORDER_API_URL = `${API_BASE}/orders`;
 
+// Kênh giao tiếp với tab Admin (cùng origin)
+const adminSyncChannel = new BroadcastChannel('shoe_store_sync');
+
 let allOrders = [];
 let currentTypeFilter = 'all';
 let currentUser = null;
@@ -287,6 +290,13 @@ async function updateStatus(orderId, newStatus) {
         if (!document.getElementById('orderModal').classList.contains('hidden')) {
             viewDetail(orderId);
         }
+
+        // Thông báo sang tab Admin nếu đang mở
+        adminSyncChannel.postMessage({
+            type: 'ORDER_STATUS_UPDATED',
+            orderId,
+            status: newStatus
+        });
     } catch (error) {
         console.error('Update status error:', error);
         alert(error.message);

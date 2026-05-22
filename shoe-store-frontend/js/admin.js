@@ -13,6 +13,26 @@ let users = [];
 let revenueChart = null;
 let statusChart = null;
 
+// ================== SYNC VỚI SHIPPER (BroadcastChannel) ================== //
+const adminSyncChannel = new BroadcastChannel('shoe_store_sync');
+adminSyncChannel.onmessage = (event) => {
+    const { type, orderId, status } = event.data || {};
+    if (type !== 'ORDER_STATUS_UPDATED') return;
+
+    // Cập nhật mảng orders local
+    const order = orders.find(o => String(o._id) === String(orderId));
+    if (order) {
+        order.status = status;
+
+        // Nếu đang xem tab orders → re-render ngay
+        const ordersTab = document.getElementById('tab-orders');
+        if (ordersTab && !ordersTab.classList.contains('hidden')) {
+            renderOrders();
+            showToast(`Shipper đã cập nhật đơn hàng → "${status}"`, 'info');
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     // Render Admin Info
     const user = JSON.parse(sessionStorage.getItem('user'));
