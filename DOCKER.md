@@ -54,12 +54,7 @@ Hệ thống tự động seed các tài khoản sau vào cơ sở dữ liệu P
 | :--- | :--- | :--- | :--- |
 | **Admin** | `admin@gmail.com` | `123456` | Quản lý sản phẩm, đơn hàng và thống kê |
 | **User (Khách hàng)** | `user@gmail.com` | `123456` | Đặt hàng và mua sắm |
-| **Shipper Nike** | `nike@shipper.com` | `password123` | Shipper chuyên trách thương hiệu Nike |
-| **Shipper Adidas** | `adidas@shipper.com` | `password123` | Shipper chuyên trách thương hiệu Adidas |
-| **Shipper Puma** | `puma@shipper.com` | `password123` | Shipper chuyên trách thương hiệu Puma |
-| **Shipper Biti's** | `bitis@shipper.com` | `password123` | Shipper chuyên trách thương hiệu Biti's |
-| **Shipper Mizuno** | `mizuno@shipper.com` | `password123` | Shipper chuyên trách thương hiệu Mizuno |
-
+| **Shipper** | `shipper@gmail.com` | `123456` | Shipper |
 ---
 
 ## 🐳 5. Lệnh quản lý thường gặp
