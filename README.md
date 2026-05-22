@@ -1,117 +1,98 @@
-# AI Shop App
+# 👟 MyShoes - AI Shop App (Full-Stack SQLite Version)
 
-Project web ban giay duoc tach thanh 2 phan:
+**MyShoes** là một hệ thống quản lý và bán giày trực tuyến hoàn chỉnh. Dự án được thiết kế theo kiến trúc **Full-stack**, sử dụng **SQLite** làm cơ sở dữ liệu để đảm bảo tính gọn nhẹ, di động và cực kỳ dễ triển khai.
 
-- Frontend: `shoe-store-frontend/`
-- Backend: `shoe-store-backend/`
-- Database: PostgreSQL chay bang Docker service `db`
+---
 
-Project da duoc chuan hoa de nguoi cham chi can chay mot lenh sau khi clone repo.
+## 🌟 1. Tính năng nổi bật
 
-## 1. Cau truc va file quan trong
+### 👤 Dành cho Khách hàng
+- **Modern UI**: Giao diện thiết kế theo phong cách Glassmorphism, đồng nhất Dark mode bằng Tailwind CSS.
+- **Smart Shopping**: Phân loại giày theo thương hiệu (Nike, Adidas, Puma, Biti's...).
+- **Shopping Cart**: Giỏ hàng lưu trữ theo từng tài khoản cá nhân thông qua `localStorage`.
+- **Order Tracking**: Khách hàng có thể xem lại lịch sử và trạng thái đơn hàng của mình.
+- **AI Consultation**: Tích hợp UI chatbot hỗ trợ tư vấn (Sẵn sàng để kết nối API AI).
 
-- `docker-compose.yml`: khoi dong dong thoi PostgreSQL, backend Node.js va frontend Nginx.
-- `shoe-store-backend/package.json`: dependencies va lenh `npm start`.
-- `shoe-store-backend/Dockerfile`: build image backend, tu dong chay script seed truoc khi start server.
-- `shoe-store-backend/docker-entrypoint.sh`: goi `check-and-seed.js` roi moi chay backend.
-- `shoe-store-backend/config/db.js`: cau hinh Sequelize ket noi PostgreSQL.
-- `shoe-store-frontend/Dockerfile`: build image frontend static bang Nginx.
-- `shoe-store-frontend/nginx.conf`: phuc vu file frontend va proxy `/api` sang backend.
-- `.env.example`: bien moi truong mac dinh de chay local.
-- `setup.bat`: script chay nhanh tren Windows.
-- `setup.sh`: script chay nhanh tren macOS/Linux.
+### 🛠️ Dành cho Quản trị viên (Admin)
+- **Dashboard Thống kê Nâng cao**:
+    - Thống kê tổng doanh thu thực tế (đã loại bỏ đơn hàng bị hủy).
+    - Biểu đồ **Chart.js** trực quan: Biến động doanh thu 7 ngày qua và Tỷ lệ trạng thái đơn hàng.
+    - Danh sách **Top 5 Sản phẩm bán chạy nhất**.
+- **Quản lý Kho hàng (CRUD)**: Toàn quyền Thêm/Sửa/Xóa sản phẩm kèm hình ảnh và mô tả.
+- **Quản lý Đơn hàng**: Xem chi tiết từng món hàng trong đơn, cập nhật trạng thái giao hàng.
+- **Quản lý Người dùng**: Tạo tài khoản admin/user, xóa người dùng và tự động xóa dữ liệu liên quan (Cascade).
 
-## 2. Cach chay cho nguoi cham
+---
 
-Windows:
+## 💻 2. Công nghệ sử dụng
 
-```bat
-setup.bat
-```
+- **Frontend**: HTML5, Vanilla JavaScript (ES6+), FontAwesome, Tailwind CSS (CDN), **Chart.js** (Statistical visuals).
+- **Backend**: Node.js, Express.js.
+- **Database Layer**: **SQLite3** với **Sequelize ORM** (Giúp đồng bộ hóa bảng và quản lý quan hệ dữ liệu).
+- **Security**: 
+    - **JWT (JSON Web Token)**: Xác thực phiên làm việc.
+    - **Bcryptjs**: Mã hóa mật khẩu một chiều trước khi lưu vào DB.
+    - **Auth Middleware**: Phân quyền nghiêm ngặt giữa người dùng thường và quản trị viên.
 
-macOS/Linux:
+---
 
+## 📂 3. Cấu trúc thư mục & Giải thích File
+
+### 🏠 Frontend (`shoe-store-frontend/`)
+- `index.html`: Trang chủ hiển thị sản phẩm theo brand/category.
+- `admin.html`: Dashboard quản trị (Yêu cầu quyền Admin).
+- `login.html` / `signup.html`: Xử lý đăng ký & đăng nhập.
+- `cart.html`: Giỏ hàng chi tiết.
+- `checkout.html`: Form nhập thông tin thanh toán và tạo đơn hàng.
+- `js/auth.js`: "Trái tim" của frontend, xử lý JWT, menu, login, logout và bảo mật route.
+- `js/admin.js`: Toàn bộ logic thống kê, biểu đồ và CRUD trong trang quản trị.
+- `js/products.js`: Xử lý hiển thị danh sách giày linh hoạt.
+
+### ⚙️ Backend (`shoe-store-backend/`)
+- `server.js`: Điểm khởi chạy API (Express server).
+- `database.sqlite`: **File chứa toàn bộ dữ liệu** của ứng dụng.
+- `models/`: Định nghĩa cấu trúc các bảng (User, Product, Order, OrderItem).
+- `controllers/`: Nơi xử lý logic nghiệp vụ cho từng API.
+- `routes/`: Định nghĩa các endpoint (đường dẫn) API.
+- `config/db.js`: Cấu hình kết nối Sequelize tới SQLite.
+
+---
+
+## ⚡ 4. Hướng Dẫn Khởi Chạy Nhanh Bằng Kịch Bản Tự Động (`setup.bat`)
+
+Dự án đã được tối ưu hóa hoàn chỉnh bằng Docker. Bạn chỉ cần khởi động **Docker Desktop** trên máy trước khi chạy script:
+
+### 🔹 Trên Windows (PowerShell hoặc Command Prompt)
+
+1. Mở thư mục dự án `ai_shop_app` trong cửa sổ dòng lệnh.
+2. Gõ lệnh sau để khởi chạy:
+   * **Trong PowerShell (Khuyên dùng):**
+     ```powershell
+     .\setup.bat
+     ```
+     > 💡 *Lưu ý quan trọng:* Trong Windows PowerShell, theo mặc định bảo mật, bạn bắt buộc phải thêm dấu chấm gạch chéo `.\` phía trước tên file script để hệ thống nhận diện và chạy được.
+   * **Trong Command Prompt (cmd.exe):**
+     ```cmd
+     setup.bat
+     ```
+
+### 🔹 Trên macOS / Linux
+Mở terminal tại thư mục dự án và chạy:
 ```bash
 chmod +x setup.sh
 ./setup.sh
 ```
 
-Sau khi script chay xong:
+---
 
-- Frontend: `http://localhost:3000`
-- Backend/API: `http://localhost:8000`
-- Database: `postgresql://postgres:password123@localhost:5432/shoe_shop`
+## 🔑 6. Danh Sách Tài Khoản Kiểm Thử (Test Accounts)
 
-## 3. Tai khoan test
+Hệ thống sau khi khởi động sẽ tự động seed sẵn dữ liệu các tài khoản mẫu dưới đây để phục vụ cho việc chấm bài và demo tính năng:
 
-Admin:
+| Vai trò (Role) | Email | Mật khẩu | Tính năng chính |
+| :--- | :--- | :--- | :--- |
+| **Quản trị viên (Admin)** | `admin@gmail.com` | `123456` | Quản lý sản phẩm, đơn hàng, người dùng, chat hỗ trợ, xem dashboard doanh thu |
+| **Khách mua hàng (User)** | `user@gmail.com` | `123456` | Xem sản phẩm, giỏ hàng, đặt hàng, cập nhật thông tin cá nhân, chat với Admin |
+| **Shipper** | `shipper@gmail.com` | `123456` | Nhận và giao đơn hàng |
 
-- Email: `admin@gmail.com`
-- Password: `123456`
-
-User:
-
-- Email: `user@gmail.com`
-- Password: `123456`
-
-Ngoai ra he thong con tao san cac tai khoan shipper phuc vu demo.
-
-## 4. Script da lam gi
-
-Ca `setup.bat` va `setup.sh` deu tu dong:
-
-- Kiem tra Docker da cai chua
-- Kiem tra Docker Compose co san hay khong
-- Tao `.env` tu `.env.example` neu file `.env` chua ton tai
-- Dung cac container cu cua project neu dang ton tai
-- Build lai image
-- Chay lai toan bo project bang Docker Compose
-- In ra link frontend, backend, database va tai khoan test
-
-## 5. Database va seed data
-
-Project dung PostgreSQL trong Docker, khong can cai PostgreSQL tren may nguoi cham.
-
-Du lieu duoc khoi tao tu:
-
-- `shoe-store-backend/seed_data.json`: danh sach san pham
-- `shoe-store-backend/seed-users.json`: tai khoan admin va user
-- `shoe-store-backend/check-and-seed.js`: dam bao du lieu test luon ton tai moi lan container backend khoi dong
-
-Neu database rong, backend se tu dong seed san pham va tai khoan.
-Neu database da ton tai, backend van kiem tra lai de bo sung/cap nhat tai khoan test neu bi thieu.
-
-## 6. Moi file dung de lam gi
-
-- `docker-compose.yml`: file trung tam de chay 3 service `db`, `backend`, `frontend` tu thu muc goc.
-- `shoe-store-backend/Dockerfile`: tao image Node.js cho API.
-- `shoe-store-frontend/Dockerfile`: tao image Nginx de phuc vu frontend static.
-- `setup.bat`: lenh chay nhanh cho Windows.
-- `setup.sh`: lenh chay nhanh cho macOS/Linux.
-- `.env.example`: gia tri mac dinh de project chay duoc ngay sau khi clone.
-- `README.md`: huong dan nop bai, cai dat va xu ly loi thong dung.
-
-## 7. Loi thuong gap va cach sua
-
-- Docker khong mo duoc:
-  Hay mo Docker Desktop truoc, doi den khi Docker daemon san sang roi chay lai script.
-
-- Loi port `3000`, `8000` hoac `5432` da duoc su dung:
-  Sua file `.env` de doi `FRONTEND_PORT`, `BACKEND_PORT`, `DB_PORT_FORWARD`, sau do chay lai `setup.bat` hoac `./setup.sh`.
-
-- Frontend len nhung khong goi duoc API:
-  Chay `docker compose ps` de kiem tra service `backend` co dang `Up` hay khong.
-
-- Muon reset database ve trang thai seed ban dau:
-
-```bash
-docker compose down -v
-docker compose up --build -d
-```
-
-## 8. Ghi chu nop bai
-
-- Khong can cai Node.js tren may nguoi cham neu dung Docker.
-- Khong phu thuoc vao file `.env` rieng chua duoc commit.
-- `docker compose up --build` chay duoc tu thu muc goc project.
-- Frontend proxy API dung service name `backend`, tranh loi proxy sai ten container.
+---
