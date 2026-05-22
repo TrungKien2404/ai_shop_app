@@ -53,7 +53,8 @@ Hệ thống tự động seed các tài khoản sau vào cơ sở dữ liệu P
 | Vai trò | Email | Mật khẩu | Chi tiết |
 | :--- | :--- | :--- | :--- |
 | **Admin** | `admin@gmail.com` | `123456` | Quản lý sản phẩm, đơn hàng và thống kê |
-
+| **User (Khách hàng)** | `user@gmail.com` | `123456` | Đặt hàng và mua sắm |
+| **Shipper** | `shipper@gmail.com` | `123456` | Shipper |
 ---
 
 ## 🐳 5. Lệnh quản lý thường gặp
