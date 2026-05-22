@@ -663,9 +663,14 @@ function renderOrders() {
                     </select>
                 </td>
                 <td class="p-4 text-center">
-                    <button onclick="viewOrderDetail('${o._id}')" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center mx-auto" title="Xem chi tiết">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
+                    <div class="flex items-center justify-center gap-2">
+                        <button onclick="viewOrderDetail('${o._id}')" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center" title="Xem chi tiết">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button onclick="deleteOrder('${o._id}', '${code}')" class="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center" title="Xóa đơn hàng">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
@@ -732,7 +737,6 @@ async function changeOrderStatus(orderId, newStatus) {
         });
         const data = await res.json();
         if (res.ok) {
-            // alert('Đã cập nhật trạng thái đơn hàng!');
             // Không cần alert hoặc fetch lại nguyên băng để tránh nhảy trang khó chịu, UI select đã tự update item.
         } else {
             alert('Lỗi cập nhật: ' + (data.message || 'Lỗi hệ thống'));
@@ -742,6 +746,30 @@ async function changeOrderStatus(orderId, newStatus) {
         console.error('Update status err:', err);
         alert('Lỗi kết nối máy chủ!');
         fetchOrders(); // Reset data
+    }
+}
+
+async function deleteOrder(orderId, orderCode) {
+    if (!confirm(`Bạn có chắc chắn muốn xóa đơn hàng #${orderCode}?\nHành động này không thể hoàn tác!`)) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        if (res.ok) {
+            // Xóa khỏi mảng local và render lại (không cần fetch lại từ server)
+            orders = orders.filter(o => String(o._id) !== String(orderId));
+            renderOrders();
+            // Hiện thông báo nhỏ
+            showToast(`Đã xóa đơn hàng #${orderCode}`, 'success');
+        } else {
+            alert('Lỗi xóa đơn: ' + (data.message || 'Lỗi hệ thống'));
+        }
+    } catch (err) {
+        console.error('Delete order err:', err);
+        alert('Lỗi kết nối máy chủ!');
     }
 }
 
@@ -1143,4 +1171,46 @@ async function handleBulkProductSubmit() {
         btn.innerHTML = oriText;
         btn.disabled = false;
     }
+}
+
+// ================== TOAST NOTIFICATION ================== //
+
+function showToast(message, type = 'success') {
+    // Xóa toast cũ nếu còn
+    const existing = document.getElementById('adminToast');
+    if (existing) existing.remove();
+
+    const colors = {
+        success: 'bg-green-600',
+        error:   'bg-red-600',
+        info:    'bg-blue-600'
+    };
+    const icons = {
+        success: 'fa-circle-check',
+        error:   'fa-circle-xmark',
+        info:    'fa-circle-info'
+    };
+
+    const toast = document.createElement('div');
+    toast.id = 'adminToast';
+    toast.className = `fixed bottom-6 right-6 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl text-white shadow-2xl
+        ${colors[type] || colors.success} transition-all duration-300 opacity-0 translate-y-4`;
+    toast.innerHTML = `
+        <i class="fa-solid ${icons[type] || icons.success} text-lg"></i>
+        <span class="font-medium text-sm">${message}</span>
+    `;
+    document.body.appendChild(toast);
+
+    // Animate in
+    requestAnimationFrame(() => {
+        toast.classList.remove('opacity-0', 'translate-y-4');
+        toast.classList.add('opacity-100', 'translate-y-0');
+    });
+
+    // Tự ẩn sau 3 giây
+    setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }

@@ -156,3 +156,19 @@ exports.updateOrderStatus = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.deleteOrder = async (req, res) => {
+  try {
+    const order = await Order.findByPk(req.params.id);
+    if (!order) return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+
+    // Xóa các OrderItem trước (tránh lỗi foreign key)
+    await OrderItem.destroy({ where: { orderId: order.id } });
+    await order.destroy();
+
+    res.json({ message: "Đã xóa đơn hàng thành công" });
+  } catch (error) {
+    console.error("deleteOrder error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
