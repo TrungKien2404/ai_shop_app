@@ -140,16 +140,14 @@
     <!-- Header -->
     <div class="mb-8">
       <h2 class="text-3xl font-black text-slate-800 mb-2">Quản lí đơn hàng</h2>
-      <p class="text-slate-500">Danh sách đơn theo loại hàng (Bóng đá / Chạy bộ / Casual).</p>
+      <p class="text-slate-500">Danh sách đơn hàng chưa giao và đã giao.</p>
     </div>
 
     <!-- Actions Bar -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
       <div class="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm w-full md:w-auto overflow-x-auto no-scrollbar">
-        <button data-type="all" onclick="filterByType('all')" class="filter-btn active px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap">Tất cả</button>
-        <button data-type="sport" onclick="filterByType('sport')" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap">Bóng đá</button>
-        <button data-type="running" onclick="filterByType('running')" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap">Chạy bộ</button>
-        <button data-type="casual" onclick="filterByType('casual')" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap">Casual</button>
+        <button data-status="all" onclick="filterByStatus('all')" class="filter-btn active px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap">Tất cả đơn hàng</button>
+        <button data-status="delivered" onclick="filterByStatus('delivered')" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap">Đã giao</button>
       </div>
 
       <button onclick="fetchOrders()" class="w-full md:w-auto flex items-center justify-center gap-3 bg-white text-slate-700 px-6 py-3 rounded-2xl text-sm font-bold hover:bg-slate-50 transition-all border border-slate-200 shadow-sm active:scale-95">

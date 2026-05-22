@@ -8,7 +8,7 @@ const ORDER_API_URL = `${API_BASE}/orders`;
 const adminSyncChannel = new BroadcastChannel('shoe_store_sync');
 
 let allOrders = [];
-let currentTypeFilter = 'all';
+let currentStatusFilter = 'all';
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,13 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const shipperBrandEl = document.getElementById('shipperBrand');
     const assignedType = getTypeKeyFromText(user.assignedBrand);
-    if (assignedType) currentTypeFilter = assignedType;
     if (shipperBrandEl) {
         shipperBrandEl.textContent = assignedType ? `Loại hàng: ${typeKeyToLabel(assignedType)}` : 'Quản lí đơn hàng';
     }
 
     // Sync UI filter buttons (if present)
-    setActiveTypeButton(currentTypeFilter);
+    setActiveStatusButton(currentStatusFilter);
 
     fetchOrders();
 });
@@ -140,24 +139,24 @@ function getOrderTypeLabel(order) {
     return 'Nhiều loại';
 }
 
-function setActiveTypeButton(typeKey) {
+function setActiveStatusButton(statusKey) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        const btnKey = btn.getAttribute('data-type');
-        const isActive = btnKey === typeKey || (typeKey === 'all' && btnKey === 'all');
+        const btnKey = btn.getAttribute('data-status');
+        const isActive = btnKey === statusKey;
 
         btn.classList.remove('active', 'bg-blue-600', 'text-white');
-        btn.classList.add('bg-white', 'text-gray-600');
+        btn.classList.add('bg-white', 'text-slate-500', 'hover:text-slate-800');
 
         if (isActive) {
             btn.classList.add('active', 'bg-blue-600', 'text-white');
-            btn.classList.remove('bg-white', 'text-gray-600');
+            btn.classList.remove('bg-white', 'text-slate-500', 'hover:text-slate-800');
         }
     });
 }
 
-function filterByType(typeKey) {
-    currentTypeFilter = typeKey || 'all';
-    setActiveTypeButton(currentTypeFilter);
+function filterByStatus(statusKey) {
+    currentStatusFilter = statusKey || 'all';
+    setActiveStatusButton(currentStatusFilter);
     renderOrders();
 }
 
@@ -196,8 +195,20 @@ function renderOrders() {
     if (!container) return;
 
     let filtered = allOrders;
-    if (currentTypeFilter !== 'all') {
-        filtered = allOrders.filter(o => getOrderTypeKeys(o).includes(currentTypeFilter));
+    
+    // First, filter by shipper's assigned brand (if any)
+    const assignedType = getTypeKeyFromText(currentUser?.assignedBrand);
+    if (assignedType) {
+        filtered = filtered.filter(o => getOrderTypeKeys(o).includes(assignedType));
+    }
+
+    // Filter by status tab
+    if (currentStatusFilter === 'all') {
+        // Show orders that are NOT delivered
+        filtered = filtered.filter(o => o.status !== 'Đã giao' && o.status !== 'Đã hoàn thành');
+    } else if (currentStatusFilter === 'delivered') {
+        // Show orders that ARE delivered
+        filtered = filtered.filter(o => o.status === 'Đã giao' || o.status === 'Đã hoàn thành');
     }
 
     if (filtered.length === 0) {
@@ -292,18 +303,8 @@ async function updateStatus(orderId, newStatus) {
 
         updateStats();
 
-        // Cập nhật badge trực tiếp trên DOM (không re-render toàn trang)
-        const card = allSelects[0]?.closest('.shipper-card');
-        if (card) {
-            // Cập nhật badge status
-            const badge = card.querySelector('.status-badge');
-            if (badge) {
-                badge.className = `status-badge ${getBadgeClass(newStatus)}`;
-                badge.textContent = newStatus;
-            }
-            // Cập nhật class card
-            card.className = `bg-white rounded-2xl p-6 shadow-sm border border-gray-100 shipper-card ${getStatusClass(newStatus)}`;
-        }
+        // Re-render orders to filter out / update matching tabs
+        renderOrders();
 
         // Nếu modal đang mở, cập nhật luôn
         if (!document.getElementById('orderModal').classList.contains('hidden')) {
