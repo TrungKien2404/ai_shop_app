@@ -232,7 +232,10 @@ function renderProductCards(container, productsSet, page = 1) {
     const priceFmt = product.price
       ? Number(product.price).toLocaleString("vi-VN") + " đ"
       : "Liên hệ";
-    const image = product.image || "https://via.placeholder.com/300x300";
+    let image = product.image || "https://via.placeholder.com/300x300";
+    if (image.startsWith('images/')) {
+      image = '../' + image;
+    }
     const orderUrl = `order.html?name=${encodeURIComponent(product.name)}&price=${encodeURIComponent(
       product.price
     )}&image=${encodeURIComponent(image)}&brand=${encodeURIComponent(product.brand || '')}`;

@@ -366,9 +366,14 @@ function viewDetail(id) {
     
     document.getElementById('modalOrderCode').textContent = `Chi tiết đơn hàng #${code}`;
     
-    const itemsHtml = (order.orderItems || []).map(item => `
+    const itemsHtml = (order.orderItems || []).map(item => {
+        let img = item.image || 'https://via.placeholder.com/60';
+        if (img.startsWith('images/')) {
+            img = '../' + img;
+        }
+        return `
         <div class="flex items-center gap-4 py-3 border-b border-gray-50 last:border-0">
-            <img src="${item.image || 'https://via.placeholder.com/60'}" class="w-16 h-16 object-cover rounded-xl border border-gray-100 shadow-sm">
+            <img src="${img}" class="w-16 h-16 object-cover rounded-xl border border-gray-100 shadow-sm">
             <div class="flex-1">
                 <p class="font-bold text-gray-800 text-sm">${item.name}</p>
                 <div class="flex gap-4 mt-1">
@@ -378,7 +383,8 @@ function viewDetail(id) {
             </div>
             <p class="font-bold text-blue-600 text-sm">${(item.price * item.quantity).toLocaleString('vi-VN')} đ</p>
         </div>
-    `).join('');
+        `;
+    }).join('');
 
     document.getElementById('modalBody').innerHTML = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">

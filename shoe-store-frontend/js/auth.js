@@ -517,7 +517,11 @@ function setLiveChatSendingState(isSending) {
 }
 
 function buildLiveChatOrderUrl(product) {
-  return `order.html?name=${encodeURIComponent(product.name || '')}&price=${encodeURIComponent(product.price || 0)}&image=${encodeURIComponent(product.image || '')}`;
+  let img = product.image || '';
+  if (img.startsWith('images/')) {
+    img = '../' + img;
+  }
+  return `order.html?name=${encodeURIComponent(product.name || '')}&price=${encodeURIComponent(product.price || 0)}&image=${encodeURIComponent(img)}`;
 }
 
 function appendLiveChatMessage(role, content, options = {}) {

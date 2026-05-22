@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -323,7 +323,11 @@
       priceEl.textContent = formatVnd(Number(qPrice));
     }
     if (qImage) {
-      productImageEl.src = qImage;
+      let finalImage = qImage;
+      if (finalImage.startsWith('images/') && !finalImage.startsWith('../')) {
+        finalImage = '../' + finalImage;
+      }
+      productImageEl.src = finalImage;
       productImageEl.alt = qName || productImageEl.alt;
     }
 

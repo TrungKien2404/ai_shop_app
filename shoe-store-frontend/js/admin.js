@@ -305,11 +305,15 @@ function renderTopProducts(ordersData) {
     }
 
     sortedProducts.forEach(p => {
+        let img = p.image || 'https://via.placeholder.com/32';
+        if (img.startsWith('images/')) {
+            img = '../' + img;
+        }
         tbody.innerHTML += `
             <tr class="hover:bg-gray-50 transition">
                 <td class="p-3">
                     <div class="flex items-center gap-2">
-                        <img src="${p.image || 'https://via.placeholder.com/32'}" class="w-8 h-8 object-cover rounded shadow-sm">
+                        <img src="${img}" class="w-8 h-8 object-cover rounded shadow-sm">
                         <span class="text-sm font-medium text-gray-700 truncate max-w-[150px]">${p.name}</span>
                     </div>
                 </td>
@@ -440,7 +444,10 @@ function renderProducts(dataToRender = null) {
     let html = '';
     list.forEach((p, index) => {
         const priceFmt = p.price ? p.price.toLocaleString('vi-VN') + ' đ' : 'Liên hệ';
-        const imgRaw = p.image || 'https://via.placeholder.com/50';
+        let imgRaw = p.image || 'https://via.placeholder.com/50';
+        if (imgRaw.startsWith('images/')) {
+            imgRaw = '../' + imgRaw;
+        }
         const img = encodeURI(imgRaw);
 
         html += `
@@ -741,12 +748,16 @@ function viewOrderDetail(id) {
             const price = Number(item.price) || 0;
             const qty = Number(item.quantity) || 0;
             const sub = price * qty;
+            let img = item.image || 'https://via.placeholder.com/40';
+            if (img.startsWith('images/')) {
+                img = '../' + img;
+            }
 
             itemsTbody.innerHTML += `
                 <tr class="hover:bg-gray-50/50">
                     <td class="p-3">
                         <div class="flex items-center gap-3">
-                            <img src="${item.image || 'https://via.placeholder.com/40'}" class="w-10 h-10 object-cover rounded border">
+                            <img src="${img}" class="w-10 h-10 object-cover rounded border">
                             <span class="font-medium text-gray-700">${item.name}</span>
                         </div>
                     </td>
