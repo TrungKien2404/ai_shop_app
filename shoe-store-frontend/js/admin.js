@@ -179,9 +179,9 @@ async function loadDashboardStats() {
             document.getElementById('stat-orders').textContent = dataO.length || 0;
 
             // --- TÍNH TOÁN DOANH THU ---
-            // Tính tất cả trừ đơn đã hủy
+            // Chỉ tính những đơn đã giao thành công
             const totalRevenue = orders
-                .filter(o => o.status !== 'Đã hủy' && o.status !== 'Đã huỷ')
+                .filter(o => o.status === 'Đã giao')
                 .reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0);
             document.getElementById('stat-revenue').textContent = totalRevenue.toLocaleString('vi-VN') + ' đ';
 
