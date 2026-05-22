@@ -53,11 +53,27 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     const data = { ...req.body };
+
+    // Validate bắt buộc
+    if (!data.name || String(data.name).trim() === '') {
+      return res.status(400).json({ message: 'Tên sản phẩm không được để trống.' });
+    }
+    if (!data.price || isNaN(Number(data.price)) || Number(data.price) <= 0) {
+      return res.status(400).json({ message: 'Giá bán phải là số lớn hơn 0.' });
+    }
+
+    data.name = String(data.name).trim();
+    data.price = Number(data.price);
     if (Array.isArray(data.size)) data.size = JSON.stringify(data.size);
-    
+
     const product = await Product.create(data);
     res.status(201).json(transformProduct(product));
   } catch (err) {
+    // Trả về chi tiết lỗi Sequelize Validation
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      const details = err.errors ? err.errors.map(e => e.message).join(', ') : err.message;
+      return res.status(400).json({ message: `Lỗi dữ liệu: ${details}` });
+    }
     res.status(500).json({ message: err.message });
   }
 };
@@ -69,8 +85,21 @@ exports.bulkCreateProducts = async (req, res) => {
       return res.status(400).json({ message: "Vui lòng cung cấp danh sách sản phẩm." });
     }
 
+    // Validate từng dòng
+    for (let i = 0; i < products.length; i++) {
+      const p = products[i];
+      if (!p.name || String(p.name).trim() === '') {
+        return res.status(400).json({ message: `Dòng ${i + 1}: Tên sản phẩm không được để trống.` });
+      }
+      if (!p.price || isNaN(Number(p.price)) || Number(p.price) <= 0) {
+        return res.status(400).json({ message: `Dòng ${i + 1}: Giá bán phải là số lớn hơn 0.` });
+      }
+    }
+
     const dataList = products.map(p => {
       const d = { ...p };
+      d.name = String(d.name).trim();
+      d.price = Number(d.price);
       if (Array.isArray(d.size)) d.size = JSON.stringify(d.size);
       return d;
     });
@@ -82,6 +111,10 @@ exports.bulkCreateProducts = async (req, res) => {
       products: created.map(transformProduct)
     });
   } catch (err) {
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      const details = err.errors ? err.errors.map(e => e.message).join(', ') : err.message;
+      return res.status(400).json({ message: `Lỗi dữ liệu: ${details}` });
+    }
     res.status(500).json({ message: err.message });
   }
 };

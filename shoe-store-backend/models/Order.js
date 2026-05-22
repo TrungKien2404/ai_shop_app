@@ -38,7 +38,7 @@ const Order = sequelize.define("Order", {
   },
   status: {
     type: DataTypes.STRING,
-    defaultValue: "Đang giao",
+    defaultValue: "Chờ xử lý",
   },
 });
 

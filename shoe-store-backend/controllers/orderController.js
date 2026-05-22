@@ -87,7 +87,7 @@ exports.createOrder = async (req, res) => {
       itemsSubtotal,
       shippingFee,
       totalPrice,
-      status: "Đang giao"
+      status: "Chờ xử lý"
     }, { transaction });
 
     for (const item of normalizedItems) {
