@@ -20,9 +20,9 @@ function updateThemeIcons(isDark) {
   const siteLogo = document.getElementById('siteLogo');
   if (siteLogo) {
     if (isDark) {
-      siteLogo.src = 'images/logo/darkmode.png';
+      siteLogo.src = '../images/logo/darkmode.png';
     } else {
-      siteLogo.src = 'images/logo/lightmode.png';
+      siteLogo.src = '../images/logo/lightmode.png';
     }
   }
 }

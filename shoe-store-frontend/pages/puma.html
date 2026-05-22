@@ -3,11 +3,11 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Adidas - 2PKN Store</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Puma - 2PKN Store</title>
+  <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="js/constants.js"></script>
+  <script src="../js/constants.js"></script>
 </head>
 
 
@@ -17,7 +17,7 @@
 
     <!-- Logo (Góc trái) -->
     <a href="index.html" class="flex items-center gap-2">
-      <img id="siteLogo" src="images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
+      <img id="siteLogo" src="../images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
       <span style="font-weight:700;font-size:1.25rem;letter-spacing:0.05em;">2PKN</span>
     </a>
 
@@ -37,27 +37,27 @@
           class="absolute left-0 mt-0 w-48 bg-white text-black rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100">
           <div class="py-2">
             <a href="nike.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-nike.png" alt="Nike" class="w-6 h-6 object-contain"
+              <img src="../images/logo-nike.png" alt="Nike" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Nike</span>
             </a>
             <a href="adidas.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-adidas.png" alt="Adidas" class="w-6 h-6 object-contain"
+              <img src="../images/logo-adidas.png" alt="Adidas" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Adidas</span>
             </a>
             <a href="puma.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-puma.png" alt="Puma" class="w-6 h-6 object-contain"
+              <img src="../images/logo-puma.png" alt="Puma" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Puma</span>
             </a>
             <a href="bitis.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-bitis.png" alt="Biti's" class="w-6 h-6 object-contain"
+              <img src="../images/logo-bitis.png" alt="Biti's" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Biti's</span>
             </a>
             <a href="mizuno.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-mizuno.png" alt="Mizuno" class="w-6 h-6 object-contain"
+              <img src="../images/logo-mizuno.png" alt="Mizuno" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Mizuno</span>
             </a>
@@ -120,21 +120,19 @@
 
   <!-- Products -->
   <h2 class="text-center text-2xl font-bold my-6 flex items-center justify-center gap-2">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Adidas_2022_logo.svg" alt="Adidas logo"
-      class="h-6 w-auto">
-    <span>ADIDAS</span>
+    <img src="https://upload.wikimedia.org/wikipedia/en/d/da/Puma_complete_logo.svg" alt="Puma logo" class="h-6 w-auto">
+    <span>PUMA</span>
   </h2>
 
-  <div id="categoryGrid" data-brand="Adidas"
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-10 mb-6">
+    <div id="categoryGrid" data-brand="Puma" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-10 mb-6">
     <div class="p-10 text-center col-span-full text-gray-500">
-      <i class="fas fa-spinner fa-spin mr-2"></i>Đang tải dữ liệu...
+        <i class="fas fa-spinner fa-spin mr-2"></i>Đang tải dữ liệu...
     </div>
   </div>
 
-  <div class="pagination" id="pagination"></div>
+<div class="pagination" id="pagination"></div>
 
-  <script src="js/auth.js"></script>
+  <script src="../js/auth.js"></script>
 
   <script>
     function toggleUserMenu() {
@@ -142,8 +140,8 @@
       if (menu) menu.classList.toggle('hidden');
     }
   </script>
-  <script src="js/products-enhanced.js"></script>
-  <script src="js/theme.js"></script>
+  <script src="../js/products-enhanced.js"></script>
+  <script src="../js/theme.js"></script>
 </body>
 
 </html>

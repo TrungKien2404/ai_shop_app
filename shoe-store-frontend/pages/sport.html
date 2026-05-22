@@ -3,11 +3,11 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Đăng Nhập - 2PKN Store</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Giày Bóng Đá - 2PKN Store</title>
+  <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="js/constants.js"></script>
+  <script src="../js/constants.js"></script>
 </head>
 
 
@@ -17,7 +17,7 @@
 
     <!-- Logo (Góc trái) -->
     <a href="index.html" class="flex items-center gap-2">
-      <img id="siteLogo" src="images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
+      <img id="siteLogo" src="../images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
       <span style="font-weight:700;font-size:1.25rem;letter-spacing:0.05em;">2PKN</span>
     </a>
 
@@ -37,27 +37,27 @@
           class="absolute left-0 mt-0 w-48 bg-white text-black rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-gray-100">
           <div class="py-2">
             <a href="nike.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-nike.png" alt="Nike" class="w-6 h-6 object-contain"
+              <img src="../images/logo-nike.png" alt="Nike" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Nike</span>
             </a>
             <a href="adidas.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-adidas.png" alt="Adidas" class="w-6 h-6 object-contain"
+              <img src="../images/logo-adidas.png" alt="Adidas" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Adidas</span>
             </a>
             <a href="puma.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-puma.png" alt="Puma" class="w-6 h-6 object-contain"
+              <img src="../images/logo-puma.png" alt="Puma" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Puma</span>
             </a>
             <a href="bitis.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-bitis.png" alt="Biti's" class="w-6 h-6 object-contain"
+              <img src="../images/logo-bitis.png" alt="Biti's" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Biti's</span>
             </a>
             <a href="mizuno.html" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition">
-              <img src="images/logo-mizuno.png" alt="Mizuno" class="w-6 h-6 object-contain"
+              <img src="../images/logo-mizuno.png" alt="Mizuno" class="w-6 h-6 object-contain"
                 onerror="this.style.display='none'">
               <span class="font-medium">Mizuno</span>
             </a>
@@ -94,8 +94,8 @@
 
       <!-- Theme Toggle -->
       <div class="relative">
-        <button onclick="toggleTheme()"
-          class="cursor-pointer text-2xl hover:text-gray-300 transition focus:outline-none" title="Đổi giao diện">
+        <button onclick="toggleTheme()" class="cursor-pointer text-2xl hover:text-gray-300 transition focus:outline-none"
+          title="Đổi giao diện">
           <i class="theme-icon fa-solid fa-moon"></i>
         </button>
       </div>
@@ -118,41 +118,23 @@
 
   </div>
 
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-      <h1 class="text-3xl font-bold mb-6 text-center">Đăng Nhập</h1>
+  <h2 class="text-center text-3xl font-bold my-10 uppercase tracking-widest">Giày Bóng Đá</h2>
 
-      <form class="space-y-4" id="loginForm">
-        <div>
-          <label class="block text-sm font-medium mb-2">Email</label>
-          <input type="email" placeholder="Nhập email của bạn" required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Mật khẩu</label>
-          <input type="password" placeholder="Nhập mật khẩu" required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-        </div>
-
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700">Đăng
-          Nhập</button>
-      </form>
-
-      <p class="text-center mt-4">Chưa có tài khoản? <a href="signup.html"
-          class="text-blue-600 font-bold hover:underline">Đăng ký ngay</a></p>
+  <div id="categoryGrid" data-type="sport" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-10 mb-6">
+    <div class="p-10 text-center col-span-full text-gray-500">
+        <i class="fas fa-spinner fa-spin mr-2"></i>Đang tải dữ liệu...
     </div>
   </div>
 
+  <script src="../js/auth.js"></script>
+  <script src="../js/products-enhanced.js"></script>
   <script>
     function toggleUserMenu() {
-      const menu = document.getElementById("userMenu");
-      menu.classList.toggle("hidden");
+      const menu = document.getElementById('userMenu');
+      if (menu) menu.classList.toggle('hidden');
     }
-
   </script>
-  <script src="js/auth.js"></script>
-  <script src="js/theme.js"></script>
+  <script src="../js/theme.js"></script>
 </body>
 
 </html>
