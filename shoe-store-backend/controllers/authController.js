@@ -128,6 +128,102 @@ exports.changePassword = async (req, res) => {
   }
 };
 
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({ message: "Tên và email không được để trống" });
+    }
+
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    }
+
+    // Kiểm tra xem email mới có bị trùng với người khác không
+    const emailNormalized = email.trim().toLowerCase();
+    if (emailNormalized !== user.email.toLowerCase()) {
+      const emailExists = await User.findOne({
+        where: {
+          email: emailNormalized,
+          id: { [Op.ne]: user.id }
+        }
+      });
+      if (emailExists) {
+        return res.status(400).json({ message: "Email này đã được sử dụng bởi tài khoản khác" });
+      }
+    }
+
+    user.name = name.trim();
+    user.email = emailNormalized;
+    await user.save();
+
+    // Trả về thông tin user đã cập nhật (không gửi kèm password)
+    res.json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      isAdmin: Boolean(user.isAdmin),
+      role: user.role,
+      assignedBrand: user.assignedBrand,
+      token: generateToken(user.id), // Sinh lại token mới chứa email/info mới nếu cần
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.updateUserByAdmin = async (req, res) => {
+  try {
+    const { name, email, role, assignedBrand } = req.body;
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    }
+
+    if (!name || !email) {
+      return res.status(400).json({ message: "Tên và email không được để trống" });
+    }
+
+    const emailNormalized = email.trim().toLowerCase();
+    if (emailNormalized !== user.email.toLowerCase()) {
+      const emailExists = await User.findOne({
+        where: {
+          email: emailNormalized,
+          id: { [Op.ne]: user.id }
+        }
+      });
+      if (emailExists) {
+        return res.status(400).json({ message: "Email này đã được sử dụng bởi tài khoản khác" });
+      }
+    }
+
+    user.name = name.trim();
+    user.email = emailNormalized;
+    if (role) {
+      user.role = role;
+      user.isAdmin = role === 'admin';
+    }
+    if (assignedBrand !== undefined) {
+      user.assignedBrand = role === 'shipper' ? assignedBrand : null;
+    }
+
+    await user.save();
+
+    res.json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      isAdmin: Boolean(user.isAdmin),
+      role: user.role,
+      assignedBrand: user.assignedBrand
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.createUserByAdmin = async (req, res) => {
   try {
     const { name, password, isAdmin } = req.body;

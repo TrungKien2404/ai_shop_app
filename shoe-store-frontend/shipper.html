@@ -117,6 +117,10 @@
              <p id="userName" class="text-sm font-bold text-slate-700">Đang tải...</p>
              <p id="userRole" class="text-[10px] text-slate-400 font-medium">Đối tác giao hàng</p>
           </div>
+          <button onclick="openEditProfileModal()" class="group flex items-center gap-2 bg-slate-50 text-slate-600 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-slate-700 hover:text-white transition-all duration-300" title="Sửa thông tin">
+            <i class="fa-solid fa-user-pen group-hover:scale-110 transition-transform duration-300"></i>
+            <span class="hidden sm:inline">Sửa thông tin</span>
+          </button>
           <button onclick="openChangePasswordModal()" class="group flex items-center gap-2 bg-slate-50 text-slate-600 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-slate-700 hover:text-white transition-all duration-300" title="Đổi mật khẩu">
             <i class="fa-solid fa-key group-hover:rotate-12 transition-transform duration-300"></i>
             <span class="hidden sm:inline">Đổi mật khẩu</span>
@@ -259,6 +263,44 @@
           <button id="cpwSubmitBtn" onclick="submitChangePassword()" class="flex-1 px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2">
             <i class="fa-solid fa-check"></i>
             Xác nhận đổi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Đổi thông tin tài khoản -->
+  <div id="editProfileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-100 transform transition-all duration-300">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-user-pen text-blue-600"></i>
+          Đổi thông tin tài khoản
+        </h3>
+        <button onclick="closeEditProfileModal()" class="text-slate-400 hover:text-slate-600 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Họ và Tên</label>
+            <input type="text" id="profileNameInput" placeholder="Nhập họ và tên mới"
+              class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Tên đăng nhập (Email)</label>
+            <input type="email" id="profileEmailInput" placeholder="Nhập email mới"
+              class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button onclick="closeEditProfileModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition">
+            Hủy
+          </button>
+          <button id="profileSubmitBtn" onclick="submitEditProfile()" class="flex-1 px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            Xác nhận lưu
           </button>
         </div>
       </div>

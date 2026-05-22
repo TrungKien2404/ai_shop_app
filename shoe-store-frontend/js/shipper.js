@@ -525,3 +525,92 @@ async function submitChangePassword() {
         btn.disabled = false;
     }
 }
+
+// ================== EDIT PROFILE (CHANGE NAME/EMAIL) ================== //
+function openEditProfileModal() {
+    const user = currentUser || (typeof authUtils !== 'undefined' ? authUtils.getUser() : null);
+    if (!user) return;
+
+    const modal = document.getElementById('editProfileModal');
+    const nameInput = document.getElementById('profileNameInput');
+    const emailInput = document.getElementById('profileEmailInput');
+
+    if (nameInput) nameInput.value = user.name || user.fullname || '';
+    if (emailInput) emailInput.value = user.email || '';
+
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function closeEditProfileModal() {
+    const modal = document.getElementById('editProfileModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+async function submitEditProfile() {
+    const nameInput = document.getElementById('profileNameInput');
+    const emailInput = document.getElementById('profileEmailInput');
+    const btn = document.getElementById('profileSubmitBtn');
+
+    const newName = nameInput?.value.trim();
+    const newEmail = emailInput?.value.trim();
+
+    if (!newName || !newEmail) {
+        alert('Vui lòng điền đầy đủ Họ và Tên, Email.');
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+        alert('Vui lòng nhập email hợp lệ.');
+        return;
+    }
+
+    const oriContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang lưu...';
+    btn.disabled = true;
+
+    try {
+        const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+        const res = await fetch(`${API_BASE}/auth/update-profile`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ name: newName, email: newEmail })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            // Cập nhật storage
+            sessionStorage.setItem('token', data.token);
+            sessionStorage.setItem('user', JSON.stringify(data));
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data));
+            
+            currentUser = data;
+
+            // Cập nhật UI hiển thị
+            const userNameEl = document.getElementById('userName');
+            if (userNameEl) userNameEl.textContent = data.name || data.email || 'Shipper';
+
+            closeEditProfileModal();
+            showShipperToast('✅ Cập nhật thông tin thành công!', 'success');
+        } else {
+            alert('Lỗi: ' + (data.message || 'Không thể cập nhật hồ sơ'));
+        }
+    } catch (err) {
+        console.error('Update profile error:', err);
+        alert('Lỗi kết nối máy chủ. Vui lòng thử lại.');
+    } finally {
+        btn.innerHTML = oriContent;
+        btn.disabled = false;
+    }
+}

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -144,7 +144,12 @@
         <!-- Thông tin tài khoản section -->
         <div id="infoSection" class="transition-opacity duration-300">
             <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
-                <h3 class="text-2xl font-bold text-gray-800">Hồ sơ của tôi</h3>
+                <div class="flex items-center gap-3">
+                    <h3 class="text-2xl font-bold text-gray-800">Hồ sơ của tôi</h3>
+                    <button type="button" id="btnEditProfile" onclick="enableEditProfile()" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm font-semibold">
+                        <i class="fa-solid fa-pen text-xs"></i> Chỉnh sửa
+                    </button>
+                </div>
                 <span
                     class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-green-200">Hoạt
                     động</span>
@@ -190,6 +195,14 @@
                             class="bg-gray-100 text-white-700 px-4 py-2 border border-gray-300 border-l-0 rounded-r-lg hover:bg-gray-200 transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:z-10"
                             onclick="alert('Chức năng đổi mật khẩu đang được phát triển')">Đổi</button>
                     </div>
+                </div>
+                <div id="editProfileActions" class="hidden flex gap-3 pt-2">
+                    <button type="button" onclick="saveProfileChanges()" id="btnSaveProfile" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm shadow">
+                        Lưu thay đổi
+                    </button>
+                    <button type="button" onclick="disableEditProfile()" class="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition font-medium text-sm">
+                        Hủy
+                    </button>
                 </div>
             </form>
         </div>
@@ -389,6 +402,125 @@
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Cập nhật mật khẩu';
+                }
+            }
+        }
+
+        function enableEditProfile() {
+            const inputName = document.getElementById('inputName');
+            const inputEmail = document.getElementById('inputEmail');
+            const btnEdit = document.getElementById('btnEditProfile');
+            const editActions = document.getElementById('editProfileActions');
+
+            if (inputName) {
+                inputName.removeAttribute('readonly');
+                inputName.classList.remove('bg-gray-50', 'cursor-not-allowed');
+                inputName.classList.add('bg-white');
+                inputName.focus();
+            }
+            if (inputEmail) {
+                inputEmail.removeAttribute('readonly');
+                inputEmail.classList.remove('bg-gray-50', 'cursor-not-allowed');
+                inputEmail.classList.add('bg-white');
+            }
+            if (btnEdit) btnEdit.classList.add('hidden');
+            if (editActions) editActions.classList.remove('hidden');
+        }
+
+        function disableEditProfile() {
+            const inputName = document.getElementById('inputName');
+            const inputEmail = document.getElementById('inputEmail');
+            const btnEdit = document.getElementById('btnEditProfile');
+            const editActions = document.getElementById('editProfileActions');
+
+            if (inputName) {
+                inputName.setAttribute('readonly', true);
+                inputName.classList.add('bg-gray-50', 'cursor-not-allowed');
+                inputName.classList.remove('bg-white');
+            }
+            if (inputEmail) {
+                inputEmail.setAttribute('readonly', true);
+                inputEmail.classList.add('bg-gray-50', 'cursor-not-allowed');
+                inputEmail.classList.remove('bg-white');
+            }
+
+            // Restore values
+            const user = getUser();
+            if (user) {
+                if (inputName) inputName.value = user.name || user.fullname || '';
+                if (inputEmail) inputEmail.value = user.email || '';
+            }
+
+            if (btnEdit) btnEdit.classList.remove('hidden');
+            if (editActions) editActions.classList.add('hidden');
+        }
+
+        async function saveProfileChanges() {
+            const token = getToken();
+            if (!token) {
+                alert('Vui lòng đăng nhập để thực hiện thay đổi.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const inputName = document.getElementById('inputName');
+            const inputEmail = document.getElementById('inputEmail');
+            const btnSave = document.getElementById('btnSaveProfile');
+
+            const nameVal = inputName?.value.trim();
+            const emailVal = inputEmail?.value.trim();
+
+            if (!nameVal || !emailVal) {
+                alert('Tên và email không được bỏ trống.');
+                return;
+            }
+
+            // Simple email validation regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailVal)) {
+                alert('Vui lòng nhập email hợp lệ.');
+                return;
+            }
+
+            try {
+                if (btnSave) {
+                    btnSave.disabled = true;
+                    btnSave.textContent = 'Đang lưu...';
+                }
+
+                const response = await fetch(`${API_BASE}/auth/update-profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name: nameVal, email: emailVal })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || 'Không thể cập nhật hồ sơ');
+                }
+
+                // Cập nhật localStorage và sessionStorage
+                sessionStorage.setItem('token', data.token);
+                sessionStorage.setItem('user', JSON.stringify(data));
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data));
+
+                // Cập nhật giao diện
+                document.getElementById('profileName').textContent = data.name || '';
+                document.getElementById('profileEmail').textContent = data.email || '';
+                updateUserMenu();
+
+                alert('Cập nhật thông tin thành công!');
+                disableEditProfile();
+            } catch (error) {
+                alert(error.message || 'Lỗi cập nhật thông tin.');
+            } finally {
+                if (btnSave) {
+                    btnSave.disabled = false;
+                    btnSave.textContent = 'Lưu thay đổi';
                 }
             }
         }

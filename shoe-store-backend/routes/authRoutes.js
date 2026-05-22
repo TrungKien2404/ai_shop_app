@@ -1,6 +1,6 @@
 const express = require("express");
-const { login, register, getAllUsers, changePassword, deleteUser, createUserByAdmin } = require("../controllers/authController");
-const { protect } = require("../middleware/authMiddleware");
+const { login, register, getAllUsers, changePassword, deleteUser, createUserByAdmin, updateProfile, updateUserByAdmin } = require("../controllers/authController");
+const { protect, admin } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -25,8 +25,10 @@ router.get("/", (req, res) => {
 router.post("/login", login);
 router.post("/register", register);
 router.put("/change-password", protect, changePassword);
+router.put("/update-profile", protect, updateProfile);
 router.get("/users", getAllUsers);
 router.post("/users", protect, createUserByAdmin);
+router.put("/users/:id", protect, admin, updateUserByAdmin);
 router.delete("/users/:id", protect, deleteUser);
 
 module.exports = router;

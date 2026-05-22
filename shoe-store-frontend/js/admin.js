@@ -867,12 +867,15 @@ function renderUsers() {
                 </td>
                 <td class="p-4 text-gray-500">${date}</td>
                 <td class="p-4 text-center">
-                    ${!u.isAdmin ? `
                     <div class="flex items-center justify-center gap-2">
+                        <button onclick="openEditUserModal('${u._id}')" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center" title="Sửa">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        ${!u.isAdmin ? `
                         <button onclick="deleteUser('${u._id}')" class="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center" title="Xóa">
                             <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>` : ''}
+                        </button>` : ''}
+                    </div>
                 </td>
             </tr>
         `;
@@ -882,7 +885,50 @@ function renderUsers() {
 // Mở Modal Thêm User
 function openUserModal() {
     document.getElementById('userForm').reset();
+    document.getElementById('uId').value = '';
+    document.getElementById('userModalTitle').textContent = 'Thêm Khách Hàng';
+    document.getElementById('btnSubmitUser').textContent = 'Tạo tài khoản';
+    
+    const pwGroup = document.getElementById('uPasswordGroup');
+    if (pwGroup) pwGroup.classList.remove('hidden');
+    const uPassword = document.getElementById('uPassword');
+    if (uPassword) uPassword.setAttribute('required', true);
+
     document.getElementById('uBrandGroup').classList.add('hidden');
+    document.getElementById('userModal').classList.remove('hidden');
+    document.getElementById('userModal').classList.add('flex');
+}
+
+// Mở Modal Sửa User
+function openEditUserModal(id) {
+    const user = users.find(u => String(u._id) === String(id));
+    if (!user) return;
+
+    document.getElementById('userForm').reset();
+    document.getElementById('uId').value = user._id;
+    document.getElementById('userModalTitle').textContent = 'Chỉnh Sửa Thông Tin';
+    document.getElementById('btnSubmitUser').textContent = 'Lưu thay đổi';
+
+    document.getElementById('uName').value = user.name || '';
+    document.getElementById('uEmail').value = user.email || '';
+    
+    // Ẩn mật khẩu khi sửa
+    const pwGroup = document.getElementById('uPasswordGroup');
+    if (pwGroup) pwGroup.classList.add('hidden');
+    const uPassword = document.getElementById('uPassword');
+    if (uPassword) uPassword.removeAttribute('required');
+
+    const uRole = document.getElementById('uRole');
+    if (uRole) {
+        uRole.value = user.role || 'user';
+        toggleBrandSelect(user.role);
+    }
+
+    const uAssignedBrand = document.getElementById('uAssignedBrand');
+    if (uAssignedBrand && user.assignedBrand) {
+        uAssignedBrand.value = user.assignedBrand;
+    }
+
     document.getElementById('userModal').classList.remove('hidden');
     document.getElementById('userModal').classList.add('flex');
 }
@@ -901,7 +947,7 @@ function closeUserModal() {
     document.getElementById('userModal').classList.remove('flex');
 }
 
-// Xử lý Submit Form User (Create)
+// Xử lý Submit Form User (Create hoặc Update)
 async function handleUserSubmit(e) {
     e.preventDefault();
     const btn = document.getElementById('btnSubmitUser');
@@ -909,30 +955,59 @@ async function handleUserSubmit(e) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang lưu...';
     btn.disabled = true;
 
+    const uId = document.getElementById('uId').value;
     const role = document.getElementById('uRole').value;
+    const isEdit = !!uId;
+
     const payload = {
         name: document.getElementById('uName').value,
         email: document.getElementById('uEmail').value,
-        password: document.getElementById('uPassword').value,
         role: role,
-        isAdmin: role === 'admin',
         assignedBrand: role === 'shipper' ? document.getElementById('uAssignedBrand').value : null
     };
 
+    if (!isEdit) {
+        payload.password = document.getElementById('uPassword').value;
+    }
+
     try {
-        const res = await fetch(`${API_BASE}/auth/users`, {
-            method: 'POST',
+        const url = isEdit ? `${API_BASE}/auth/users/${uId}` : `${API_BASE}/auth/users`;
+        const method = isEdit ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+            method: method,
             headers: getAuthHeaders(),
             body: JSON.stringify(payload)
         });
 
         const data = await res.json();
         if (res.ok || data.success) {
-            alert('Thêm khách hàng thành công!');
+            alert(isEdit ? 'Cập nhật thông tin thành công!' : 'Thêm khách hàng thành công!');
+            
+            // Nếu admin tự sửa chính mình
+            if (isEdit) {
+                const currentUserStr = sessionStorage.getItem('user') || localStorage.getItem('user');
+                if (currentUserStr) {
+                    const currentUser = JSON.parse(currentUserStr);
+                    const currentId = currentUser._id || currentUser.id;
+                    if (String(currentId) === String(uId)) {
+                        // Cập nhật lại name và email cục bộ
+                        currentUser.name = data.name;
+                        currentUser.email = data.email;
+                        sessionStorage.setItem('user', JSON.stringify(currentUser));
+                        localStorage.setItem('user', JSON.stringify(currentUser));
+                        
+                        // Cập nhật lại UI admin sidebar
+                        const adminNameEl = document.getElementById('adminName');
+                        if (adminNameEl) adminNameEl.textContent = data.name || data.email || 'Admin';
+                    }
+                }
+            }
+
             closeUserModal();
             fetchUsers();
         } else {
-            alert('Lỗi: ' + (data.message || 'Không thể tạo tài khoản.'));
+            alert('Lỗi: ' + (data.message || 'Không thể lưu thông tin.'));
         }
     } catch (err) {
         console.error("Submit user err:", err);
