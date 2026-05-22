@@ -851,7 +851,7 @@ function renderUsers() {
     users.forEach((u, index) => {
         let role = 'Khách hàng';
         if (u.role === 'admin' || u.isAdmin) role = 'Quản trị viên';
-        else if (u.role === 'shipper') role = `Shipper (${u.assignedBrand || 'N/A'})`;
+        else if (u.role === 'shipper') role = 'Shipper';
         
         const roleClass = (u.role === 'admin' || u.isAdmin) ? 'bg-purple-100 text-purple-700' : 
                           (u.role === 'shipper') ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600';
@@ -894,7 +894,6 @@ function openUserModal() {
     const uPassword = document.getElementById('uPassword');
     if (uPassword) uPassword.setAttribute('required', true);
 
-    document.getElementById('uBrandGroup').classList.add('hidden');
     document.getElementById('userModal').classList.remove('hidden');
     document.getElementById('userModal').classList.add('flex');
 }
@@ -921,25 +920,10 @@ function openEditUserModal(id) {
     const uRole = document.getElementById('uRole');
     if (uRole) {
         uRole.value = user.role || 'user';
-        toggleBrandSelect(user.role);
-    }
-
-    const uAssignedBrand = document.getElementById('uAssignedBrand');
-    if (uAssignedBrand && user.assignedBrand) {
-        uAssignedBrand.value = user.assignedBrand;
     }
 
     document.getElementById('userModal').classList.remove('hidden');
     document.getElementById('userModal').classList.add('flex');
-}
-
-function toggleBrandSelect(role) {
-    const brandGroup = document.getElementById('uBrandGroup');
-    if (role === 'shipper') {
-        brandGroup.classList.remove('hidden');
-    } else {
-        brandGroup.classList.add('hidden');
-    }
 }
 
 function closeUserModal() {
@@ -963,7 +947,7 @@ async function handleUserSubmit(e) {
         name: document.getElementById('uName').value,
         email: document.getElementById('uEmail').value,
         role: role,
-        assignedBrand: role === 'shipper' ? document.getElementById('uAssignedBrand').value : null
+        assignedBrand: null
     };
 
     if (!isEdit) {
