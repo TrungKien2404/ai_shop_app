@@ -434,3 +434,94 @@ function closeModal() {
 window.addEventListener('click', (e) => {
     if (e.target.id === 'orderModal') closeModal();
 });
+
+// ================== ĐỔI MẬT KHẨU ================== //
+
+function openChangePasswordModal() {
+    // Reset form
+    document.getElementById('cpwCurrent').value = '';
+    document.getElementById('cpwNew').value = '';
+    document.getElementById('cpwConfirm').value = '';
+    document.getElementById('cpwError').classList.add('hidden');
+
+    const modal = document.getElementById('changePasswordModal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeChangePasswordModal() {
+    document.getElementById('changePasswordModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+function toggleCpwVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
+function showCpwError(message) {
+    const box = document.getElementById('cpwError');
+    document.getElementById('cpwErrorText').textContent = message;
+    box.classList.remove('hidden');
+}
+
+async function submitChangePassword() {
+    const currentPw  = document.getElementById('cpwCurrent').value.trim();
+    const newPw      = document.getElementById('cpwNew').value.trim();
+    const confirmPw  = document.getElementById('cpwConfirm').value.trim();
+
+    document.getElementById('cpwError').classList.add('hidden');
+
+    // Validate client-side
+    if (!currentPw || !newPw || !confirmPw) {
+        return showCpwError('Vui lòng điền đầy đủ tất cả các trường.');
+    }
+    if (newPw.length < 6) {
+        return showCpwError('Mật khẩu mới phải có ít nhất 6 ký tự.');
+    }
+    if (newPw !== confirmPw) {
+        return showCpwError('Xác nhận mật khẩu không khớp.');
+    }
+    if (newPw === currentPw) {
+        return showCpwError('Mật khẩu mới phải khác mật khẩu hiện tại.');
+    }
+
+    const btn = document.getElementById('cpwSubmitBtn');
+    const oriContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+    btn.disabled = true;
+
+    try {
+        const token = sessionStorage.getItem('token');
+        const res = await fetch(`${API_BASE}/auth/change-password`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            closeChangePasswordModal();
+            showShipperToast('✅ Đổi mật khẩu thành công!', 'success');
+        } else {
+            showCpwError(data.message || 'Đổi mật khẩu thất bại. Vui lòng thử lại.');
+        }
+    } catch (err) {
+        console.error('Change password error:', err);
+        showCpwError('Lỗi kết nối máy chủ. Vui lòng thử lại.');
+    } finally {
+        btn.innerHTML = oriContent;
+        btn.disabled = false;
+    }
+}

@@ -112,18 +112,22 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3">
           <div class="hidden md:flex flex-col items-end">
              <p id="userName" class="text-sm font-bold text-slate-700">Đang tải...</p>
              <p id="userRole" class="text-[10px] text-slate-400 font-medium">Đối tác giao hàng</p>
           </div>
+          <button onclick="openChangePasswordModal()" class="group flex items-center gap-2 bg-slate-50 text-slate-600 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-slate-700 hover:text-white transition-all duration-300" title="Đổi mật khẩu">
+            <i class="fa-solid fa-key group-hover:rotate-12 transition-transform duration-300"></i>
+            <span class="hidden sm:inline">Đổi mật khẩu</span>
+          </button>
           <a href="admin.html" class="group flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-600 hover:text-white transition-all duration-300">
             <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform duration-300"></i>
-            <span>Trang Admin</span>
+            <span class="hidden sm:inline">Trang Admin</span>
           </a>
           <button onclick="authUtils.handleLogout()" class="group flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-red-600 hover:text-white transition-all duration-300">
             <i class="fa-solid fa-right-from-bracket group-hover:rotate-180 transition-transform duration-500"></i>
-            <span>Rời khỏi</span>
+            <span class="hidden sm:inline">Rời khỏi</span>
           </button>
         </div>
       </div>
@@ -186,6 +190,76 @@
         <button onclick="closeModal()" class="px-8 py-3 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all">Đóng</button>
         <div id="modalActions" class="flex gap-2">
             <!-- Dynamic Actions -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Đổi Mật Khẩu -->
+  <div id="changePasswordModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeChangePasswordModal()"></div>
+    <div class="relative bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-slate-800 to-blue-600 p-6 text-white">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-key text-white"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Đổi mật khẩu</h3>
+            <p class="text-xs text-blue-200">Cập nhật mật khẩu tài khoản Shipper</p>
+          </div>
+        </div>
+        <button onclick="closeChangePasswordModal()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <!-- Form -->
+      <div class="p-6">
+        <div id="cpwError" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="cpwErrorText"></span>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Mật khẩu hiện tại</label>
+            <div class="relative">
+              <input type="password" id="cpwCurrent" placeholder="Nhập mật khẩu hiện tại"
+                class="w-full border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+              <button type="button" onclick="toggleCpwVisibility('cpwCurrent', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-eye text-sm"></i>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Mật khẩu mới</label>
+            <div class="relative">
+              <input type="password" id="cpwNew" placeholder="Tối thiểu 6 ký tự"
+                class="w-full border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+              <button type="button" onclick="toggleCpwVisibility('cpwNew', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-eye text-sm"></i>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Xác nhận mật khẩu mới</label>
+            <div class="relative">
+              <input type="password" id="cpwConfirm" placeholder="Nhập lại mật khẩu mới"
+                class="w-full border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+              <button type="button" onclick="toggleCpwVisibility('cpwConfirm', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-eye text-sm"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button onclick="closeChangePasswordModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition">
+            Hủy
+          </button>
+          <button id="cpwSubmitBtn" onclick="submitChangePassword()" class="flex-1 px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            Xác nhận đổi
+          </button>
         </div>
       </div>
     </div>
