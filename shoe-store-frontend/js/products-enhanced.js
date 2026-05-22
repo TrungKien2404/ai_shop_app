@@ -235,9 +235,10 @@ function renderProductCards(container, productsSet, page = 1) {
     const image = product.image || "https://via.placeholder.com/300x300";
     const orderUrl = `order.html?name=${encodeURIComponent(product.name)}&price=${encodeURIComponent(
       product.price
-    )}&image=${encodeURIComponent(image)}`;
+    )}&image=${encodeURIComponent(image)}&brand=${encodeURIComponent(product.brand || '')}`;
     const safeName = escapeHtml(product.name || "");
     const safeBrand = escapeHtml(product.brand || "Brand");
+    const safeCategory = escapeHtml(product.category || "");
     const safeImage = escapeHtml(image);
     const safeOrderUrl = escapeHtml(orderUrl);
 
@@ -253,6 +254,8 @@ function renderProductCards(container, productsSet, page = 1) {
               data-name="${safeName}"
               data-price="${Number(product.price) || 0}"
               data-image="${safeImage}"
+              data-brand="${safeBrand}"
+              data-category="${safeCategory}"
               data-order-url="${safeOrderUrl}"
               data-action="cart">
               <i class="fa-solid fa-cart-plus mr-1"></i> Thêm vào giỏ
@@ -264,6 +267,8 @@ function renderProductCards(container, productsSet, page = 1) {
               data-name="${safeName}"
               data-price="${Number(product.price) || 0}"
               data-image="${safeImage}"
+              data-brand="${safeBrand}"
+              data-category="${safeCategory}"
               data-order-url="${safeOrderUrl}"
               data-action="buy">
               <i class="fa-solid fa-bolt mr-1"></i> Mua ngay
@@ -354,6 +359,8 @@ function bindProductCardInteractions(container) {
         name: button.dataset.name,
         price: Number(button.dataset.price) || 0,
         image: button.dataset.image || "",
+        brand: button.dataset.brand || "",
+        category: button.dataset.category || "",
         orderUrl: button.dataset.orderUrl || ""
       }, action);
     });
@@ -518,7 +525,9 @@ function confirmSizeSelection(action) {
       image: pendingCartProduct.image,
       price: pendingCartProduct.price,
       quantity: 1,
-      size: pendingCartProduct.selectedSize
+      size: pendingCartProduct.selectedSize,
+      brand: pendingCartProduct.brand || "",
+      category: pendingCartProduct.category || ""
     }
   ]);
   window.cartUtils?.updateCartBadge?.();

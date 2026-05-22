@@ -23,6 +23,12 @@ const OrderItem = sequelize.define("OrderItem", {
   size: {
     type: DataTypes.STRING,
   },
+  brand: {
+    type: DataTypes.STRING,
+  },
+  category: {
+    type: DataTypes.STRING,
+  },
 });
 
 OrderItem.belongsTo(Order, { foreignKey: "orderId" });

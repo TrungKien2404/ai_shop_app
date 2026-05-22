@@ -32,9 +32,11 @@ async function handleSignup(event) {
       // Lưu token vào sessionStorage (tự xóa khi đóng trình duyệt)
       sessionStorage.setItem('token', data.token);
       sessionStorage.setItem('user', JSON.stringify(data));
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data));
 
       alert('Đăng ký thành công!');
-      window.location.href = 'home.html';
+      window.location.href = 'index.html';
     } else {
       alert('Đăng ký thất bại: ' + (data.errors?.[0] || data.message));
     }
@@ -68,15 +70,29 @@ async function handleLogin(event) {
       // Lưu token vào sessionStorage (tự xóa khi đóng trình duyệt)
       sessionStorage.setItem('token', data.token);
       sessionStorage.setItem('user', JSON.stringify(data));
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data));
 
       alert('Đăng nhập thành công!');
+      // Shipper: always go to the single management page
+      if (data.role === 'shipper') {
+        sessionStorage.removeItem('redirectAfterLogin');
+        window.location.href = 'shipper.html';
+        return;
+      }
+
       const redirectAfterLogin = sessionStorage.getItem('redirectAfterLogin');
       if (redirectAfterLogin && !redirectAfterLogin.includes('login.html') && !redirectAfterLogin.includes('signup.html')) {
         sessionStorage.removeItem('redirectAfterLogin');
         window.location.href = redirectAfterLogin;
+        return;
+      }
+
+      sessionStorage.removeItem('redirectAfterLogin');
+      if (data.role === 'admin' || data.isAdmin === true) {
+        window.location.href = 'admin.html';
       } else {
-        sessionStorage.removeItem('redirectAfterLogin');
-        window.location.href = 'home.html';
+        window.location.href = 'index.html';
       }
     } else {
       alert('Đăng nhập thất bại: ' + data.message);
@@ -88,12 +104,12 @@ async function handleLogin(event) {
 
 // ================== GET TOKEN ==================
 function getToken() {
-  return sessionStorage.getItem('token');
+  return sessionStorage.getItem('token') || localStorage.getItem('token');
 }
 
 // ================== GET USER ==================
 function getUser() {
-  const user = sessionStorage.getItem('user');
+  const user = sessionStorage.getItem('user') || localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
 }
 
@@ -103,7 +119,8 @@ async function handleLogout() {
 
   if (!token) {
     sessionStorage.removeItem('user');
-    window.location.href = 'home.html';
+    localStorage.removeItem('user');
+    window.location.href = 'index.html';
     return;
   }
 
@@ -121,7 +138,9 @@ async function handleLogout() {
   // Clear session storage
   sessionStorage.removeItem('token');
   sessionStorage.removeItem('user');
-  window.location.href = 'home.html';
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'index.html';
 }
 
 // ================== CHECK IF LOGGED IN ==================
@@ -186,7 +205,9 @@ function normalizeCartItems(items) {
       image: rawItem.image || '',
       price: Number(rawItem.price) || 0,
       quantity: normalizeCartQuantity(rawItem.quantity),
-      size: rawItem.size || ''
+      size: rawItem.size || '',
+      brand: rawItem.brand || '',
+      category: rawItem.category || ''
     };
 
     const key = [item.name, item.price, item.size, item.image].join('||');
@@ -277,7 +298,8 @@ window.authUtils = {
   getUser,
   isLoggedIn,
   requireLogin,
-  isAdmin
+    isAdmin,
+    handleLogout
 };
 
 function getNavbarSearchElements() {
@@ -330,7 +352,6 @@ function updateUserMenu() {
     const user = getUser();
     const displayName = user.name || user.fullname || 'Người dùng';
 
-    // Nếu là admin, hiển thị thêm link tới trang quản trị
     const adminLink = (user.role === 'admin' || user.isAdmin === true)
       ? `<a href="admin.html" class="block px-4 py-2 text-blue-600 font-bold hover:bg-gray-100">🚀 Trang Quản Trị</a>`
       : '';
@@ -345,6 +366,27 @@ function updateUserMenu() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+  // Sync auth state between sessionStorage (per-tab) and localStorage (shared)
+  const sessionToken = sessionStorage.getItem('token');
+  const sessionUser = sessionStorage.getItem('user');
+  const localToken = localStorage.getItem('token');
+  const localUser = localStorage.getItem('user');
+
+  if (sessionToken && !localToken) localStorage.setItem('token', sessionToken);
+  if (sessionUser && !localUser) localStorage.setItem('user', sessionUser);
+  if (!sessionToken && localToken) sessionStorage.setItem('token', localToken);
+  if (!sessionUser && localUser) sessionStorage.setItem('user', localUser);
+
+  // Shipper chỉ dùng 1 trang quản lí đơn hàng (shipper.html)
+  const user = getUser();
+  const path = (window.location.pathname || '').toLowerCase();
+  const isAuthPage = path.includes('login.html') || path.includes('signup.html');
+  const isShipperPage = path.includes('shipper.html');
+  if (user?.role === 'shipper' && !isAuthPage && !isShipperPage) {
+    window.location.href = 'shipper.html';
+    return;
+  }
+
   updateUserMenu();
   updateCartBadge();
   setupGlobalSearch();

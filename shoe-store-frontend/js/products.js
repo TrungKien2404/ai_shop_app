@@ -12,7 +12,7 @@ async function fetchProductsForCurrentPage() {
 
         const products = await response.json();
 
-        const isHomePage = location.pathname.includes('home.html') || location.pathname.endsWith('/');
+        const isHomePage = location.pathname.includes('index.html') || location.pathname.endsWith('/');
 
         // Render mục Best Seller
         const bestsellerGrid = document.getElementById('bestsellerGrid');
@@ -145,13 +145,13 @@ function renderProductCards(container, productsSet, page = 1) {
         const img = encodeURI(imgRaw);
         // Xử lý an toàn cả dấu nháy đơn và kép cho HTML attribute
         const safeName = (p.name || "").replace(/"/g, "&quot;").replace(/'/g, "\\'");
-        const orderUrl = `order.html?name=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price)}&image=${encodeURIComponent(img)}`.replace(/'/g, "%27");
+        const orderUrl = `order.html?name=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price)}&image=${encodeURIComponent(img)}&brand=${encodeURIComponent(p.brand || '')}`.replace(/'/g, "%27");
 
         // Ẩn nút "Thêm vào giỏ" nếu là admin
         const isAdminUser = window.authUtils?.isAdmin?.();
         const addToCartOverlay = isAdminUser ? '' : `
                     <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                        <button onclick="event.stopPropagation(); openSizePicker('${p._id}', '${safeName}', ${p.price}, '${img}')" 
+                        <button onclick="event.stopPropagation(); openSizePicker('${p._id}', '${safeName}', ${p.price}, '${img}', '${(p.brand || "").replace(/'/g, "\\'")}', '${(p.category || "").replace(/'/g, "\\'")}')" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded-full font-medium hover:bg-blue-700 transform translate-y-4 group-hover:translate-y-0 transition">
                             Thêm vào giỏ
                         </button>
@@ -239,10 +239,10 @@ function ensureSizePickerModal() {
     document.body.appendChild(modal);
 }
 
-function openSizePicker(id, name, price, image) {
+function openSizePicker(id, name, price, image, brand, category) {
     if (!window.authUtils?.requireLogin?.('Vui lòng đăng nhập để thêm vào giỏ hàng.')) return;
 
-    pendingCartProduct = { id, name, price, image, selectedSize: null };
+    pendingCartProduct = { id, name, price, image, brand, category, selectedSize: null };
     document.getElementById('sizePickerName').textContent = name;
     const optionsGrid = document.getElementById('sizeOptions');
     optionsGrid.innerHTML = AVAILABLE_SIZES.map(s => `
@@ -276,7 +276,9 @@ function confirmAddToCart() {
         price: pendingCartProduct.price,
         image: pendingCartProduct.image,
         size: pendingCartProduct.selectedSize,
-        quantity: 1
+        quantity: 1,
+        brand: pendingCartProduct.brand,
+        category: pendingCartProduct.category
     });
     window.cartUtils?.saveCartItems?.(cart);
     window.cartUtils?.updateCartBadge?.();

@@ -37,10 +37,12 @@ exports.register = async (req, res) => {
     });
 
     res.status(201).json({
-      _id: user.id, // Aliasing id to _id for frontend compatibility
+      _id: user.id,
       name: user.name,
       email: user.email,
       isAdmin: Boolean(user.isAdmin),
+      role: user.role,
+      assignedBrand: user.assignedBrand,
       token: generateToken(user.id),
     });
   } catch (err) {
@@ -64,6 +66,8 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         isAdmin: Boolean(user.isAdmin),
+        role: user.role,
+        assignedBrand: user.assignedBrand,
         token: generateToken(user.id),
       });
     } else {
@@ -140,7 +144,9 @@ exports.createUserByAdmin = async (req, res) => {
       name: name?.trim() || "User",
       email,
       password,
-      isAdmin: isAdmin || false
+      isAdmin: isAdmin || false,
+      role: req.body.role || "user",
+      assignedBrand: req.body.assignedBrand || null
     });
 
     res.status(201).json({
@@ -148,6 +154,8 @@ exports.createUserByAdmin = async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: Boolean(user.isAdmin),
+      role: user.role,
+      assignedBrand: user.assignedBrand
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

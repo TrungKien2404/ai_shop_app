@@ -65,7 +65,7 @@ function checkAdminAuth() {
         // thông thường là user.role === 'admin' hoặc user.isAdmin === true)
         if (user.role !== 'admin' && user.isAdmin !== true) {
             alert('Bạn không có quyền quản trị để truy cập trang này.');
-            window.location.href = 'home.html';
+            window.location.href = 'index.html';
         }
     } catch (e) {
         window.location.href = 'login.html';
@@ -775,8 +775,12 @@ function renderUsers() {
     }
 
     users.forEach((u, index) => {
-        const role = u.isAdmin ? 'Quản trị viên' : 'Khách hàng';
-        const roleClass = u.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600';
+        let role = 'Khách hàng';
+        if (u.role === 'admin' || u.isAdmin) role = 'Quản trị viên';
+        else if (u.role === 'shipper') role = `Shipper (${u.assignedBrand || 'N/A'})`;
+        
+        const roleClass = (u.role === 'admin' || u.isAdmin) ? 'bg-purple-100 text-purple-700' : 
+                          (u.role === 'shipper') ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600';
         const date = u.createdAt ? new Date(u.createdAt).toLocaleDateString('vi-VN') : 'Mới đây';
 
         tbody.innerHTML += `
@@ -804,8 +808,18 @@ function renderUsers() {
 // Mở Modal Thêm User
 function openUserModal() {
     document.getElementById('userForm').reset();
+    document.getElementById('uBrandGroup').classList.add('hidden');
     document.getElementById('userModal').classList.remove('hidden');
     document.getElementById('userModal').classList.add('flex');
+}
+
+function toggleBrandSelect(role) {
+    const brandGroup = document.getElementById('uBrandGroup');
+    if (role === 'shipper') {
+        brandGroup.classList.remove('hidden');
+    } else {
+        brandGroup.classList.add('hidden');
+    }
 }
 
 function closeUserModal() {
@@ -821,11 +835,14 @@ async function handleUserSubmit(e) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang lưu...';
     btn.disabled = true;
 
+    const role = document.getElementById('uRole').value;
     const payload = {
         name: document.getElementById('uName').value,
         email: document.getElementById('uEmail').value,
         password: document.getElementById('uPassword').value,
-        isAdmin: document.getElementById('uIsAdmin').checked
+        role: role,
+        isAdmin: role === 'admin',
+        assignedBrand: role === 'shipper' ? document.getElementById('uAssignedBrand').value : null
     };
 
     try {

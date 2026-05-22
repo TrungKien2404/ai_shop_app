@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shipper - Quản lí đơn hàng</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/constants.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #f8fafc;
+    }
+
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .order-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(226, 232, 240, 1);
+      background: white;
+    }
+
+    .order-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+      border-color: #3b82f6;
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 100px;
+      height: 100px;
+      background: currentColor;
+      opacity: 0.05;
+      border-radius: 50%;
+    }
+
+    .filter-btn {
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn.active {
+      background: #3b82f6;
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .animate-pulse-soft {
+      animation: pulse-soft 2s infinite;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+
+<body class="text-slate-900">
+
+  <!-- Navbar -->
+  <nav class="glass-nav sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex items-center gap-4">
+          <div class="bg-blue-600 p-2.5 rounded-2xl shadow-lg shadow-blue-200">
+            <i class="fa-solid fa-truck-fast text-white text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-800">Shipper Pro</h1>
+            <p id="shipperBrand" class="text-[10px] uppercase tracking-widest font-bold text-blue-600">Quản lí đơn hàng</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <div class="hidden md:flex flex-col items-end">
+             <p id="userName" class="text-sm font-bold text-slate-700">Đang tải...</p>
+             <p id="userRole" class="text-[10px] text-slate-400 font-medium">Đối tác giao hàng</p>
+          </div>
+          <button onclick="authUtils.handleLogout()" class="group flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-red-600 hover:text-white transition-all duration-300">
+            <i class="fa-solid fa-right-from-bracket group-hover:rotate-180 transition-transform duration-500"></i>
+            <span>Rời khỏi</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h2 class="text-3xl font-black text-slate-800 mb-2">Quản lí đơn hàng</h2>
+      <p class="text-slate-500">Danh sách đơn theo loại hàng (Bóng đá / Chạy bộ / Casual).</p>
+    </div>
+
+    <!-- Actions Bar -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+      <div class="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm w-full md:w-auto overflow-x-auto no-scrollbar">
+        <button data-type="all" onclick="filterByType('all')" class="filter-btn active px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap">Tất cả</button>
+        <button data-type="sport" onclick="filterByType('sport')" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap">Bóng đá</button>
+        <button data-type="running" onclick="filterByType('running')" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap">Chạy bộ</button>
+        <button data-type="casual" onclick="filterByType('casual')" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap">Casual</button>
+      </div>
+
+      <button onclick="fetchOrders()" class="w-full md:w-auto flex items-center justify-center gap-3 bg-white text-slate-700 px-6 py-3 rounded-2xl text-sm font-bold hover:bg-slate-50 transition-all border border-slate-200 shadow-sm active:scale-95">
+        <i class="fa-solid fa-rotate-right text-blue-600"></i>
+        Làm mới danh sách
+      </button>
+    </div>
+
+    <!-- Orders Feed -->
+    <div id="ordersContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+      <!-- Skeleton Loading -->
+      <div class="col-span-full py-32 text-center">
+        <div class="inline-block relative">
+            <div class="w-16 h-16 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
+            <i class="fa-solid fa-truck-ramp-box absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600"></i>
+        </div>
+        <p class="mt-6 text-slate-400 font-medium animate-pulse">Đang đồng bộ dữ liệu vận chuyển...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modern Modal -->
+  <div id="orderModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity"></div>
+    <div class="relative bg-white rounded-[2rem] max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in duration-300">
+      <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div>
+           <span id="modalBadge" class="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-100 px-3 py-1.5 rounded-full mb-2 inline-block">Mã đơn hàng</span>
+           <h3 id="modalOrderCode" class="text-2xl font-black text-slate-900 tracking-tight">Chi tiết đơn hàng</h3>
+        </div>
+        <button onclick="closeModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white text-slate-400 hover:text-slate-900 hover:shadow-lg transition-all border border-slate-100">&times;</button>
+      </div>
+      
+      <div id="modalBody" class="p-8 overflow-y-auto flex-1">
+        <!-- Content injected here -->
+      </div>
+
+      <div class="p-8 border-t border-slate-100 bg-white flex justify-end gap-4">
+        <button onclick="closeModal()" class="px-8 py-3 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all">Đóng</button>
+        <div id="modalActions" class="flex gap-2">
+            <!-- Dynamic Actions -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/shipper.js"></script>
+</body>
+
+</html>

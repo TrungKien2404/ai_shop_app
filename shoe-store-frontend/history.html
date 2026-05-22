@@ -16,7 +16,7 @@
   <!-- Header Menu (Chỉ lấy phần core thiết yếu hiển thị Back và User dropdown) -->
   <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <a href="home.html" class="flex items-center gap-2">
+      <a href="index.html" class="flex items-center gap-2">
         <i class="fa-solid fa-arrow-left"></i> <span class="font-bold text-lg hover:text-blue-600 transition">Quay lại
           Cửa Hàng</span>
       </a>
@@ -104,7 +104,7 @@
         // Render
         tbody.innerHTML = '';
         if (!orders || orders.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-500">Bạn chưa mua bất kỳ đơn hàng nào. <a href="home.html" class="text-blue-600 underline border-b">Mua ngay</a></td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-500">Bạn chưa mua bất kỳ đơn hàng nào. <a href="index.html" class="text-blue-600 underline border-b">Mua ngay</a></td></tr>`;
           return;
         }
 

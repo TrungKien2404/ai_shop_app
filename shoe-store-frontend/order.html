@@ -16,13 +16,13 @@
   <div class="custom-navbar p-4 flex justify-between items-center relative z-50 shadow-sm">
 
     <!-- Logo (Góc trái) -->
-    <a href="home.html" class="flex items-center gap-2">
+    <a href="index.html" class="flex items-center gap-2">
       <img id="siteLogo" src="images/logo/lightmode.png" alt="Logo" class="h-10 w-auto">
     </a>
 
     <!-- Menu (Ở giữa) -->
     <div class="flex items-center space-x-8">
-      <a href="home.html" class="hover:text-gray-300 font-semibold text-lg transition">Home</a>
+      <a href="index.html" class="hover:text-gray-300 font-semibold text-lg transition">Home</a>
 
       <!-- Dropdown Sản phẩm -->
       <div class="relative group">
@@ -83,9 +83,9 @@
       <div class="relative">
         <a href="cart.html" class="cursor-pointer text-2xl hover:opacity-80 transition">
           🛒
-          <span
+          <span id="cartBadge"
             class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold shadow">
-            2
+            0
           </span>
         </a>
       </div>
@@ -175,7 +175,7 @@
           </button>
         </div>
 
-        <a href="home.html" class="inline-block mt-5 text-sm text-gray-500 hover:text-gray-700">← Quay lại trang chủ</a>
+        <a href="index.html" class="inline-block mt-5 text-sm text-gray-500 hover:text-gray-700">← Quay lại trang chủ</a>
       </div>
     </div>
   </main>
@@ -187,8 +187,6 @@
       const menu = document.getElementById("userMenu");
       menu.classList.toggle("hidden");
     }
-
-
 
     const priceEl = document.getElementById("productPrice");
     const quantityInput = document.getElementById("quantityInput");
@@ -235,7 +233,8 @@
         image: productImageEl.getAttribute("src"),
         price: Number(priceEl.dataset.price || 0),
         quantity,
-        size: selectedSize
+        size: selectedSize,
+        brand: qBrand || ""
       };
     }
 
@@ -288,7 +287,6 @@
       updateSubtotal();
     });
 
-    // Tính realtime theo từng ký tự nhập
     quantityInput.addEventListener("input", updateSubtotal);
     quantityInput.addEventListener("blur", normalizeQuantityToMinOne);
     quantityInput.addEventListener("keydown", (event) => {
@@ -312,11 +310,11 @@
       goToCheckoutWithCurrentItem();
     });
 
-    // Hỗ trợ truyền thông tin nhanh qua URL: order.html?name=...&price=4190000&image=...
     const query = new URLSearchParams(window.location.search);
     const qName = query.get("name");
     const qPrice = query.get("price");
     const qImage = query.get("image");
+    const qBrand = query.get("brand");
 
     if (qName) productNameEl.textContent = qName;
     if (qPrice && !Number.isNaN(Number(qPrice))) {

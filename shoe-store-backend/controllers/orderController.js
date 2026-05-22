@@ -24,6 +24,8 @@ function normalizeOrderItems(orderItems = []) {
       price: Math.max(0, Number(item.price) || 0),
       quantity: Math.max(1, Math.floor(Number(item.quantity) || 1)),
       size: item.size || "",
+      brand: item.brand || "",
+      category: item.category || "",
     }));
 }
 

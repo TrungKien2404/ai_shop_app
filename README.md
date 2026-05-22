@@ -39,7 +39,7 @@
 ## 📂 3. Cấu trúc thư mục & Giải thích File
 
 ### 🏠 Frontend (`shoe-store-frontend/`)
-- `home.html`: Trang chủ hiển thị sản phẩm theo brand/category.
+- `index.html`: Trang chủ hiển thị sản phẩm theo brand/category.
 - `admin.html`: Dashboard quản trị (Yêu cầu quyền Admin).
 - `login.html` / `signup.html`: Xử lý đăng ký & đăng nhập.
 - `cart.html`: Giỏ hàng chi tiết.
@@ -72,7 +72,7 @@ npm run dev
 
 ### Bước 2: Chạy Frontend
 Bạn chỉ cần mở các file HTML bằng trình duyệt hoặc dùng **Live Server** (VS Code).
-- **Trang chủ**: `http://127.0.0.1:5500/home.html`
+- **Trang chủ**: `http://127.0.0.1:5500/index.html`
 
 ---
 

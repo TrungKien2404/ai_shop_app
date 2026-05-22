@@ -27,6 +27,14 @@ const User = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: "user", // "user", "admin", "shipper"
+    },
+    assignedBrand: {
+      type: DataTypes.STRING,
+      allowNull: true, // "Nike", "Adidas", "Puma", etc.
+    },
   },
   {
     hooks: {
