@@ -7,49 +7,6 @@ const TEST_USERS = fs.existsSync("./seed-users.json")
   ? JSON.parse(fs.readFileSync("./seed-users.json", "utf-8"))
   : [];
 
-const SHIPPERS = [
-  {
-    name: "Shipper Nike",
-    email: "nike@shipper.com",
-    password: "password123",
-    role: "shipper",
-    assignedBrand: "Nike",
-    isAdmin: false,
-  },
-  {
-    name: "Shipper Adidas",
-    email: "adidas@shipper.com",
-    password: "password123",
-    role: "shipper",
-    assignedBrand: "Adidas",
-    isAdmin: false,
-  },
-  {
-    name: "Shipper Puma",
-    email: "puma@shipper.com",
-    password: "password123",
-    role: "shipper",
-    assignedBrand: "Puma",
-    isAdmin: false,
-  },
-  {
-    name: "Shipper Biti's",
-    email: "bitis@shipper.com",
-    password: "password123",
-    role: "shipper",
-    assignedBrand: "Biti's",
-    isAdmin: false,
-  },
-  {
-    name: "Shipper Mizuno",
-    email: "mizuno@shipper.com",
-    password: "password123",
-    role: "shipper",
-    assignedBrand: "Mizuno",
-    isAdmin: false,
-  },
-];
-
 const normalizeEmail = (email = "") => email.trim().toLowerCase();
 
 async function ensureUsers(users, label) {
@@ -135,8 +92,6 @@ async function checkAndSeed() {
     } else {
       console.log("seed-users.json not found. Skipping test user seeding.");
     }
-
-    await ensureUsers(SHIPPERS, "shipper");
 
     console.log("Database seeding checks completed.");
     process.exit(0);

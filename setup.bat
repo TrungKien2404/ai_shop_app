@@ -70,9 +70,10 @@ echo   - Frontend:    http://localhost:%FRONTEND_PORT%
 echo   - Backend/API: http://localhost:%BACKEND_PORT%
 echo   - Local DB:    postgresql://%POSTGRES_USER%:%POSTGRES_PASSWORD%@localhost:%DB_PORT_FORWARD%/%POSTGRES_DB%
 echo.
-echo [2] DA DEPLOY TREN CLOUD (RENDER):
+echo [2] DA DEPLOY TREN (RENDER):
 echo   - API/Backend Render: https://ai-shop-app-backend.onrender.com/api
-echo   - Web App Render (Nếu có): https://ai-shop-app-backend.onrender.com
+echo   - Web App Render: https://ai-shop-app-backend.onrender.com
+echo   - Web App Render: https://ai-shop-app.onrender.com
 echo.
 echo Tai khoan test:
 echo   - Admin: email: admin@gmail.com / password: 123456
