@@ -7,7 +7,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-green)](https://nodejs.org)
 [![Express.js](https://img.shields.io/badge/Express.js-v4.18-gray)](https://expressjs.com)
 [![Sequelize](https://img.shields.io/badge/Sequelize-v6.37-blue)](https://sequelize.org)
-[![Postgresql](https://img.shields.io/badge/SQLite-v3-003B57)](https://www.sqlite.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v15-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
 </div>
 
