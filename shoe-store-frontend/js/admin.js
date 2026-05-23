@@ -674,6 +674,24 @@ async function fetchOrders() {
     }
 }
 
+function getStatusBadgeHtml(status) {
+    const s = status || 'Chờ xử lý';
+    let classes = '';
+    const norm = s.toLowerCase();
+    if (norm.includes('cho xu ly') || norm.includes('chờ xử lý')) {
+        classes = 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    } else if (norm.includes('dang giao') || norm.includes('đang giao')) {
+        classes = 'bg-blue-100 text-blue-800 border-blue-200';
+    } else if (norm.includes('da giao') || norm.includes('đã giao') || norm.includes('hoan thanh') || norm.includes('đã hoàn thành')) {
+        classes = 'bg-green-100 text-green-800 border-green-200';
+    } else if (norm.includes('da huy') || norm.includes('đã hủy') || norm.includes('đã huỷ')) {
+        classes = 'bg-red-100 text-red-800 border-red-200';
+    } else {
+        classes = 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+    return `<span class="px-2.5 py-1 rounded-full text-xs font-bold border ${classes} inline-block shadow-sm">${s}</span>`;
+}
+
 function renderOrders() {
     const tbody = document.getElementById('ordersTableBody');
     tbody.innerHTML = '';
@@ -698,10 +716,7 @@ function renderOrders() {
 
         const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('vi-VN') : 'N/A';
 
-        const stt = o.status || 'Chờ xử lý';
-        const statusOptions = ['Chờ xử lý', 'Đang giao', 'Đã giao', 'Đã hủy']
-            .map(opt => `<option value="${opt}" ${opt === stt ? 'selected' : ''}>${opt}</option>`)
-            .join('');
+        const statusBadge = getStatusBadgeHtml(o.status);
 
         tbody.innerHTML += `
             <tr class="hover:bg-gray-50/50 transition">
@@ -711,9 +726,7 @@ function renderOrders() {
                 <td class="p-4 font-bold text-blue-600">${total}</td>
                 <td class="p-4 text-gray-500">${date}</td>
                 <td class="p-4">
-                    <select onchange="changeOrderStatus('${o._id}', this.value)" class="border rounded px-2 py-1 outline-none focus:ring-2 focus:ring-blue-400 bg-white cursor-pointer text-sm font-semibold text-gray-700 w-full max-w-[130px]">
-                        ${statusOptions}
-                    </select>
+                    ${statusBadge}
                 </td>
                 <td class="p-4 text-center">
                     <div class="flex items-center justify-center gap-2">
